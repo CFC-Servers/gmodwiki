@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "ts-node-esm ./build/index.ts",
     "preview": "astro preview",
     "astro": "astro",
     "pages:dev": "wrangler pages dev --compatibility-date=2024-01-29 -- astro dev",
@@ -14,11 +14,17 @@
   "dependencies": {
     "@astrojs/check": "^0.4.1",
     "@astrojs/cloudflare": "^9.0.0",
-    "astro": "^4.3.2",
-    "typescript": "^5.3.3"
+    "astro": "^4.3.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240129.0",
+    "@types/node": "^20.11.16",
+    "bottleneck": "^2.19.5",
+    "chalk": "^5.3.0",
+    "cheerio": "^1.0.0-rc.12",
+    "ky": "^1.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
     "wrangler": "^3.26.0"
   }
 }
