@@ -66,7 +66,7 @@ const disclaimer = `<div class="markdown">
   <div class="note">
     <div class="inner">
       <p>This site is a community mirror of the <a href="https://wiki.facepunch.com/gmod/">official Garry's Mod wiki.</a>. This site is not maintained by Facepunch Studios.</p>
-      <p>Page content may be out of date. Edits, history, and searching are unavailable.</p>
+      <p>Page content is automatically updated every three days. Edits, history, and searching are currently unavailable.</p>
     </div>
   </div>
 </div>
