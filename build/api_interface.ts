@@ -26,14 +26,19 @@ class ApiInterface {
         });
     }
 
-    async _get(endpoint: string): Promise<any> {
-        const url = `${this.baseUrl}${endpoint}`
+    async _get(url: string): Promise<any> {
         console.log(chalk.blue("GET"), url)
         return this.limiter.schedule(() => ky.get(url))
     }
 
     async getRaw(endpoint: string): Promise<any> {
-        const response = await this._get(endpoint)
+        const response = await this._get(`${this.baseUrl}${endpoint}`)
+        const buff = await response.arrayBuffer()
+        return Buffer.from(buff)
+    }
+    
+    async getRawFull(url: string): Promise<any> {
+        const response = await this._get(url)
         const buff = await response.arrayBuffer()
         return Buffer.from(buff)
     }
@@ -47,7 +52,7 @@ class ApiInterface {
             return contents.toString()
         }
 
-        const response = await this._get(endpoint)
+        const response = await this._get(`${this.baseUrl}${endpoint}`)
         const contents = await response.text() 
 
         const dir = path.dirname(cachePath)
@@ -66,7 +71,7 @@ class ApiInterface {
             return JSON.parse(contents.toString())
         }
 
-        const response = await this._get(`${endpoint}?format=json`)
+        const response = await this._get(`${this.baseUrl}${endpoint}?format=json`)
         const text = await response.text()
 
         const dir = path.dirname(cachePath)
