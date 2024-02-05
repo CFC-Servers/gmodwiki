@@ -118,6 +118,8 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     let layout = $.html()
     layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
     layout = layout.replace(/\/gmod\//g, "/")
+    layout = layout.replace(/"{title}"/g, "{title}")
+    layout = layout.replace(/"{description}"/g, "{descirption}")
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 
     await processCss("public/styles/gmod.css", contentHandler)
