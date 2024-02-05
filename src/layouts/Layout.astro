@@ -1,7 +1,7 @@
 
 ---
 import Sidebar from "../components/Sidebar.astro";
-const { title, description, footer } = Astro.props;
+const { title, description, views, updated } = Astro.props;
 ---
 <!DOCTYPE html><html lang="en"><head>
 	<meta charset="utf-8">
@@ -51,7 +51,7 @@ const { title, description, footer } = Astro.props;
 
 				<div class="pagetitle" id="tabs_page_title"><a href="/gmod/" class="parent">Home</a> / <a href="/gmod/">Garry's Mod Wiki</a></div>
 
-				
+				<ul id="pagelinks"></ul>
 			</div>
 
 		<div class="content">
@@ -63,7 +63,7 @@ const { title, description, footer } = Astro.props;
 
 </div>
 
-<div class="footer" id="pagefooter">{footer}</div>
+<div class="footer" id="pagefooter">{views} <br> {updated}</div>
 		</div>
 
 		

@@ -9,7 +9,7 @@ function processFooters($: any) {
 
     // Contains the section for views / last updated
     const firstFooter = footers.first()
-    firstFooter.html("{footer}")
+    firstFooter.html("{views} <br> {updated}")
 
     // Contains the section for the links
     const secondFooter = footers.last()
@@ -33,7 +33,7 @@ function replaceVariables($: any) {
     $("title").html("{title}")
     $("meta[name='og:title']").attr("content", "{title}")
     $("meta[name='og:description']").attr("content", "{description}")
-    $("ul[id='pagelinks']").remove()
+    $("ul[id='pagelinks']").html("")
 }
 
 function inlineScripts($: any) {
@@ -58,7 +58,7 @@ async function processCss(path: string, contentHandler: StaticContentHandler) {
 const makeLayoutHeader = (content: string) => `
 ---
 import Sidebar from "../components/Sidebar.astro";
-const { title, description, footer } = Astro.props;
+const { title, description, views, updated } = Astro.props;
 ---
 ${content}
 `

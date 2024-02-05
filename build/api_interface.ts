@@ -22,7 +22,7 @@ class ApiInterface {
 
         this.limiter = new Bottleneck({
             maxConcurrent: maxRequests,
-            minTime: 2000
+            minTime: 225
         });
     }
 
