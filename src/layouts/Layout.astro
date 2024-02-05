@@ -58,7 +58,15 @@ const { title, description, views, updated } = Astro.props;
 			
 <div class="content">
 
-        <h1 class="pagetitle" id="pagetitle">Garry's Mod Wiki</h1>
+        <h1 class="pagetitle" id="pagetitle">Garry's Mod Wiki</h1><div class="markdown">
+  <div class="note">
+    <div class="inner">
+      <p> This page is a mirror of the <a href="https://wiki.facepunch.com/gmod/">official Garry's Mod wiki.</a>. It is not maintained by Facepunch Studios</p>
+      <p> Page content is updated daily. Edits, history, and searching are unavailable.</p>
+    </div>
+  </div>
+</div>
+
         <div class="markdown" id="pagecontent"><slot></slot></div>
 
 </div>

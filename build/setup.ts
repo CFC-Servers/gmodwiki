@@ -47,6 +47,20 @@ function inlineScripts($: any) {
     }
 }
 
+const disclaimer = `<div class="markdown">
+  <div class="note">
+    <div class="inner">
+      <p>This site is a community mirror of the <a href="https://wiki.facepunch.com/gmod/">official Garry's Mod wiki.</a>. It is not maintained by Facepunch Studios.</p>
+      <p>Page content is updated daily. Edits, history, and searching are unavailable.</p>
+    </div>
+  </div>
+</div>
+`
+
+function addDisclaimer($: any) {
+    $(disclaimer).insertAfter("h1.pagetitle");
+}
+
 // Procecsses a downloaded CSS file and gets remote content, and modifies the file
 async function processCss(path: string, contentHandler: StaticContentHandler) {
     const current = await fs.readFile(path, "utf-8")
@@ -72,6 +86,7 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     processContent($)
     replaceVariables($)
     inlineScripts($)
+    addDisclaimer($)
 
     let sidebar = extractSidebar($)
     sidebar = sidebar.trim()

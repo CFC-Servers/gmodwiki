@@ -20,39 +20,40 @@ class Navigate {
             return true;
         }
 
-        requestAnimationFrame(() => {
-            this.pageTitle2.innerText = "Loading..";
-            this.pageContent.parentElement.classList.add("loading");
-            fetch(address + ".json", { method: 'GET' })
-                .then(r => r.json())
-                .then(json => {
-                window.scrollTo(0, 0);
-                this.UpdatePage(json);
-                this.pageContent.parentElement.classList.remove("loading");
-            })
-                .catch((e) => {
-                var json = { html: "Failed to load page <b>" + address + "</b>" + (e ? "<p>" + e.toString() + "</p>" : ""), title: "Failed to load page", footer: "", pageLinks: [] };
-                window.scrollTo(0, 0);
-                this.UpdatePage(json);
-                this.pageContent.parentElement.classList.remove("loading");
-                console.warn("Failed to fetch " + address);
-                });
+        var newData;
+        this.pageTitle2.innerText = "Loading..";
+        this.pageContent.parentElement.classList.add("loading");
 
+        fetch(address + ".json", { method: 'GET' })
+            .then(r => r.json())
+            .then(json => {
+            newData = json;
+        }).catch((e) => {
+            newData = { html: "Failed to load page <b>" + address + "</b>" + (e ? "<p>" + e.toString() + "</p>" : ""), title: "Failed to load page", footer: "", pageLinks: [] };
+            console.warn("Failed to fetch " + address);
+        }).then(() => {
             if (push) {
                 history.pushState({}, "", address);
             }
 
             requestAnimationFrame(() => {
-                this.UpdateSidebar();
-                if (window.innerWidth <= 780) {
-                    var e = document.getElementById("sidebar");
-                    e.classList.remove("visible");
-                }
+                window.scrollTo(0, 0);
+                this.UpdatePage(newData);
+                this.pageContent.parentElement.classList.remove("loading");
+
+                requestAnimationFrame(() => {
+                    this.UpdateSidebar();
+                    if (window.innerWidth <= 780) {
+                        var e = document.getElementById("sidebar");
+                        e.classList.remove("visible");
+                    }
+                });
             })
         });
 
         return false;
     }
+
     static UpdatePage(json) {
         this.pageContent.innerHTML = json.html;
         this.pageTitle.innerText = json.title;
@@ -116,37 +117,39 @@ class Navigate {
         this.ToPage(address, false);
     }
 
-    static InstallLinks(element) {
-        var links = element.getElementsByTagName("a");
-        var thisHost = window.location.host;
-        for (let i = 0; i < links.length; i++) {
-            var a = links[i];
-            if (a.host != thisHost)
-                continue;
-            let val = a.getAttribute("href");
-            if (val == null || val == '')
-                continue;
-            if (val.indexOf('#') >= 0 || val.indexOf('~') >= 0)
-                continue;
-            a.onclick = e => {
-                if (!(e.ctrlKey || e.shiftKey || e.altKey)) {
-                    Navigate.ToPage(val);
-                    e.preventDefault();
-                }
-            };
-        }
-    }
     static Install() {
         this.Init();
         window.onpopstate = e => this.OnNavigated(e);
+
         if (this.pageContent == null)
             return true;
 
         var thisHost = window.location.host;
-        this.sideBar.addEventListener("click", function(e) {
+        this.sideBar.addEventListener("click", (e) => {
             var a = e.target;
 
             if (a.host != thisHost)
+                return;
+
+            let val = a.getAttribute("href");
+            if (val == null || val == '')
+                return;
+
+            if (val.indexOf('#') >= 0 || val.indexOf('~') >= 0)
+                return;
+
+            if (!(e.ctrlKey || e.shiftKey || e.altKey)) {
+                Navigate.ToPage(val);
+                e.preventDefault();
+            }
+        });
+
+        this.pageContent.addEventListener("click", (e) => {
+            var a = e.target;
+            if (a.host != thisHost)
+                return;
+
+            if (a.tagName !== "A")
                 return;
 
             let val = a.getAttribute("href");
