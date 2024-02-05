@@ -119,7 +119,7 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
     layout = layout.replace(/\/gmod\//g, "/")
     layout = layout.replace(/"{title}"/g, "{title}")
-    layout = layout.replace(/"{description}"/g, "{descirption}")
+    layout = layout.replace(/"{description}"/g, "{description}")
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 
     await processCss("public/styles/gmod.css", contentHandler)
