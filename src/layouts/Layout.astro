@@ -89,4 +89,91 @@ const { title, description } = Astro.props;
 
 
 
+</body></html><!DOCTYPE html><html lang="en"><head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{title}</title>
+	<script src="/cdn-cgi/apps/head/JodREY1zTjWBVnPepvx61z0haaQ.js"></script><link rel="stylesheet" href="/styles/gmod.css?n=b5c91ded-e85d-420f-a4b8-f7158772aa55">
+	<link rel="icon" type="image/png" href="https://files.facepunch.com/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.png">
+	<script src="/script.js?n=b5c91ded-e85d-420f-a4b8-f7158772aa55"></script>
+	<link rel="search" title="Garry's Mod Wiki" type="application/opensearchdescription+xml" href="/gmod/~searchmanifest">
+
+	<meta name="twitter:site" content="@fcpnchstds">
+	<meta name="twitter:card" content="summary">
+	<meta name="theme-color" content="#0082ff">
+
+	<meta property="og:title" name="og:title" content="{title}">
+	<meta property="og:site_name" name="og:site_name" content="Garry's Mod Wiki">
+	<meta property="og:type" name="og:type" content="website">
+	<meta property="og:description" name="og:description" content="{description}">
+	<meta property="og:image" name="og:image" content="//files.facepunch.com/wiki/files/353/8d8c63b684d38b4.png">
+
+	<script>WikiRealm = "gmod";</script>
+
+</head>
+<body>
+
+	<div id="toolbar">
+
+		<div>
+
+			<div>
+				<button onclick="ToggleClass( 'sidebar', 'visible' )"><i class="mdi mdi-menu"></i></button>
+			</div>
+
+			<div class="grow"></div>
+
+			<h1 class="title">
+				<a href="/gmod/">Garry's Mod Wiki</a>
+			</h1>
+
+		</div>
+
+	</div>
+
+	<div class="body">
+
+			
+
+		<div class="content">
+			
+<div class="content">
+
+        <h1 class="pagetitle" id="pagetitle">Garry's Mod Wiki</h1>
+        <div class="markdown" id="pagecontent"><slot></slot></div>
+
+</div>
+
+<div class="footer" id="pagefooter">{footer}</div>
+		</div>
+
+		
+
+	</div>
+
+
+		<div id="sidebar"><Sidebar /></div>
+
+		<script>
+
+			//
+			// Scroll the active element into view
+			//
+			var sidebar = document.getElementById( "sidebar" );
+			var active = sidebar.getElementsByClassName( "active" );
+			if ( active.length == 1 )
+			{
+				active[0].scrollIntoView( { smooth: true, block: "center" } );
+			}
+
+			InitSearch();
+
+		</script>
+
+	<script>
+		Navigate.Install();
+	</script>
+
+
+
 </body></html>

@@ -1,4 +1,6 @@
 // Downloads and builds all of the gmod pages
+import chalk from "chalk"
+import { promises as fs } from "fs"
 import { getAllPageLinks } from "./get_page_manifest.js"
 import type ApiInterface from "./api_interface.js"
 
@@ -28,15 +30,21 @@ interface PageResponse {
 
 async function buildPage(api: ApiInterface, link: string) {
     const struct: PageResponse = await api.getJSON(link)
+    console.log(chalk.green("Building"), link) 
 
     // TODO: Parse any static content here
 
     const body = makePageBody(struct.title, struct.wikiName, struct.footer, struct.html)
-    console.log(body)
+    const address = struct.address.length > 0 ? struct.address : "index"
+    const destination = `./src/pages/gmod/${address}.astro`
+    await fs.writeFile(destination, body)
 }
 
 export async function buildAllPages(api: ApiInterface) {
     const allLinks = await getAllPageLinks(api)
 
-    await buildPage(api, allLinks[0])
+    // build the first 5
+    for (const link of allLinks.slice(0, 5)) {
+        await buildPage(api, link)
+    }
 }
