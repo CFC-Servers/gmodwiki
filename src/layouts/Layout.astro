@@ -5,12 +5,12 @@ const { title, description, views, updated } = Astro.props;
 ---
 <!DOCTYPE html><html lang="en"><head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="preconnect" href="https://fonts.googleapis.com">
 	<title>{title}</title>
-	<script src="/cdn-cgi/apps/head/JodREY1zTjWBVnPepvx61z0haaQ.js" is:inline=""></script><link rel="stylesheet" href="/styles/gmod.css">
+	<link rel="stylesheet" href="/styles/gmod.css">
 	<link rel="icon" type="image/png" href="/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.png">
 	<script src="/script.js" is:inline=""></script>
-	<link rel="search" title="Garry's Mod Wiki" type="application/opensearchdescription+xml" href="/gmod/~searchmanifest">
+	<link rel="search" title="Garry's Mod Wiki" type="application/opensearchdescription+xml" href="/~searchmanifest">
 
 	<meta name="twitter:site" content="@fcpnchstds">
 	<meta name="twitter:card" content="summary">
@@ -22,7 +22,7 @@ const { title, description, views, updated } = Astro.props;
 	<meta property="og:description" name="og:description" content="{description}">
 	<meta property="og:image" name="og:image" content="//files.facepunch.com/wiki/files/353/8d8c63b684d38b4.png">
 
-	<script>WikiRealm = "gmod";</script>
+	
 
 </head>
 <body>
@@ -38,7 +38,7 @@ const { title, description, views, updated } = Astro.props;
 			<div class="grow"></div>
 
 			<h1 class="title">
-				<a href="/gmod/">Garry's Mod Wiki</a>
+				<a href="/">Garry's Mod Wiki</a>
 			</h1>
 
 		</div>
@@ -49,7 +49,7 @@ const { title, description, views, updated } = Astro.props;
 
 			<div class="body-tabs">
 
-				<div class="pagetitle" id="tabs_page_title"><a href="/gmod/" class="parent">Home</a> / <a href="/gmod/">Garry's Mod Wiki</a></div>
+				<div class="pagetitle" id="tabs_page_title"><a href="/" class="parent">Home</a> / <a href="/">Garry's Mod Wiki</a></div>
 
 				<ul id="pagelinks"></ul>
 			</div>
@@ -61,8 +61,8 @@ const { title, description, views, updated } = Astro.props;
         <h1 class="pagetitle" id="pagetitle">Garry's Mod Wiki</h1><div class="markdown">
   <div class="note">
     <div class="inner">
-      <p> This page is a mirror of the <a href="https://wiki.facepunch.com/gmod/">official Garry's Mod wiki.</a>. It is not maintained by Facepunch Studios</p>
-      <p> Page content is updated daily. Edits, history, and searching are unavailable.</p>
+      <p>This site is a community mirror of the <a href="https://wiki.facepunch.com/">official Garry's Mod wiki.</a>. It is not maintained by Facepunch Studios.</p>
+      <p>Page content is updated daily. Edits, history, and searching are unavailable.</p>
     </div>
   </div>
 </div>
@@ -81,25 +81,9 @@ const { title, description, views, updated } = Astro.props;
 
 		<div id="sidebar"><Sidebar /></div>
 
-		<script>
+		
 
-			//
-			// Scroll the active element into view
-			//
-			var sidebar = document.getElementById( "sidebar" );
-			var active = sidebar.getElementsByClassName( "active" );
-			if ( active.length == 1 )
-			{
-				active[0].scrollIntoView( { smooth: true, block: "center" } );
-			}
-
-			InitSearch();
-
-		</script>
-
-	<script>
-		Navigate.Install();
-	</script>
+	
 
 
 

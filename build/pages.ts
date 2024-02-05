@@ -7,15 +7,6 @@ import type ApiInterface from "./api_interface.js"
 import type StaticContentHandler from "./static.js"
 import type SearchManager from "./search.js"
 
-const makePageBody = (title: string, description: string, views: string, updated: string, content: string) => `
----
-import Layout from "@layouts/Layout.astro";
----
-<Layout title="${title}" description="${description}" views="${views}" updated="${updated}">
-${content}
-</Layout>
-`
-
 const makeJsonBody = (struct: PageResponse) => `export async function GET() {
     const struct = ${JSON.stringify(JSON.stringify(struct))};
     return new Response(struct, {
@@ -27,50 +18,56 @@ const makeJsonBody = (struct: PageResponse) => `export async function GET() {
 }
 `
 
-const getFooterInfo = (footer: string): FooterInfo => {
-    const [views, updated] = footer.split("<br>")
-    return { views: views, updated: updated }
-}
-
-interface FooterInfo {
-    views: string;
-    updated: string;
-}
-
 interface PageResponse {
     title: string;
     wikiName: string;
-    wikiIcon: string;
-    wikiUrl: string;
+    wikiIcon?: string;
+    wikiUrl?: string;
     tags: string;
     address: string;
-    createdTime: string;
-    updateCount: number;
-    markup: string;
+    createdTime?: string;
+    updateCount?: number;
+    markup?: string;
     html: string;
     footer: string;
-    revisionId: number;
-    pageLinks: any[];
+    revisionId?: number;
+    pageLinks?: any[];
 }
 
+const excludes: Map<string, boolean> = new Map([
+    ["/gmod/Enums/ACT", true],
+    ["/gmod/HL2_Sound_List", true],
+])
+
 async function buildPage(api: ApiInterface, contentManager: StaticContentHandler, searchManager: SearchManager, link: string) {
+    if (excludes.has(link)) {
+        return
+    }
     const struct: PageResponse = await api.getJSON(link)
     console.log(chalk.green("Building"), link) 
 
-    struct.html = await contentManager.processContent(struct.html, false)
-    struct.markup = ""
-    struct.pageLinks = []
+    let pageContent = await contentManager.processContent(struct.html, false)
+    pageContent = pageContent.replace(/<html><head><\/head><body>/g, "")
+    pageContent = pageContent.replace(/<\/body><\/html>/g, "")
+    pageContent = pageContent.replaceAll(/\/gmod\//g, "/")
 
-    const footerInfo = getFooterInfo(struct.footer)
-    const body = makePageBody(struct.title, struct.wikiName, footerInfo.views, footerInfo.updated, struct.html)
-    const address = struct.address.length > 0 ? struct.address : "index"
+    delete struct.wikiIcon
+    delete struct.wikiUrl
+    delete struct.createdTime
+    delete struct.updateCount
+    delete struct.markup
+    delete struct.revisionId
+    delete struct.pageLinks
 
-    const pageDestination = `./src/pages/gmod/${address}.astro`
-    const dirPath = path.dirname(pageDestination)
+    struct.html = pageContent
+
+    let address = struct.address.length > 0 ? struct.address : "index"
+    address = address.replaceAll("/gmod/", "/")
+
+    const jsonDestination = `./src/pages/${address}.json.ts`
+    const dirPath = path.dirname(jsonDestination)
     await fs.mkdir(dirPath, { recursive: true })
-    await fs.writeFile(pageDestination, body)
 
-    const jsonDestination = `./src/pages/gmod/${address}.json.ts`
     const jsonContent = makeJsonBody(struct)
     await fs.writeFile(jsonDestination, jsonContent)
 

@@ -16,8 +16,8 @@ export async function buildSearchIndex(searchManager: SearchManager) {
     const index = searchManager.buildIndex()
     const indexValue = JSON.stringify(index)
     const content = buildContent(indexValue)
-    await fs.writeFile("src/pages/gmod/websearch.json.ts", content)
+    await fs.writeFile("src/pages/websearch.json.ts", content)
 
     // copy build/search to src/pages/gmod/~search:[query].astro
-    await fs.copyFile("build/~search:[query].astro", "src/pages/gmod/~search:[query].astro")
+    await fs.copyFile("build/~search:[query].astro", "src/pages/~search:[query].astro")
 }

@@ -1,6 +1,7 @@
 // Sets up the layout and components files
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
+import CleanCSS from "clean-css"
 import type ApiInterface from "./api_interface.js"
 import type StaticContentHandler from "./static.js"
 
@@ -36,14 +37,27 @@ function replaceVariables($: any) {
     $("ul[id='pagelinks']").html("")
 }
 
-function inlineScripts($: any) {
+function addBrowserHints($: any) {
+    $(`<link rel="preconnect" href="https://fonts.googleapis.com">`).insertAfter(`meta[name='viewport']`)
+}
+
+function processScripts($: any) {
     const scripts = $("script")
+
     for (let i = 0; i < scripts.length; i++) {
         const script = $(scripts[i])
         const src = script.attr("src")
+
         if (src) {
-            script.replaceWith(`<script src="${src}" is:inline></script>`)
+            if (src.startsWith("/cdn-cgi/")) {
+                script.remove()
+            } else {
+                script.replaceWith(`<script src="${src}" is:inline></script>`)
+            }
+        } else {
+            script.remove()
         }
+
     }
 }
 
@@ -64,7 +78,8 @@ function addDisclaimer($: any) {
 // Procecsses a downloaded CSS file and gets remote content, and modifies the file
 async function processCss(path: string, contentHandler: StaticContentHandler) {
     const current = await fs.readFile(path, "utf-8")
-    const newContent = await contentHandler.processContent(current, true)
+    let newContent = await contentHandler.processContent(current, true)
+    newContent = new CleanCSS({level: 2}).minify(newContent).styles
 
     await fs.writeFile(path, newContent)
 }
@@ -85,17 +100,21 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     processFooters($)
     processContent($)
     replaceVariables($)
-    inlineScripts($)
+    processScripts($)
     addDisclaimer($)
+    addBrowserHints($)
 
     let sidebar = extractSidebar($)
     sidebar = sidebar.trim()
+    sidebar = sidebar.replace(/\/gmod\//g, "/")
     await fs.writeFile("src/components/Sidebar.astro", sidebar)
 
     let layout = $.html()
     layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
+    layout = layout.replace(/\/gmod\//g, "/")
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 
     await processCss("public/styles/gmod.css", contentHandler)
     await fs.copyFile("build/script.js", "public/script.js")
+    await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")
 }

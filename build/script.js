@@ -428,3 +428,26 @@ function AddSearchTitle() {
     }
     Titles = [];
 }
+window.onload = () => {
+    //
+    // Scroll the active element into view
+    //
+    requestAnimationFrame(() => {
+        var sidebar = document.getElementById( "sidebar" );
+        var active = sidebar.getElementsByClassName( "active" );
+        if ( active.length == 1 )
+        {
+            active[0].scrollIntoView( { smooth: true, block: "center" } );
+        }
+
+        requestAnimationFrame(() => {
+            InitSearch();
+
+            requestAnimationFrame(() => {
+                Navigate.Install();
+            });
+        });
+    });
+
+    WikiRealm = "gmod";
+}
