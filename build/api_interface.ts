@@ -29,7 +29,13 @@ class ApiInterface {
     async _get(endpoint: string): Promise<any> {
         const url = `${this.baseUrl}${endpoint}`
         console.log(chalk.blue("GET"), url)
-        return this.limiter.schedule(() => ky.get(`${this.baseUrl}${endpoint}`))
+        return this.limiter.schedule(() => ky.get(url))
+    }
+
+    async getRaw(endpoint: string): Promise<any> {
+        const response = await this._get(endpoint)
+        const buff = await response.arrayBuffer()
+        return Buffer.from(buff)
     }
 
     async get(endpoint: string): Promise<any> {
@@ -60,14 +66,14 @@ class ApiInterface {
             return JSON.parse(contents.toString())
         }
 
-        const response = await this._get(endpoint)
+        const response = await this._get(`${endpoint}?format=json`)
         const text = await response.text()
 
         const dir = path.dirname(cachePath)
         await fs.mkdir(dir, { recursive: true })
         await fs.writeFile(cachePath, text)
 
-        return await response.json()
+        return await JSON.parse(text)
     }
 }
 

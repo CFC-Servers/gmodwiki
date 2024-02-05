@@ -1,23 +1,42 @@
-// Finds and builds all individual pages for the website
-import * as cheerio from "cheerio"
-import { promises as fs } from "fs"
+// Downloads and builds all of the gmod pages
+import { getAllPageLinks } from "./get_page_manifest.js"
 import type ApiInterface from "./api_interface.js"
 
-function getSidebar($: any) {
-    const sidebar = $("div[id='sidebar']")
-    const links = sidebar.find("a")
+const makePageBody = (title: string, description: string, footer: string, content: string) => `
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="${title}" description="${description}" footer="${footer}">
+${content}
+</Layout>
+`
 
-    const sidebarLinks: string[] = []
-    links.each((_: number, link: any) => {
-        sidebarLinks.push($(link).attr("href"))
-    })
-
-    console.log(sidebarLinks)
+interface PageResponse {
+    title: string;
+    wikiName: string;
+    wikiIcon: string;
+    wikiUrl: string;
+    tags: string;
+    address: string;
+    createdTime: string;
+    updateCount: number;
+    markup: string;
+    html: string;
+    footer: string;
+    revisionId: number;
 }
 
-export async function pages(api: ApiInterface) {
-    const index = await api.get("/gmod")
-    const $ = cheerio.load(index)
+async function buildPage(api: ApiInterface, link: string) {
+    const struct: PageResponse = await api.getJSON(link)
 
-    getSidebar($)
+    // TODO: Parse any static content here
+
+    const body = makePageBody(struct.title, struct.wikiName, struct.footer, struct.html)
+    console.log(body)
+}
+
+export async function buildAllPages(api: ApiInterface) {
+    const allLinks = await getAllPageLinks(api)
+
+    await buildPage(api, allLinks[0])
 }
