@@ -18,7 +18,12 @@ ${content}
 
 const makeJsonBody = (struct: PageResponse) => `export async function GET() {
     const struct = ${JSON.stringify(JSON.stringify(struct))};
-    return new Response(struct);
+    return new Response(struct, {
+        headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=86400, s-maxage=86400"
+        }
+    });
 }
 `
 
