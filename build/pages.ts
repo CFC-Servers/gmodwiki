@@ -7,7 +7,7 @@ import type StaticContentHandler from "./static.js"
 
 const makePageBody = (title: string, description: string, footer: string, content: string) => `
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 ---
 <Layout title="${title}" description="${description}" footer="${footer}">
 ${content}
