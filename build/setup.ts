@@ -111,6 +111,7 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     sidebar = sidebar.replace(/\/gmod\//g, "/")
     sidebar = sidebar.replaceAll("meth ", "")
     sidebar = sidebar.replaceAll("memb ", "")
+    sidebar = sidebar.replaceAll("ToggleClass", "window.ToggleClass")
     sidebar = htmlMinify(sidebar, { collapseWhitespace: true, removeComments: true })
     await fs.writeFile("src/components/Sidebar.astro", sidebar)
 

@@ -14,10 +14,13 @@ class Navigate {
         this.details = this.sideBar.getElementsByTagName("details");
     }
     static ToPage(address, push = true) {
-        // this.Init();
         if (this.pageContent == null) {
             window.location.href = address;
             return true;
+        }
+
+        if (address === `${window.location.protocol}//${window.location.host}${window.location.pathname}`) {
+            return false;
         }
 
         var newData;
@@ -119,6 +122,7 @@ class Navigate {
         if (address.indexOf("#") > 0) {
             address = address.substring(0, address.indexOf("#"));
         }
+
         console.log("OnNavigated to", address);
         this.ToPage(address, false);
     }
@@ -159,7 +163,7 @@ class Navigate {
                 return;
 
             let val = a.getAttribute("href");
-            if (val == null || val == '')
+            if (val == null || val == "")
                 return;
 
             if (val.indexOf('#') >= 0 || val.indexOf('~') >= 0)
@@ -249,13 +253,15 @@ class TextareaDecorator {
 
 
 
-function ToggleClass(element, classname) {
+window.ToggleClass = function(element, classname) {
     var e = document.getElementById(element);
     if (e.classList.contains(classname))
         e.classList.remove(classname);
     else
         e.classList.add(classname);
 }
+
+
 function CopyCode(event) {
     var code = event.target.closest("div.code").innerText;
     navigator.clipboard.writeText(code);
@@ -434,6 +440,18 @@ function AddSearchTitle() {
     }
     Titles = [];
 }
+
+window.addEventListener('keydown', (e) => {
+    if (e.keyCode != 191)
+        return;
+    if (document.activeElement.tagName == "INPUT")
+        return;
+    if (document.activeElement.tagName == "TEXTAREA")
+        return;
+    SearchInput.focus();
+    SearchInput.value = "";
+    e.preventDefault();
+});
 
 window.onload = () => {
     requestAnimationFrame(() => {
