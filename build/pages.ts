@@ -35,6 +35,7 @@ interface PageResponse {
     pageLinks?: any[];
 }
 
+// Excluded to keep the bundle size under 25mb (cloudflare limit)
 const excludes: Map<string, boolean> = new Map([
     ["/gmod/Enums/ACT", true],
     ["/gmod/HL2_Sound_List", true],
@@ -86,6 +87,15 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
 export async function buildAllPages(api: ApiInterface, contentHandler: StaticContentHandler, searchManager: SearchManager) {
     const allLinks = await getAllPageLinks(api)
 
-    const promises = allLinks.map(link => buildPage(api, contentHandler, searchManager, link))
-    await Promise.all(promises)
+    // split into 10 chunks
+    const chunkSize = Math.ceil(allLinks.length / 10)
+    const chunks = []
+    for (let i = 0; i < allLinks.length; i += chunkSize) {
+        chunks.push(allLinks.slice(i, i + chunkSize))
+    }
+
+    for (const chunk of chunks) {
+      const promises = chunk.map(link => buildPage(api, contentHandler, searchManager, link))
+      await Promise.all(promises)
+    }
 }

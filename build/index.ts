@@ -7,7 +7,7 @@ import { buildAllPages } from "./pages.js"
 import { buildSearchIndex } from "./build_search_index.js"
 
 const baseURL = "https://wiki.facepunch.com"
-const api = new ApiInterface(baseURL, 8)
+const api = new ApiInterface(baseURL, 10)
 const staticContent = new StaticContentHandler(baseURL, api)
 const searchManager = new SearchManager()
 

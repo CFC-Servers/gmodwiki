@@ -122,6 +122,8 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
 
     await processCss("public/styles/gmod.css", contentHandler)
 
+    await fs.mkdir("src/pages", { recursive: true })
+
     const minifiedJs = await minify("build/script.js", { js: { mangle: true } })
     await fs.writeFile("public/script.js", minifiedJs)
     await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")

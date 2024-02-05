@@ -69,12 +69,12 @@ class Navigate {
                 var a = document.createElement("a");
                 a.classList.add("parent");
                 a.text = "Home";
-                a.href = `/${json.wikiUrl}/`;
+                a.href = "/";
                 this.pageTitle2.appendChild(a);
                 this.pageTitle2.append("/");
                 var a2 = document.createElement("a");
                 a2.text = json.title;
-                a2.href = `/${json.wikiUrl}/${json.address}`;
+                a2.href = `/${json.address}`;
                 this.pageTitle2.appendChild(a2);
                 var siteTitle = document.title.substring(document.title.lastIndexOf(" - "));
                 document.title = json.title + siteTitle;

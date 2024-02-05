@@ -9,6 +9,20 @@ export default defineConfig({
   },
   output: "server",
   adapter: cloudflare({
-      mode: "advanced"
+      mode: "advanced",
+      routes: {
+        strategy: "include",
+        include: ["/*"],
+        exclude: [
+          "/script.js",
+          "/styles/gmod.css",
+          "/wiki/files/*",
+          "/rubat/*",
+          "/lewis/*",
+          "/garry/*",
+          "/fonts/*",
+          "/*.json"
+        ]
+      }
   }),
 });
