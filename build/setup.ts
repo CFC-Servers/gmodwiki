@@ -63,15 +63,6 @@ const { title, description, views, updated } = Astro.props;
 ${content}
 `
 
-async function modifyScript() {
-    let content = await fs.readFile("public/script.js", "utf-8")
-
-    content = content.replaceAll("?format=json", ".json")
-    content = content.replace(/^\s+this\.cache\[address\] = json;$/gm, "");
-
-    await fs.writeFile("public/script.js", content)
-}
-
 export async function setup(api: ApiInterface, contentHandler: StaticContentHandler) {
     const rawPage = await api.get("/gmod")
     const index = await contentHandler.processContent(rawPage, false)
@@ -91,5 +82,5 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 
     await processCss("public/styles/gmod.css", contentHandler)
-    await modifyScript()
+    await fs.copyFile("build/script.js", "public/script.js")
 }

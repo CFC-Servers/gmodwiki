@@ -97,7 +97,7 @@ class StaticContentHandler {
             const url = $el.attr("src") || $el.attr("href")
             if (!url) continue
 
-            const extension = path.extname(url.split('?')[0])
+            const extension = path.extname(url.split('?')[0]).toLowerCase()
             if (!fileWhitelist.has(extension)) continue
 
             const resolvedUrl = this.resolveUrl(url)
@@ -108,8 +108,12 @@ class StaticContentHandler {
             const newURL = await this.downloadContent(resolvedUrl)
             if (!newURL) continue
 
-            const attr = $el.is("link") ? "href" : "src"
-            $el.attr(attr, newURL)
+            if ($el.attr("src") !== undefined) {
+                $el.attr("src", newURL)
+            }
+            if ($el.attr("href") !== undefined) {
+                $el.attr("href", newURL)
+            }
         }
 
         return $.html()
