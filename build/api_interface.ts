@@ -17,12 +17,12 @@ class ApiInterface {
     private baseUrl: string;
     private limiter: Bottleneck;
 
-    constructor(baseUrl: string, maxRequests: number) {
+    constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
 
         this.limiter = new Bottleneck({
-            maxConcurrent: maxRequests,
-            minTime: 200
+            maxConcurrent: 8,
+            minTime: 10
         });
     }
 

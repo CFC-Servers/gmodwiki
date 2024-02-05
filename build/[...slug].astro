@@ -7,17 +7,19 @@ let views = 0;
 let updated = "";
 let content = "";
 
-const slug = Astro.params.slug || "index";
-const response = await fetch(`${Astro.url.protocol}//${Astro.url.host}/${slug}.json`);
-const json = await response.json();
+window.onload = async () => {
+    const slug = Astro.params.slug || "index";
+    const response = await fetch(`${Astro.url.protocol}//${Astro.url.host}/${slug}.json`);
+    const json = await response.json();
 
-title = json.title;
-description = json.description;
-content = json.html;
+    title = json.title;
+    description = json.description;
+    content = json.html;
 
-const footerInfo = json.footer.split("<br>");
-views = footerInfo[0];
-updated = footerInfo[1];
+    const footerInfo = json.footer.split("<br>");
+    views = footerInfo[0];
+    updated = footerInfo[1];
+};
 ---
 
 <Layout title={title} description={description} views={views} updated={updated}>

@@ -20,8 +20,7 @@ export default defineConfig({
           "/rubat/*",
           "/lewis/*",
           "/garry/*",
-          "/fonts/*",
-          "/*.json"
+          "/fonts/*"
         ]
       }
   }),
