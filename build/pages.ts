@@ -52,7 +52,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     const struct: PageResponse = await api.getJSON(link)
     console.log(chalk.green("Building"), link) 
 
-    struct.html = await contentManager.processContent(struct.html, true)
+    struct.html = await contentManager.processContent(struct.html, false)
     struct.markup = ""
     struct.pageLinks = []
 

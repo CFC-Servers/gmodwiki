@@ -13,6 +13,27 @@ async function fileExists(path: string) {
     }
 }
 
+const fileWhitelist = new Map([
+    [".png", true],
+    [".jpg", true],
+    [".svg", true],
+    [".jpeg", true],
+    [".gif", true],
+    [".ico", true],
+    [".css", true],
+    [".js", true],
+    [".woff", true],
+    [".woff2", true],
+    [".ttf", true],
+    [".eot", true],
+    [".otf", true],
+])
+
+const hostWhitelist = new Map([
+    ["files.facepunch.com", true],
+    ["wiki.facepunch.com", true],
+])
+
 class StaticContentHandler {
     private host: string
     private api: ApiInterface
@@ -26,8 +47,10 @@ class StaticContentHandler {
 
     private async downloadContent(url: string): Promise<string> {
         const resolvedUrl = this.resolveUrl(url)
+
         if (this.cache.has(resolvedUrl)) {
-            return this.cache.get(resolvedUrl)!
+            const cached = this.cache.get(resolvedUrl)
+            if (cached) return cached
         }
 
         const urlPath = new URL(resolvedUrl).pathname;
@@ -36,7 +59,7 @@ class StaticContentHandler {
 
         const fileName = path.basename(resolvedUrl).split('?')[0]
         const filePath = path.join(fullPath, fileName);
-        const newURL = `/${filePath}`.replace("public/", "")
+        const newURL = `/${filePath}`.replaceAll("public/", "")
 
         if (await fileExists(filePath)) {
             this.cache.set(resolvedUrl, newURL)
@@ -65,20 +88,27 @@ class StaticContentHandler {
 
     private async processHtml(content: string): Promise<string> {
         const $ = cheerio.load(content)
-        const elements = $('img[src], link[href], script[src]')
+        const elements = $("img[src], link[href], script[src], a[href]")
 
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i]
 
             const $el = $(element)
-            const url = $el.attr('src') || $el.attr('href')
+            const url = $el.attr("src") || $el.attr("href")
             if (!url) continue
 
+            const extension = path.extname(url.split('?')[0])
+            if (!fileWhitelist.has(extension)) continue
+
             const resolvedUrl = this.resolveUrl(url)
+
+            const host = new URL(resolvedUrl).hostname
+            if (!hostWhitelist.has(host)) continue
+
             const newURL = await this.downloadContent(resolvedUrl)
             if (!newURL) continue
 
-            const attr = $el.is('link') ? 'href' : 'src'
+            const attr = $el.is("link") ? "href" : "src"
             $el.attr(attr, newURL)
         }
 
@@ -98,7 +128,7 @@ class StaticContentHandler {
             const newURL = await this.downloadContent(resolvedUrl)
             if (!newURL) continue
 
-            modifiedContent = modifiedContent.replace(url, newURL)
+            modifiedContent = modifiedContent.replaceAll(url, newURL)
         }
 
         return modifiedContent
