@@ -55,23 +55,29 @@ class Navigate {
     }
 
     static UpdatePage(json) {
-        this.pageContent.innerHTML = json.html;
-        this.pageTitle.innerText = json.title;
-        this.pageFooter.innerHTML = json.footer;
-        this.pageLinks.innerHTML = "";
-        this.pageTitle2.innerText = "";
-        var a = document.createElement("a");
-        a.classList.add("parent");
-        a.text = "Home";
-        a.href = `/${json.wikiUrl}/`;
-        this.pageTitle2.appendChild(a);
-        this.pageTitle2.append("/");
-        var a2 = document.createElement("a");
-        a2.text = json.title;
-        a2.href = `/${json.wikiUrl}/${json.address}`;
-        this.pageTitle2.appendChild(a2);
-        var siteTitle = document.title.substring(document.title.lastIndexOf(" - "));
-        document.title = json.title + siteTitle;
+        requestAnimationFrame(() => {
+            this.pageContent.innerHTML = json.html;
+            this.pageTitle.innerText = json.title;
+            this.pageFooter.innerHTML = json.footer;
+            this.pageLinks.innerHTML = "";
+            this.pageTitle2.innerText = "";
+
+            requestAnimationFrame(() => {
+                var a = document.createElement("a");
+                a.classList.add("parent");
+                a.text = "Home";
+                a.href = `/${json.wikiUrl}/`;
+                this.pageTitle2.appendChild(a);
+                this.pageTitle2.append("/");
+                var a2 = document.createElement("a");
+                a2.text = json.title;
+                a2.href = `/${json.wikiUrl}/${json.address}`;
+                this.pageTitle2.appendChild(a2);
+                var siteTitle = document.title.substring(document.title.lastIndexOf(" - "));
+                document.title = json.title + siteTitle;
+            })
+        })
+
     }
 
     static UpdateSidebar() {
@@ -428,10 +434,8 @@ function AddSearchTitle() {
     }
     Titles = [];
 }
+
 window.onload = () => {
-    //
-    // Scroll the active element into view
-    //
     requestAnimationFrame(() => {
         var sidebar = document.getElementById( "sidebar" );
         var active = sidebar.getElementsByClassName( "active" );

@@ -1,6 +1,7 @@
 // Downloads and builds all of the gmod pages
 import path from "path"
 import chalk from "chalk"
+import { minify } from "html-minifier"
 import { promises as fs } from "fs"
 import { getAllPageLinks } from "./get_page_manifest.js"
 import type ApiInterface from "./api_interface.js"
@@ -50,6 +51,14 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     pageContent = pageContent.replace(/<html><head><\/head><body>/g, "")
     pageContent = pageContent.replace(/<\/body><\/html>/g, "")
     pageContent = pageContent.replaceAll(/\/gmod\//g, "/")
+    pageContent = minify(pageContent, {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeEmptyAttributes: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+    })
 
     delete struct.wikiIcon
     delete struct.wikiUrl

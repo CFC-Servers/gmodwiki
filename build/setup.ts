@@ -1,7 +1,8 @@
 // Sets up the layout and components files
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
-import CleanCSS from "clean-css"
+import { minify } from "minify";
+import { minify as htmlMinify } from "html-minifier"
 import type ApiInterface from "./api_interface.js"
 import type StaticContentHandler from "./static.js"
 
@@ -64,8 +65,8 @@ function processScripts($: any) {
 const disclaimer = `<div class="markdown">
   <div class="note">
     <div class="inner">
-      <p>This site is a community mirror of the <a href="https://wiki.facepunch.com/gmod/">official Garry's Mod wiki.</a>. It is not maintained by Facepunch Studios.</p>
-      <p>Page content is updated daily. Edits, history, and searching are unavailable.</p>
+      <p>This site is a community mirror of the <a href="https://wiki.facepunch.com/gmod/">official Garry's Mod wiki.</a>. This site is not maintained by Facepunch Studios.</p>
+      <p>Page content may be out of date. Edits, history, and searching are unavailable.</p>
     </div>
   </div>
 </div>
@@ -79,7 +80,8 @@ function addDisclaimer($: any) {
 async function processCss(path: string, contentHandler: StaticContentHandler) {
     const current = await fs.readFile(path, "utf-8")
     let newContent = await contentHandler.processContent(current, true)
-    newContent = new CleanCSS({level: 2}).minify(newContent).styles
+    newContent = `${newContent} #sidebar details[open] > ul { display: block; }\n`
+    newContent = `${newContent} #sidebar details > ul { display: none; }`
 
     await fs.writeFile(path, newContent)
 }
@@ -107,6 +109,9 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     let sidebar = extractSidebar($)
     sidebar = sidebar.trim()
     sidebar = sidebar.replace(/\/gmod\//g, "/")
+    sidebar = sidebar.replaceAll("meth ", "")
+    sidebar = sidebar.replaceAll("memb ", "")
+    sidebar = htmlMinify(sidebar, { collapseWhitespace: true, removeComments: true })
     await fs.writeFile("src/components/Sidebar.astro", sidebar)
 
     let layout = $.html()
@@ -115,6 +120,8 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 
     await processCss("public/styles/gmod.css", contentHandler)
-    await fs.copyFile("build/script.js", "public/script.js")
+
+    const minifiedJs = await minify("build/script.js", { js: { mangle: true } })
+    await fs.writeFile("public/script.js", minifiedJs)
     await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")
 }

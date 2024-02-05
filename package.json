@@ -19,13 +19,15 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240129.0",
     "@types/cheerio": "^0.22.35",
-    "@types/clean-css": "^4.2.11",
+    "@types/html-minifier": "^4.0.5",
+    "@types/minify": "^9.1.4",
     "@types/node": "^20.11.16",
     "bottleneck": "^2.19.5",
     "chalk": "^5.3.0",
     "cheerio": "^1.0.0-rc.12",
-    "clean-css": "^5.3.3",
+    "html-minifier": "^4.0.0",
     "ky": "^1.2.0",
+    "minify": "^11.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "wrangler": "^3.26.0"

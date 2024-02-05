@@ -58,10 +58,11 @@ class StaticContentHandler {
         const fullPath = `public/${directoryStructure}`
 
         const fileName = path.basename(resolvedUrl).split('?')[0]
+        const fileExtension = path.extname(fileName).toLowerCase()
         const filePath = path.join(fullPath, fileName);
         const newURL = `/${filePath}`.replaceAll("public/", "")
 
-        if (await fileExists(filePath)) {
+        if (fileExtension !== ".css" && await fileExists(filePath)) {
             this.cache.set(resolvedUrl, newURL)
             return newURL;
         }
