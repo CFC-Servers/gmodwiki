@@ -11,7 +11,7 @@ jobs:
 
       - name: Setup
         run: |
-          npm ci
+          npm i
 
       - name: Build
         run: |

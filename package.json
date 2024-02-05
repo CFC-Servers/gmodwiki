@@ -4,10 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
-    "build": "ts-node-esm ./build/index.ts",
+    "build": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/index.ts",
     "preview": "astro preview",
-    "astro": "astro",
     "pages:dev": "wrangler pages dev --compatibility-date=2024-01-29 -- astro dev",
     "pages:deploy": "astro build && wrangler pages deploy ./dist"
   },
