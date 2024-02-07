@@ -36,8 +36,6 @@ interface PageResponse {
 
 // Excluded to keep the bundle size under 25mb (cloudflare limit)
 const excludes: Map<string, boolean> = new Map([
-    ["/gmod/Enums/ACT", true],
-    ["/gmod/HL2_Sound_List", true],
 ])
 
 async function buildPage(api: ApiInterface, contentManager: StaticContentHandler, searchManager: SearchManager, link: string) {

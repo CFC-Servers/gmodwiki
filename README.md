@@ -24,5 +24,4 @@ Current limitations:
 - No full search _(planned - doable)_
 - No Editing _(will not implement)_
 - No change history _(probably won't implement)_
-- `/Enums/ACT` and `HL2_Sound_List` pages are excluded as they ballooned the final bundle size too much
 - The main page script.js is self-hosted and modified (for performance), meaning any useful updates will need to be manually backported
