@@ -5,6 +5,7 @@ services:
     image: ghcr.io/cfc-servers/gmodwiki:latest
     build: .
     container_name: gmodwiki_web
-    stop_grace_period: 2s
+    stop_grace_period: 1s
     ports:
       - "${GMODWIKI_HOST:-127.0.0.1}:${GMODWIKI_PORT:-4321}:4321"
+    restart: unless-stopped
