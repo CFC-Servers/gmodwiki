@@ -81,7 +81,8 @@ async function processCss(path: string, contentHandler: StaticContentHandler) {
     const current = await fs.readFile(path, "utf-8")
     let newContent = await contentHandler.processContent(current, true)
     newContent = `${newContent} #sidebar details[open] > ul { display: block; }\n`
-    newContent = `${newContent} #sidebar details > ul { display: none; }`
+    newContent = `${newContent} #sidebar details > ul { display: none; }\n`
+    newContent = `${newContent} .body > .content, #pagelinks a.active { background-image: none !important; }`
 
     await fs.writeFile(path, newContent)
 }
