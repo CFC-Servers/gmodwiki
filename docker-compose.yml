@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   gmodwiki_web:
-    image: gmodwiki_slim:latest
+    image: ghcr.io/cfc-servers/gmodwiki:latest
     build: .
     container_name: gmodwiki_web
     stop_grace_period: 2s
