@@ -3,11 +3,35 @@ import Layout from "@layouts/Layout.astro"
 
 const slug = Astro.params.slug || "index"
 let json: any = { title: "Failed to load page", description: "Failed to load page", html: "", footer: "0 views<br>" }
+const fourohfour = `
+<div class="markdown" id="pagecontent">
+    <a name="notfound" class="anchor_offset"></a>
+    <h1>Not Found<a class="anchor" href="#notfound"><i class="mdi mdi-link-variant"></i></a></h1>
+    <p>This page is missing.</p>
+</div>
+`
 
 try {
+    // This slug endpoint shouldn't ever handle a .json file (unless it's not present)
+    // We return a raw json, because this happens if a link in a page isn't mirrored
+    if (slug.endsWith(".json")) {
+        json.title = "Page Not Found"
+        json.description = "Page Not Found"
+        json.html = fourohfour
+        return new Response(JSON.stringify(json), { status: 404 })
+    }
+
     const resource = `${Astro.url.protocol}//${Astro.url.host}/content/${slug}.json`
     const response = await fetch(resource)
-    json = await response.json()
+    if (!response.ok) {
+        // Otherwise, we return a formatted 404 page. This happens if someone visits a missing page directly.
+        // TODO: Can we just not catch this case and let the 404 response handle it?
+        json.title = "Page Not Found"
+        json.description = "Page Not Found"
+        json.html = fourohfour
+    } else {
+        json = await response.json()
+    }
 } catch (e) {
     json.html = "Failed to load page <b>" + slug + "</b>" + (e ? "<p>" + e.toString() + "</p>" : "")
 }

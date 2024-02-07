@@ -1,7 +1,7 @@
-FROM node:21-alpine AS builder
+FROM node:21 AS builder
 
-ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends python3-minimal && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
