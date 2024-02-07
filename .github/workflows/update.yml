@@ -50,6 +50,7 @@ jobs:
           $GITHUB_WORKSPACE/docker-slim build \
             --target gmodwiki_fat:latest \
             --include-path /app/dist \
+            --http-probe-off \
             --remove-file-artifacts \
             --continue-after 10 \
             --show-clogs --show-blogs \
