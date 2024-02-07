@@ -14,11 +14,11 @@ jobs:
 
       - name: Get docker-slim
         run: |
-          SLIM_VERSION=1.40.10
+          SLIM_VERSION=1.40.11
 
           curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/$SLIM_VERSION/dist_linux.tar.gz
           tar -xvzf ds.tar.gz
-          mv dist_linux/* $GITHUB_WORKSPACE
+          mv dist_linux/* /usr/bin/
           rm -rfv ds.tar.gz dist_linux/
 
       - name: Setup
@@ -26,16 +26,18 @@ jobs:
           npm i
 
       - name: Build
+        env:
+          BUILD_ENV: production
         run: |
           npm run build
           npx astro build
 
-      - name: Publish Site
-        uses: cloudflare/wrangler-action@3.0.0
-        with:
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy --project-name=gmodwiki ./dist
+          #- name: Publish Site
+          #  uses: cloudflare/wrangler-action@3.0.0
+          #  with:
+          #    accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          #    apiToken: ${{ secrets.CF_API_TOKEN }}
+          #    command: pages deploy --project-name=gmodwiki ./dist
 
       - name: Build starter image
         run: |
@@ -43,11 +45,11 @@ jobs:
 
       - name: Make slim image
         run: |
-          $GITHUB_WORKSPACE/docker-slim build \
+          /usr/bin/docker-slim build \
             --target gmodwiki_fat:latest \
             --preserve-path /app/dist \
             --remove-file-artifacts \
-            --continue-after 5 \
+            --continue-after 10 \
             --show-clogs --show-blogs \
             --tag ghcr.io/cfc-servers/gmodwiki:latest
 
