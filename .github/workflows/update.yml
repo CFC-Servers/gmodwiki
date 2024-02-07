@@ -33,12 +33,12 @@ jobs:
           npm run build
           npx astro build
 
-      - name: Publish Site
-        uses: cloudflare/wrangler-action@3.0.0
-        with:
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy --project-name=gmodwiki ./dist
+          # - name: Publish Site
+          #   uses: cloudflare/wrangler-action@3.0.0
+          #   with:
+          #     accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          #     apiToken: ${{ secrets.CF_API_TOKEN }}
+          #     command: pages deploy --project-name=gmodwiki ./dist
 
       - name: Build starter image
         run: |
@@ -50,6 +50,7 @@ jobs:
           $GITHUB_WORKSPACE/docker-slim build \
             --target gmodwiki_fat:latest \
             --include-path /app/dist \
+            --include-path /app/node_modules \
             --http-probe-off \
             --remove-file-artifacts \
             --continue-after 10 \
