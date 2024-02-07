@@ -49,7 +49,7 @@ jobs:
           EXIT_CODE=0
           $GITHUB_WORKSPACE/docker-slim build \
             --target gmodwiki_fat:latest \
-            --preserve-path /app/dist \
+            --include-path /app/dist \
             --remove-file-artifacts \
             --continue-after 10 \
             --show-clogs --show-blogs \
