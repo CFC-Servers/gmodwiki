@@ -40,6 +40,7 @@ function replaceVariables($: any) {
 
 function addBrowserHints($: any) {
     $(`<link rel="preconnect" href="https://fonts.googleapis.com">`).insertAfter(`meta[name='viewport']`)
+    $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(`meta[name='viewport']`)
 }
 
 function processScripts($: any) {
