@@ -8,6 +8,7 @@ The scraper then builds the appropriate `.astro` and `.json` files for all of th
 The build script dynamically modifies things like styles, scripts, html to optimize for cloud hosting.
 
 ## Features
+- Full DarkReader support!
 - Loading and in-browser performance enhancements over the original
 - Memory usage improvements
 - Full 1:1 styling with the original
