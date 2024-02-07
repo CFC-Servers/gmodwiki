@@ -107,3 +107,20 @@ Now, set up the special `?format=json` redirect rule:
         - Status Code: 301
     - Click "Deploy"
     - Wait about 30 seconds, and then try visiting: `https://<YOUR DOMAIN>/Player_Animations?format=json` and verify that you're redirected to: `https://<YOUR DOMAIN>/content/Player_Animations.json`
+
+## Dev
+Development should be fairly simple:
+```
+npm i;
+npm run build;
+npm run astrobuild;
+npm run preview;
+```
+
+### Some dev notes:
+- The first `npm run build` will take awhile as it scrapes the main website
+- Once built:
+    - All downloaded page content will be cached into `./build/cache/`
+    - All downloaded static content will be cached to `./public/`
+    - You can remove either of these directories if you need to re-parse the remote content again
+- By default, `npm run astrobuild` will build the site for **self hosting**, not **cloud hosting**. If you need to test the cloud environment, you can run `export BUILD_ENV=production` before running the build/preview commands
