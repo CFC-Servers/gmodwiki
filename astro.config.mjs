@@ -1,27 +1,38 @@
 import { defineConfig } from 'astro/config';
 
+import node from '@astrojs/node';
 import cloudflare from "@astrojs/cloudflare";
 
-// https://astro.build/config
+const buildEnv = process.env.BUILD_ENV;
+
+let adapter;
+
+if (buildEnv === "production") {
+  console.log("Using Cloudflare adapter");
+  adapter = cloudflare({
+    mode: "advanced",
+    routes: {
+      strategy: "include",
+      include: ["/*"],
+      exclude: [
+        "/content/*",
+        "/script.js",
+        "/styles/gmod.css",
+        "/wiki/files/*",
+        "/rubat/*",
+        "/lewis/*",
+        "/garry/*",
+        "/fonts/*"
+      ]
+    }
+  });
+} else {
+  console.log("Using Node adapter");
+  adapter = node({ mode: "standalone" });
+}
+
 export default defineConfig({
-  build: {
-      split: true,
-  },
+  build: { split: true, },
   output: "server",
-  adapter: cloudflare({
-      mode: "advanced",
-      routes: {
-        strategy: "include",
-        include: ["/*"],
-        exclude: [
-          "/script.js",
-          "/styles/gmod.css",
-          "/wiki/files/*",
-          "/rubat/*",
-          "/lewis/*",
-          "/garry/*",
-          "/fonts/*"
-        ]
-      }
-  }),
+  adapter: adapter
 });

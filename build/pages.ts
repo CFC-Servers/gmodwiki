@@ -65,11 +65,11 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     let address = struct.address.length > 0 ? struct.address : "index"
     address = address.replaceAll("/gmod/", "/")
 
-    const jsonDestination = `./src/pages/${address}.json.ts`
+    const jsonDestination = `./public/content/${address}.json`
     const dirPath = path.dirname(jsonDestination)
     await fs.mkdir(dirPath, { recursive: true })
 
-    const jsonContent = makeJsonBody(struct)
+    const jsonContent = JSON.stringify(struct)
     await fs.writeFile(jsonDestination, jsonContent)
 
     searchManager.addBlob(address, struct.html)

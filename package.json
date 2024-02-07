@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/index.ts",
+    "astrobuild": "astro build",
     "preview": "astro preview",
     "pages:dev": "wrangler pages dev --compatibility-date=2024-01-29 -- astro dev",
     "pages:deploy": "astro build && wrangler pages deploy ./dist"
@@ -12,6 +13,7 @@
   "dependencies": {
     "@astrojs/check": "^0.4.1",
     "@astrojs/cloudflare": "^9.0.0",
+    "@astrojs/node": "^8.2.0",
     "astro": "^4.3.2"
   },
   "devDependencies": {
