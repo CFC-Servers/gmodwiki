@@ -46,7 +46,6 @@ jobs:
 
       - name: Make slim image
         run: |
-          EXIT_CODE=0
           $GITHUB_WORKSPACE/docker-slim build \
             --target gmodwiki_fat:latest \
             --include-path /app/dist \
@@ -56,11 +55,6 @@ jobs:
             --continue-after 10 \
             --show-clogs --show-blogs \
             --tag ghcr.io/cfc-servers/gmodwiki:latest \
-            || EXIT_CODE=$?
-
-          if [ $EXIT_CODE -ne 0 ] && [ $EXIT_CODE -ne 32 ] && [ $EXIT_CODE -ne 3 ]; then
-            exit $EXIT_CODE;
-          fi
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3

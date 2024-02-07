@@ -22,9 +22,10 @@ RUN npm run astrobuild
 FROM node:21-alpine
 WORKDIR /app
 COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/node_modules /app/node_modules
 
 ENV HOST=0.0.0.0
 ENV PORT=4321
 ENV NODE_ENV=production
+RUN npm i cookie kleur clsx cssesc server-destroy send path-to-regexp html-escaper
+RUN du -sh /app/node_modules
 CMD ["node", "/app/dist/server/entry.mjs"]

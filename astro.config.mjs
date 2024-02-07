@@ -6,9 +6,10 @@ import cloudflare from "@astrojs/cloudflare";
 const buildEnv = process.env.BUILD_ENV;
 
 let adapter;
+const buildConfig = { split: true };
 
 if (buildEnv === "production") {
-  console.log("Using Cloudflare adapter");
+  console.log("Building for Cloudflare adapter");
   adapter = cloudflare({
     mode: "advanced",
     routes: {
@@ -27,12 +28,17 @@ if (buildEnv === "production") {
     }
   });
 } else {
-  console.log("Using Node adapter");
+  console.log("Building for Node adapter");
   adapter = node({ mode: "standalone" });
+  
+  buildConfig.split = false;
+  buildConfig.rollupOptions = {
+    external: ["fs", "node:fs", "path", "node:path"]
+  }
 }
 
 export default defineConfig({
-  build: { split: true, },
+  build: buildConfig,
   output: "server",
   adapter: adapter
 });
