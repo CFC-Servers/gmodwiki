@@ -12,6 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get docker-slim
+        run: |
+          SLIM_VERSION=1.40.10
+
+          curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/$SLIM_VERSION/dist_linux.tar.gz
+          tar -xvzf ds.tar.gz
+          mv dist_linux/* $GITHUB_WORKSPACE
+          rm -rfv ds.tar.gz dist_linux/
+
       - name: Setup
         run: |
           npm i
@@ -21,9 +30,34 @@ jobs:
           npm run build
           npx astro build
 
-      - name: Publish
+      - name: Publish Site
         uses: cloudflare/wrangler-action@3.0.0
         with:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
           command: pages deploy --project-name=gmodwiki ./dist
+
+      - name: Build starter image
+        run: |
+          docker build --tag gmodwiki_fat:latest .
+
+      - name: Make slim image
+        run: |
+          $GITHUB_WORKSPACE/docker-slim build \
+            --target gmodwiki_fat:latest \
+            --preserve-path /app/dist \
+            --remove-file-artifacts \
+            --continue-after 5 \
+            --show-clogs --show-blogs \
+            --tag ghcr.io/cfc-servers/gmodwiki:latest
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Tag and push image
+        run: |
+          docker push ghcr.io/cfc-servers/gmodwiki --all-tags

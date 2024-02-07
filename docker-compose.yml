@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  gmodwiki_web:
+    image: gmodwiki_slim:latest
+    build: .
+    container_name: gmodwiki_web
+    stop_grace_period: 2s
+    ports:
+      - "${GMODWIKI_HOST:-127.0.0.1}:${GMODWIKI_PORT:-4321}:4321"

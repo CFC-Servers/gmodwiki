@@ -22,3 +22,5 @@ pnpm-debug.log*
 
 build/cache/
 public/
+
+slim.report.json
