@@ -13,7 +13,7 @@ const fourohfour = `
 
 try {
     // This slug endpoint shouldn't ever handle a .json file (unless it's not present)
-    // We return a raw json, because this happens if a link in a page isn't mirrored
+    // This happens if a link in a page isn't mirrored
     if (slug.endsWith(".json")) {
         json.title = "Page Not Found"
         json.description = "Page Not Found"
@@ -23,7 +23,7 @@ try {
 
     const resource = `${Astro.url.protocol}//${Astro.url.host}/content/${slug}.json`
     const response = await fetch(resource)
-    if (!response.ok) {
+    if (response.status === 404) {
         // Otherwise, we return a formatted 404 page. This happens if someone visits a missing page directly.
         // TODO: Can we just not catch this case and let the 404 response handle it?
         json.title = "Page Not Found"
