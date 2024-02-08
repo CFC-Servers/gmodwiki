@@ -12,7 +12,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - Local self-hosting with Docker
 - Loading and in-browser performance enhancements over the original
 - Memory usage improvements
-- Search bar works fast for basic searching
+- Fast searching _(both basic and full search are implemented)_
 - All images are mirrored and optimized
 - Hosted entirely on the cloud
 - Automatic content updates every three days
@@ -20,7 +20,6 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 
 ### Limitations
 Current limitations:
-- No full search _(planned - doable)_
 - No Editing _(will not implement)_
 - No change history _(probably won't implement)_
 - All images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp)

@@ -71,7 +71,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     const jsonContent = JSON.stringify(struct)
     await fs.writeFile(jsonDestination, jsonContent)
 
-    // searchManager.addBlob(address, struct.html)
+    searchManager.addBlob(address, struct.html)
 }
 
 export async function buildAllPages(api: ApiInterface, contentHandler: StaticContentHandler, searchManager: SearchManager) {

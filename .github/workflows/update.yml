@@ -28,12 +28,26 @@ jobs:
         run: |
           npm i
 
-      - name: Build
+      - name: Scrape and Build
         env:
           BUILD_ENV: production
         run: |
           npm run build
-          npx astro build
+
+      - name: Upload search index
+        uses: cloudflare/wrangler-action@3.0.0
+        with:
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: r2 object put gmodwiki/search_index.json --file ./public/search_index.json
+
+      - name: Build final pack
+        env:
+          BUILD_ENV: production
+        run: |
+          # Temporarily move it out of the public dir to keep it out of the Cloudflare bundle
+          mv --verbose ./public/search_index.json .
+          npm astrobuild
 
       - name: Publish Site
         uses: cloudflare/wrangler-action@3.0.0
@@ -44,6 +58,7 @@ jobs:
 
       - name: Build starter image
         run: |
+          mv --verbose ./search_index.json ./public/
           docker build --tag gmodwiki_fat:latest .
 
       - name: Make slim image

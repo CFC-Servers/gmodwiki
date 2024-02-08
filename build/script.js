@@ -281,7 +281,6 @@ var SearchResults;
 var SidebarContents;
 var MaxResultCount = 200;
 var ResultCount = 0;
-var WikiRealm = "";
 var SearchDelay = null;
 function InitSearch() {
     SearchInput = document.getElementById("search");
@@ -293,7 +292,7 @@ function InitSearch() {
     });
     SearchInput.addEventListener("keyup", e => {
         if (e.keyCode == 13) {
-            window.location.href = "/" + WikiRealm + "/~search:" + SearchInput.value;
+            window.location.href = "/websearch?query=" + SearchInput.value;
         }
     });
 }
@@ -469,6 +468,4 @@ window.addEventListener("load", () => {
             });
         });
     });
-
-    WikiRealm = "gmod"
 })

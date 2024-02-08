@@ -18,6 +18,7 @@ if (buildEnv === "production") {
       exclude: [
         "/content/*",
         "/script.js",
+        "/search_index.json",
         "/styles/gmod.css",
         "/wiki/files/*",
         "/rubat/*",
@@ -31,7 +32,6 @@ if (buildEnv === "production") {
   console.log("Building for Node adapter");
   adapter = node({ mode: "standalone" });
   
-  buildConfig.split = false;
   buildConfig.rollupOptions = {
     external: ["fs", "node:fs", "path", "node:path"]
   }

@@ -14,7 +14,7 @@ const searchManager = new SearchManager()
 async function init() {
     await setup(api, staticContent)
     await buildAllPages(api, staticContent, searchManager)
-    // await buildSearchIndex(searchManager)
+    await buildSearchIndex(searchManager)
 }
 
 init();
