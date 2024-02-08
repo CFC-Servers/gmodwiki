@@ -114,9 +114,16 @@ async function processCss(contentHandler: StaticContentHandler) {
     const path = "public/styles/gmod.css"
     const current = await fs.readFile(path, "utf-8")
     let newContent = await contentHandler.processContent(current, true)
+
+    // Optimization, hide all list items that aren't expanded
     newContent = `${newContent} #sidebar details[open] > ul { display: block; }\n`
     newContent = `${newContent} #sidebar details > ul { display: none; }\n`
+
+    // Remove the weird dot matrix thing that breaks Darkreader
     newContent = `${newContent} .body > .content, #pagelinks a.active { background-image: none !important; }`
+
+    // Add padding to the "Toggle Dark Mode" button
+    newContent = `${newContent} ul#pagelinks > li { padding-right: 1rem; }`
 
     await fs.writeFile(path, newContent)
 }

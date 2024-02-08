@@ -22,11 +22,15 @@ class Navigate {
             return false;
         }
 
+        if (address === "" || address === "/") {
+            address = "/index";
+        }
+
         var newData;
         this.pageTitle2.innerText = "Loading..";
         this.pageContent.parentElement.classList.add("loading");
 
-        fetch(`/content/${address}.json`, { method: 'GET' })
+        fetch(`/content${address}.json`, { method: 'GET' })
             .then(r => r.json())
             .then(json => {
             newData = json;
@@ -121,7 +125,6 @@ class Navigate {
             address = address.substring(0, address.indexOf("#"));
         }
 
-        console.log("OnNavigated to", address);
         this.ToPage(address, false);
     }
 
@@ -140,10 +143,10 @@ class Navigate {
                 return;
 
             let val = a.getAttribute("href");
-            if (val == null || val == '')
+            if (val == null || val == "")
                 return;
 
-            if (val.indexOf('#') >= 0 || val.indexOf('~') >= 0)
+            if (val.indexOf("#") >= 0 || val.indexOf("~") >= 0)
                 return;
 
             if (!(e.ctrlKey || e.shiftKey || e.altKey)) {
@@ -164,7 +167,7 @@ class Navigate {
             if (val == null || val == "")
                 return;
 
-            if (val.indexOf('#') >= 0 || val.indexOf('~') >= 0)
+            if (val.indexOf("#") >= 0 || val.indexOf("~") >= 0)
                 return;
 
             if (!(e.ctrlKey || e.shiftKey || e.altKey)) {
