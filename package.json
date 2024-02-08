@@ -8,7 +8,8 @@
     "astrobuild": "astro build",
     "preview": "astro preview",
     "pages:dev": "wrangler pages dev --compatibility-date=2024-01-29 -- astro dev",
-    "pages:deploy": "astro build && wrangler pages deploy ./dist"
+    "pages:deploy": "astro build && wrangler pages deploy ./dist",
+    "get_used_mdis": "rg -Io \"mdi-[\\w-]+\" ./build/cache/ | sort | uniq"
   },
   "devDependencies": {
     "@astrojs/check": "^0.4.1",

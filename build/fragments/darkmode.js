@@ -14,22 +14,16 @@ const style = `
     ::-webkit-scrollbar-thumb:hover{
       background: rgb(31, 31, 31);
     }
-    .body > .content, #pagelinks a.active {
-      background: url(https://i.imgur.com/iKHU5u8.png);
-    }
-    .body, body > div.body > div.footer, body > div.body > div.content {
-      background: url(https://i.imgur.com/iKHU5u8.png);
+    .body, div.footer, div.content {
       background-color: rgba(0, 0, 0, 0.2) !important;
-      backdrop-filter: blur(2px);
     }
-    .body > .footer > div > div ul li a {
+    .footer > div > div ul li a {
       color: #fff;
     }
-    .markdown > .function .function_line {
+    .function_line {
       background-color: rgba(0, 0, 0, 0.25) !important;
-      backdrop-filter: blur(4px);
     }
-    .body-tabs ul li a.active {
+    a.active {
       background-color: #333;
       color: #fff;
     }
@@ -38,11 +32,9 @@ const style = `
     }
     .markdown .code {
       background-color: rgba(0, 0, 0, 0.25) !important;
-      backdrop-filter: blur(4px);
     }
     .markdown code {
       background-color: rgba(0, 0, 0, 0.5) !important;
-      backdrop-filter: blur(4px);
     }
     .markdown span.key {
       background-color: #000;
@@ -75,7 +67,36 @@ const style = `
       background-color: #dd610082;
   }
 `;
+
+const transitions = `
+    .body, div.footer, div.content {
+      transition: background-color 0.2s;
+    }
+    .body > .footer > div > div ul li a {
+      transition: color 0.2s;
+    }
+    .function_line {
+      transition: background-color 0.2s;
+    }
+    a.active {
+      transition: background-color 0.2s color 0.2s;
+    }
+    .markdown, .markdown .code, .markdown code, .markdown span.key, .markdown h2, .markdown h3, .body-tabs ul li a, .markdown table td, .markdown table th, .member_line, .member_line a.subject, .highlight {
+      transition: background-color 0.2s border 0.2s;
+    }
+`;
 const button = document.getElementById("toggle-dark-mode");
+
+function addTransitions() {
+    const head = document.getElementsByTagName("head")[0];
+    if (!head) { return; }
+
+    const styleElement = document.createElement("style");
+    styleElement.id = "dark-mode-transitions";
+    styleElement.type = "text/css";
+    styleElement.innerHTML = transitions;
+    head.appendChild(styleElement);
+}
 
 function addGlobalStyle() {
     const head = document.getElementsByTagName("head")[0];
@@ -122,4 +143,5 @@ function toggleDarkMode() {
 }
 
 button.addEventListener("click", toggleDarkMode)
+window.addEventListener("load", addTransitions)
 window.addEventListener("load", checkDarkMode)

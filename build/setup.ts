@@ -97,7 +97,102 @@ function setupScriptTags($: cheerio.CheerioAPI) {
 
 async function setupDisclaimer($: cheerio.CheerioAPI) {
     const disclaimer = await fs.readFile("build/fragments/disclaimer.html", "utf-8")
-    $(disclaimer).insertAfter("h1.pagetitle");
+    $(disclaimer).insertAfter("div.footer[id='pagefooter']");
+}
+
+const mdiWhitelist = [
+    ".mdi-account",
+    ".mdi-book",
+    ".mdi-bookshelf",
+    ".mdi-calendar",
+    ".mdi-code-braces",
+    ".mdi-code-not-equal",
+    ".mdi-content-copy",
+    ".mdi-cube-outline",
+    ".mdi-database",
+    ".mdi-file",
+    ".mdi-file-download",
+    ".mdi-fire",
+    ".mdi-floor-plan",
+    ".mdi-format-list-numbered",
+    ".mdi-gamepad-variant",
+    ".mdi-github-box",
+    ".mdi-history",
+    ".mdi-hook",
+    ".mdi-image-broken-variant",
+    ".mdi-language-lua",
+    ".mdi-library-shelves",
+    ".mdi-link-variant",
+    ".mdi-menu",
+    ".mdi-pencil",
+    ".mdi-robot",
+    ".mdi-server",
+    ".mdi-source-branch",
+    ".mdi-source-pull",
+    ".mdi-steam",
+    ".mdi-television-guide",
+    ".mdi-test-tube",
+    ".mdi-tools",
+    ".mdi-vector-triangle",
+    ".mdi-view-quilt",
+]
+
+function removeDeadStyles(content: string) {
+    const isBadMdi = (block: string) => {
+        const isMdi = block.startsWith(".mdi-")
+        if (!isMdi) return false
+
+        const mdi = block.split("::before")[0]
+        if (!mdiWhitelist.includes(mdi)) return true
+        
+        return false
+    }
+
+    const usesDeadClass = (block: string) => {
+        if (block.startsWith(".contentbar")) return true
+        if (block.startsWith(".card")) return true
+        if (block.startsWith(".infocard")) return true
+        return false
+    }
+
+    const isEdit = (block: string) => {
+        if (block.startsWith("#edit_")) return true
+        if (block.startsWith("#preview")) return true
+        if (block.indexOf(".edit") !== -1) return true
+        return false
+    }
+
+    const shouldKeep = (block: string) => {
+        if (isBadMdi(block)) return false
+        if (usesDeadClass(block)) return false
+        if (isEdit(block)) return false
+        return true
+    }
+
+    const blocks = content.split("}\n\n")
+    const keptBlocks = blocks.filter(shouldKeep)
+
+    return keptBlocks.join("}\n\n")
+}
+
+function optimizeCss(content: string) {
+    content = content.replace(/html > body > \.body > \.footer {/g, ".body > .footer {")
+    content = content.replace(/html > body > \.body > \.content > \.footer {/g, ".content > .footer {")
+    content = content.replace(/html > body > \.body > \.content \.content\.loading {/g, ".content.loading {")
+    content = content.replace(/html > body > \.body > \.content \.content {/g, ".content .content {")
+    content = content.replace(/html > body > \.body > \.content {/g, "body > .body > .content {")
+    content = content.replace(/html > body > \.body {/g, "body > .body {")
+    content = content.replace(/html > body a {/g, "body a {")
+    content = content.replace(/html > body {/g, "body {")
+    content = content.replace(/html > body > .footer {/g, "body > .footer {")
+
+    // Sidebar
+    content = content.replace(/#sidebar \.section > a, #sidebar \.section > details\.level1 > summary > div {/g, "#sidebar .section > a, .level1 > summary > div {")
+    content = content.replace(/#sidebar \.section > a > i, #sidebar \.section > details\.level1 > summary > div > i {/g, "#sidebar .section i {")
+    content = content.replace(/#sidebar details\.level2 > ul > li > a {/g, ".level2 > ul > li > a {")
+    content = content.replace(/#sidebar details\.level2 ul > li > a {/g, ".level2 ul > li > a {")
+
+    return content
 }
 
 // Procecsses a downloaded CSS file and gets remote content, and modifies the file
@@ -105,6 +200,8 @@ async function processCss(contentHandler: StaticContentHandler) {
     const path = "public/styles/gmod.css"
     const current = await fs.readFile(path, "utf-8")
     let newContent = await contentHandler.processContent(current, true)
+
+    newContent = newContent.replace(/[\r]/g, "");
 
     // Optimization, hide all list items that aren't expanded
     newContent = `${newContent} #sidebar details[open] > ul { display: block; }\n`
@@ -118,6 +215,12 @@ async function processCss(contentHandler: StaticContentHandler) {
 
     // Override the padding for the first element on the page (it's a little too long with our disclaimer)
     newContent = `${newContent} #pagecontent > :first-child { margin-top: 2rem !important; }\n`
+
+    // Add the "Mirror" tag/lable to the icon
+    newContent = `${newContent} #ident > h1 > a::after { content: "Mirror"; color: #0082ff; font-size: 10px; text-transform: uppercase; padding: 2px; margin-left: 8px; display: inline-block; position: relative; top: -4px; }`
+
+    newContent = removeDeadStyles(newContent)
+    newContent = optimizeCss(newContent)
 
     await fs.writeFile(path, newContent)
 }
