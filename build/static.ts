@@ -1,5 +1,6 @@
 // Finds, acquires, writes, and stubs any static content found in a given html file
 import path from "path"
+import sharp from "sharp"
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
 import type ApiInterface from "./api_interface.js"
@@ -19,6 +20,7 @@ const fileWhitelist = new Map([
     [".svg", true],
     [".jpeg", true],
     [".gif", true],
+    [".webp", true],
     [".ico", true],
     [".css", true],
     [".js", true],
@@ -28,6 +30,16 @@ const fileWhitelist = new Map([
     [".eot", true],
     [".otf", true],
 ])
+
+const isImage = new Map([
+    [".png", true],
+    [".jpg", true],
+    [".svg", true],
+    [".jpeg", true],
+    [".gif", true],
+    [".webp", true]
+])
+
 
 const hostWhitelist = new Map([
     ["files.facepunch.com", true],
@@ -45,6 +57,10 @@ class StaticContentHandler {
         this.cache = new Map()
     }
 
+    private async optimizeImage(data: Buffer): Promise<Buffer> {
+        return await sharp(data).webp({ quality: 75 }).toBuffer()
+    }
+
     private async downloadContent(url: string): Promise<string> {
         const resolvedUrl = this.resolveUrl(url)
 
@@ -59,8 +75,14 @@ class StaticContentHandler {
 
         const fileName = path.basename(resolvedUrl).split('?')[0]
         const fileExtension = path.extname(fileName).toLowerCase()
-        const filePath = path.join(fullPath, fileName);
-        const newURL = `/${filePath}`.replaceAll("public/", "")
+        let filePath = path.join(fullPath, fileName);
+        let newURL = `/${filePath}`.replaceAll("public/", "")
+
+        // We replace all images with webp
+        if (isImage.has(fileExtension)) {
+            filePath = filePath.replace(fileExtension, ".webp")
+            newURL = newURL.replace(fileExtension, ".webp")
+        }
 
         if (fileExtension !== ".css" && await fileExists(filePath)) {
             this.cache.set(resolvedUrl, newURL)
@@ -69,7 +91,11 @@ class StaticContentHandler {
 
         await fs.mkdir(fullPath, { recursive: true })
 
-        const data = await this.api.getRawFull(resolvedUrl)
+        let data = await this.api.getRawFull(resolvedUrl)
+        if (isImage.has(fileExtension)) {
+            data = await this.optimizeImage(data)
+        }
+
         await fs.writeFile(filePath, data)
 
         this.cache.set(resolvedUrl, newURL)

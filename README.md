@@ -24,6 +24,7 @@ Current limitations:
 - No full search _(planned - doable)_
 - No Editing _(will not implement)_
 - No change history _(probably won't implement)_
+- All images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp)
 - The main page script.js is self-hosted and modified (for performance), meaning any useful updates will need to be manually backported
 
 ## Self-Hosting

@@ -37,7 +37,7 @@ class ApiInterface {
         return Buffer.from(buff)
     }
     
-    async getRawFull(url: string): Promise<any> {
+    async getRawFull(url: string): Promise<Buffer> {
         const response = await this._get(url)
         const buff = await response.arrayBuffer()
         return Buffer.from(buff)
