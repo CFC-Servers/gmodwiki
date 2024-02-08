@@ -33,6 +33,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 Current limitations:
 - No Editing _(will not implement)_
 - No change history _(probably won't implement)_
+- Copy button _(on textareas)_ is temporary nonfunctional
 - All images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp)
 - The main page script.js is self-hosted and modified (for performance), meaning any useful updates will need to be manually backported
 
