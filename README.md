@@ -4,7 +4,7 @@ This project scrapes and mirrors the GMod Wiki.
 
 It also includes a number of enhancments over the original.
 
-You may use the public site, https://gmodwiki.com, or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for offline access!
+You may use the [public site](https://gmodwiki.com), or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for super fast offline access!
 
 ### Features
 - Custom Darkmode support _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
