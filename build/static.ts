@@ -58,7 +58,7 @@ class StaticContentHandler {
     }
 
     private async optimizeImage(data: Buffer): Promise<Buffer> {
-        return await sharp(data).webp({ quality: 75 }).toBuffer()
+        return await sharp(data).webp({ quality: 80 }).toBuffer()
     }
 
     private async downloadContent(url: string): Promise<string> {

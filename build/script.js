@@ -18,10 +18,6 @@ class Navigate {
             return true;
         }
 
-        if (address === window.location.pathname) {
-            return false;
-        }
-
         if (address === "" || address === "/") {
             address = "/index";
         }
@@ -125,7 +121,9 @@ class Navigate {
             address = address.substring(0, address.indexOf("#"));
         }
 
-        this.ToPage(address, false);
+        const newAddress = address.replaceAll(window.location.origin, "");
+
+        this.ToPage(newAddress, false);
     }
 
     static Install() {
@@ -454,23 +452,23 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
 });
 
-window.onload = () => {
+window.addEventListener("load", () => {
     requestAnimationFrame(() => {
-        var sidebar = document.getElementById( "sidebar" );
-        var active = sidebar.getElementsByClassName( "active" );
+        var sidebar = document.getElementById( "sidebar" )
+        var active = sidebar.getElementsByClassName( "active" )
         if ( active.length == 1 )
         {
-            active[0].scrollIntoView( { smooth: true, block: "center" } );
+            active[0].scrollIntoView( { smooth: true, block: "center" } )
         }
 
         requestAnimationFrame(() => {
-            InitSearch();
+            InitSearch()
 
             requestAnimationFrame(() => {
-                Navigate.Install();
+                Navigate.Install()
             });
         });
     });
 
-    WikiRealm = "gmod";
-}
+    WikiRealm = "gmod"
+})

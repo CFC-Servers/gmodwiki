@@ -120,10 +120,13 @@ async function processCss(contentHandler: StaticContentHandler) {
     newContent = `${newContent} #sidebar details > ul { display: none; }\n`
 
     // Remove the weird dot matrix thing that breaks Darkreader
-    newContent = `${newContent} .body > .content, #pagelinks a.active { background-image: none !important; }`
+    newContent = `${newContent} .body > .content, #pagelinks a.active { background-image: none !important; }\n`
 
     // Add padding to the "Toggle Dark Mode" button
-    newContent = `${newContent} ul#pagelinks > li { padding-right: 1rem; }`
+    newContent = `${newContent} ul#pagelinks > li { padding-right: 1rem; }\n`
+
+    // Override the padding for the first element on the page (it's a little too long with our disclaimer)
+    newContent = `${newContent} #pagecontent > :first-child { margin-top: 2rem !important; }\n`
 
     await fs.writeFile(path, newContent)
 }

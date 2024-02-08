@@ -48,6 +48,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     let pageContent = await contentManager.processContent(struct.html, false)
     pageContent = pageContent.replace(/<html><head><\/head><body>/g, "")
     pageContent = pageContent.replace(/<\/body><\/html>/g, "")
+    pageContent = struct.html.replace(/https:\/\/wiki\.facepunch\.com\/gmod\//g, "/")
     pageContent = pageContent.replaceAll(/\/gmod\//g, "/")
 
     delete struct.wikiIcon
@@ -70,7 +71,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     const jsonContent = JSON.stringify(struct)
     await fs.writeFile(jsonDestination, jsonContent)
 
-    searchManager.addBlob(address, struct.html)
+    // searchManager.addBlob(address, struct.html)
 }
 
 export async function buildAllPages(api: ApiInterface, contentHandler: StaticContentHandler, searchManager: SearchManager) {
