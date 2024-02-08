@@ -8,15 +8,26 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 
 ### Features
 - Custom Darkmode support _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
-    - Alternatively, the mirror has DarkReader support!
-- Local self-hosting with Docker
+    - Alternatively, this mirror plays nicely with DarkReader!
+- Self-hosting support with Docker
 - Loading and in-browser performance enhancements over the original
+    - Significant performance improvements for CSS styling
+    - Reduced the total stylesheet size by 80+%
+    - Noticeable improvements to "Page-to-page" navigation speed
+    - Vastly improved navigation performance on Firefox
 - Memory usage improvements
-- Fast searching _(both basic and full search are implemented)_
+    - Caches page content in browser cache rather than Javascript memory
+- Fast searching 
+    - Both basic and full-site searching are implemented
+    - Search results are not paginated
 - All images are mirrored and optimized
+    - Image size reduced by > 40% with only a small loss in quality
 - Hosted entirely on the cloud
+    - Very reliable, it should only go down if Cloudflare has a major outage
 - Automatic content updates every three days
-- `?format=json` support _(redirects to `/content/{path}.json` which is how all the page contents are stored now)_
+    - All page content is pulled from the live site automatically
+- `?format=json` support
+- `~pagelist` support _(json format only)_
 
 ### Limitations
 Current limitations:
