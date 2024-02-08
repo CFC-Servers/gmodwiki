@@ -61,7 +61,7 @@ GMODWIKI_HOST=127.0.0.1
 GMODWIKI_PORT=4321
 ```
 
-Then you can change the Host or Port in that file, adn then run `docker compose up` again.
+Then you can change the Host or Port in that file, and then run `docker compose up` again.
 
 
 If you want to expose the wiki instance to the world _(not recommended without a reverse proxy like Nginx, and especially not without Cloudflare)_:
