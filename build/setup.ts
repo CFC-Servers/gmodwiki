@@ -3,10 +3,10 @@ import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
 import { minify } from "minify";
 import { minify as htmlMinify } from "html-minifier"
-import type ApiInterface from "./api_interface.js"
-import type StaticContentHandler from "./static.js"
+import type ApiInterface from "./modules/api_interface.js"
+import type StaticContentHandler from "./modules/static.js"
 
-function processFooters($: cheerio.CheerioAPI) {
+function setupFooters($: cheerio.CheerioAPI) {
     const footers = $("div.footer")
 
     // Contains the section for views / last updated
@@ -18,12 +18,12 @@ function processFooters($: cheerio.CheerioAPI) {
     secondFooter.remove()
 }
 
-function processContent($: cheerio.CheerioAPI) {
+function setupContent($: cheerio.CheerioAPI) {
     const content = $("div[id='pagecontent']")
     content.html("<slot />")
 }
 
-async function processSidebar($: cheerio.CheerioAPI) {
+async function setupSidebar($: cheerio.CheerioAPI) {
     const sidebar = $("div[id='sidebar']")
     let contents = sidebar.html()
     if (!contents) throw new Error("No sidebar found - please report this!")
@@ -38,7 +38,7 @@ async function processSidebar($: cheerio.CheerioAPI) {
     await fs.writeFile("src/components/Sidebar.astro", contents)
 }
 
-async function processLayout($: cheerio.CheerioAPI) {
+async function setupLayout($: cheerio.CheerioAPI) {
     let layout = $.html()
     layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
     layout = layout.replace(/\/gmod\//g, "/")
@@ -52,30 +52,30 @@ async function setupFolders() {
     await fs.mkdir("public/content", { recursive: true })
 }
 
-async function processMainScript() {
+async function setupMainScript() {
     const minifiedJs = await minify("build/script.js", { js: { mangle: true } })
     await fs.writeFile("public/script.js", minifiedJs)
 }
 
-async function moveAstroFiles() {
+async function setupFragments() {
     await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")
 }
 
-function replaceVariables($: cheerio.CheerioAPI) {
+function setupPageVariables($: cheerio.CheerioAPI) {
     $("title").html("{title}")
     $("meta[name='og:title']").attr("content", "{title}")
     $("meta[name='og:description']").attr("content", "{description}")
     $("ul[id='pagelinks']").html("")
 }
 
-function addBrowserHints($: cheerio.CheerioAPI) {
+function setupBrowserHints($: cheerio.CheerioAPI) {
     const insertAfter = `meta[name='viewport']`
     $(`<link rel="preconnect" href="https://fonts.googleapis.com">`).insertAfter(insertAfter)
     $(`<link rel="preconnect" href="https://fonts.gstatic.com">`).insertAfter(insertAfter)
     $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(insertAfter)
 }
 
-function processScripts($: cheerio.CheerioAPI) {
+function setupScriptTags($: cheerio.CheerioAPI) {
     const scripts = $("script")
 
     for (let i = 0; i < scripts.length; i++) {
@@ -95,17 +95,8 @@ function processScripts($: cheerio.CheerioAPI) {
     }
 }
 
-const disclaimer = `<div class="markdown">
-  <div class="note">
-    <div class="inner">
-      <p><a target="_blank" href="https://github.com/CFC-Servers/gmodwiki">This site</a> is a community mirror of the <a target="_blank" href="https://wiki.facepunch.com">official Garry's Mod wiki.</a>. This site is not maintained by Facepunch Studios.</p>
-      <p>Page content is automatically updated every three days. Edits, history, and searching are currently unavailable.</p>
-    </div>
-  </div>
-</div>
-`
-
-function addDisclaimer($: cheerio.CheerioAPI) {
+async function setupDisclaimer($: cheerio.CheerioAPI) {
+    const disclaimer = await fs.readFile("build/fragments/disclaimer.html", "utf-8")
     $(disclaimer).insertAfter("h1.pagetitle");
 }
 
@@ -139,7 +130,7 @@ const { title, description, views, updated } = Astro.props;
 ${content}
 `
 
-async function addDarkMode($: cheerio.CheerioAPI) {
+async function setupDarkMode($: cheerio.CheerioAPI) {
     const pagelinks = $("ul[id='pagelinks']")
     pagelinks.append(`<li><button id="toggle-dark-mode">Toggle Dark Mode</button></li>`)
 
@@ -153,17 +144,17 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     const index = await contentHandler.processContent(rawPage, false)
     const $ = cheerio.load(index)
 
-    processFooters($)
-    processContent($)
-    replaceVariables($)
-    processScripts($)
-    addDisclaimer($)
-    addBrowserHints($)
-    await processSidebar($)
-    await addDarkMode($)
-    await processLayout($)
+    setupFooters($)
+    setupContent($)
+    setupPageVariables($)
+    setupScriptTags($)
+    setupBrowserHints($)
+    await setupDisclaimer($)
+    await setupSidebar($)
+    await setupDarkMode($)
+    await setupLayout($)
     await processCss(contentHandler)
     await setupFolders()
-    await processMainScript()
-    await moveAstroFiles()
+    await setupMainScript()
+    await setupFragments()
 }

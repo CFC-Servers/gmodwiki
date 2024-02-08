@@ -1,10 +1,10 @@
-import ApiInterface from "./api_interface.js"
-import StaticContentHandler from "./static.js"
-import SearchManager from "./search.js"
+import ApiInterface from "./modules/api_interface.js"
+import StaticContentHandler from "./modules/static.js"
+import SearchManager from "./modules/search.js"
 
 import { setup } from "./setup.js"
-import { buildAllPages } from "./pages.js"
-import { buildSearchIndex } from "./build_search_index.js"
+import { buildAllPages } from "./modules/pages.js"
+import { buildSearchIndex } from "./modules/build_search_index.js"
 
 const baseURL = "https://wiki.facepunch.com"
 const api = new ApiInterface(baseURL)
