@@ -2,10 +2,9 @@
 
 This project scrapes and mirrors the GMod Wiki.
 
-It uses AstroJS to do the templating/building.
+It also includes a number of enhancments over the original.
 
-The scraper then builds the appropriate `.astro` and `.json` files for all of the pages.
-The build script dynamically modifies things like styles, scripts, html to optimize for cloud hosting.
+You may use the public site, https://gmodwiki.com, or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for offline access!
 
 ### Features
 - Custom Darkmode support _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
