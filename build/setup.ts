@@ -176,6 +176,7 @@ function removeDeadStyles(content: string) {
 }
 
 function optimizeCss(content: string) {
+    // Simplifies unnecesarily specific selectors
     content = content.replace(/html > body > \.body > \.footer {/g, ".body > .footer {")
     content = content.replace(/html > body > \.body > \.content > \.footer {/g, ".content > .footer {")
     content = content.replace(/html > body > \.body > \.content \.content\.loading {/g, ".content.loading {")
@@ -187,10 +188,16 @@ function optimizeCss(content: string) {
     content = content.replace(/html > body > .footer {/g, "body > .footer {")
 
     // Sidebar
+    // Makes rules more specific, and make them only apply to open details where applicable
+    // Reduces the total number of elements selected by css rules by **tens of thousands**!
     content = content.replace(/#sidebar \.section > a, #sidebar \.section > details\.level1 > summary > div {/g, "#sidebar .section > a, .level1 > summary > div {")
     content = content.replace(/#sidebar \.section > a > i, #sidebar \.section > details\.level1 > summary > div > i {/g, "#sidebar .section i {")
-    content = content.replace(/#sidebar details\.level2 > ul > li > a {/g, ".level2 > ul > li > a {")
-    content = content.replace(/#sidebar details\.level2 ul > li > a {/g, ".level2 ul > li > a {")
+    content = content.replace(/#sidebar details\.level2 > ul > li > a {/g, "details[open].level2 > ul > li > a {")
+    content = content.replace(/#sidebar details\.level2 ul > li > a {/g, "details[open].level2 ul > li > a {")
+    content = content.replace(/#sidebar details > ul > li {/g, "details[open] > ul > li {")
+    content = content.replace(/#sidebar details > ul > li:nth\-child\(odd\) {/g, "details[open] > ul > li:nth-child(2n+1) {")
+    content = content.replace(/#sidebar details a {/g, "details[open] a {")
+    content = content.replace(/#sidebar details\.level1 > ul > li > a {/g, "details[open].level1 > ul > li > a {")
 
     return content
 }
