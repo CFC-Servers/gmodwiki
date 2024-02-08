@@ -43,7 +43,7 @@ class ApiInterface {
         return Buffer.from(buff)
     }
 
-    async get(endpoint: string): Promise<any> {
+    async get(endpoint: string): Promise<string> {
         const cachePath = `build/cache/${endpoint}.html`
 
         if (await fileExists(cachePath)) {
@@ -63,12 +63,18 @@ class ApiInterface {
     }
 
     async getJSON(endpoint: string): Promise<any> {
-        const cachePath = `build/cache/${endpoint}.json`
+        const cacheEndpoint = endpoint === "" ? "index" : endpoint
+        const cachePath = `build/cache/${cacheEndpoint}.json`
 
         if (await fileExists(cachePath)) {
-            console.log(chalk.yellow("Using cached index for"), endpoint)
+            console.log(chalk.yellow("Using cached index for"), cacheEndpoint)
             const contents = await fs.readFile(cachePath)
-            return JSON.parse(contents.toString())
+            try {
+                return JSON.parse(contents.toString())
+            } catch (e) {
+                console.error("Failed to parse JSON", e, `endpoint: '${cacheEndpoint}'`)
+                throw e
+            }
         }
 
         const response = await this._get(`${this.baseUrl}${endpoint}?format=json`)
@@ -78,7 +84,13 @@ class ApiInterface {
         await fs.mkdir(dir, { recursive: true })
         await fs.writeFile(cachePath, text)
 
-        return await JSON.parse(text)
+        try {
+            return JSON.parse(text)
+        } catch (e) {
+            console.error("Failed to parse JSON", e, `endpoint: '${endpoint}'`)
+            console.error(text)
+            throw e
+        }
     }
 }
 

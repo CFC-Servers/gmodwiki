@@ -53,12 +53,12 @@ async function setupFolders() {
 }
 
 async function setupMainScript() {
-    const minifiedJs = await minify("build/script.js", { js: { mangle: true } })
+    const minifiedJs = await minify("build/fragments/script.js", { js: { mangle: true } })
     await fs.writeFile("public/script.js", minifiedJs)
 }
 
 async function setupFragments() {
-    await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")
+    await fs.copyFile("build/fragments/[...slug].astro", "src/pages/[...slug].astro")
 }
 
 function setupPageVariables($: cheerio.CheerioAPI) {
@@ -136,7 +136,12 @@ async function setupDarkMode($: cheerio.CheerioAPI) {
 
     $(`<script src="/darkmode.js" is:inline></script>`).insertAfter("div.footer")
 
-    await fs.copyFile("build/darkmode.js", "public/darkmode.js")
+    await fs.copyFile("build/fragments/darkmode.js", "public/darkmode.js")
+}
+
+async function getRemoteFiles(api: ApiInterface) {
+    const pagelist = await api.get("/gmod/~pagelist?format=json")
+    await fs.writeFile("public/~pagelist.json", pagelist)
 }
 
 export async function setup(api: ApiInterface, contentHandler: StaticContentHandler) {
@@ -157,4 +162,5 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await setupFolders()
     await setupMainScript()
     await setupFragments()
+    await getRemoteFiles(api)
 }

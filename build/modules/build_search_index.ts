@@ -7,6 +7,6 @@ export async function buildSearchIndex(searchManager: SearchManager) {
     const indexValue = JSON.stringify(index)
 
     await fs.writeFile("public/search_index.json", indexValue)
-    await fs.copyFile("build/websearch.astro", "src/pages/websearch.astro")
-    await fs.copyFile("build/websearch.json.ts", "src/pages/websearch.json.ts")
+    await fs.copyFile("build/fragments/websearch.astro", "src/pages/websearch.astro")
+    await fs.copyFile("build/fragments/websearch.json.ts", "src/pages/websearch.json.ts")
 }

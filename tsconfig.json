@@ -1,6 +1,8 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["ES2021", "WebWorker"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "types": [

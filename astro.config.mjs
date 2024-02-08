@@ -19,6 +19,7 @@ if (buildEnv === "production") {
         "/content/*",
         "/script.js",
         "/search_index.json",
+        "/~pagelist.json",
         "/styles/gmod.css",
         "/wiki/files/*",
         "/rubat/*",
