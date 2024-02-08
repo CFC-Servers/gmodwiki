@@ -47,7 +47,7 @@ jobs:
         run: |
           # Temporarily move it out of the public dir to keep it out of the Cloudflare bundle
           mv --verbose ./public/search_index.json .
-          npm astrobuild
+          npm run astrobuild
 
       - name: Publish Site
         uses: cloudflare/wrangler-action@3.0.0
