@@ -18,6 +18,8 @@ class Navigate {
             return true;
         }
 
+        address = address.replaceAll(window.location.origin, "");
+
         if (address === "" || address === "/") {
             address = "/index";
         }
@@ -121,9 +123,7 @@ class Navigate {
             address = address.substring(0, address.indexOf("#"));
         }
 
-        const newAddress = address.replaceAll(window.location.origin, "");
-
-        this.ToPage(newAddress, false);
+        this.ToPage(address, false);
     }
 
     static Install() {
@@ -431,8 +431,9 @@ function AddSearchTitle() {
     }
     for (var i = 0; i < Titles.length; i++) {
         var cpy = Titles[i].cloneNode(true);
-        if (cpy.href)
+        if (cpy.href) {
             cpy.onclick = e => Navigate.ToPage(cpy.href, true);
+        }
         cpy.className = "node" + ((TitleCount - Titles.length) + i);
         SearchResults.appendChild(cpy);
     }
