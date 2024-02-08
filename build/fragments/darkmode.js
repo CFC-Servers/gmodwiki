@@ -144,6 +144,9 @@ function toggleDarkMode() {
 window.addEventListener("DOMContentLoaded", () => {
     addTransitions()
     checkDarkMode()
+})
+
+window.addEventListener("load", () => {
     const button = document.getElementById("toggle-dark-mode")
     button.addEventListener("click", toggleDarkMode)
 })
