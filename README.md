@@ -8,11 +8,11 @@ The scraper then builds the appropriate `.astro` and `.json` files for all of th
 The build script dynamically modifies things like styles, scripts, html to optimize for cloud hosting.
 
 ### Features
-- Full DarkReader support!
+- Custom Darkmode support _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
+    - Alternatively, the mirror has DarkReader support!
 - Local self-hosting with Docker
 - Loading and in-browser performance enhancements over the original
 - Memory usage improvements
-- 1:1 styling with the original
 - Search bar works fast for basic searching
 - All images are mirrored and optimized
 - Hosted entirely on the cloud

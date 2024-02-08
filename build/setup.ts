@@ -6,7 +6,7 @@ import { minify as htmlMinify } from "html-minifier"
 import type ApiInterface from "./api_interface.js"
 import type StaticContentHandler from "./static.js"
 
-function processFooters($: any) {
+function processFooters($: cheerio.CheerioAPI) {
     const footers = $("div.footer")
 
     // Contains the section for views / last updated
@@ -18,32 +18,64 @@ function processFooters($: any) {
     secondFooter.remove()
 }
 
-function processContent($: any) {
+function processContent($: cheerio.CheerioAPI) {
     const content = $("div[id='pagecontent']")
     content.html("<slot />")
 }
 
-function extractSidebar($: any): string {
+async function processSidebar($: cheerio.CheerioAPI) {
     const sidebar = $("div[id='sidebar']")
-    const contents = sidebar.html()
+    let contents = sidebar.html()
+    if (!contents) throw new Error("No sidebar found - please report this!")
     sidebar.html("<Sidebar></Sidebar>")
 
-    return contents
+    contents = contents.trim()
+    contents = contents.replace(/\/gmod\//g, "/")
+    contents = contents.replaceAll("meth ", "")
+    contents = contents.replaceAll("memb ", "")
+    contents = contents.replaceAll("ToggleClass", "window.ToggleClass")
+    contents = htmlMinify(contents, { collapseWhitespace: true, removeComments: true })
+    await fs.writeFile("src/components/Sidebar.astro", contents)
 }
 
-function replaceVariables($: any) {
+async function processLayout($: cheerio.CheerioAPI) {
+    let layout = $.html()
+    layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
+    layout = layout.replace(/\/gmod\//g, "/")
+    layout = layout.replace(/"{title}"/g, "{title}")
+    layout = layout.replace(/"{description}"/g, "{description}")
+    await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
+}
+
+async function setupFolders() {
+    await fs.mkdir("src/pages", { recursive: true })
+    await fs.mkdir("public/content", { recursive: true })
+}
+
+async function processMainScript() {
+    const minifiedJs = await minify("build/script.js", { js: { mangle: true } })
+    await fs.writeFile("public/script.js", minifiedJs)
+}
+
+async function moveAstroFiles() {
+    await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")
+}
+
+function replaceVariables($: cheerio.CheerioAPI) {
     $("title").html("{title}")
     $("meta[name='og:title']").attr("content", "{title}")
     $("meta[name='og:description']").attr("content", "{description}")
     $("ul[id='pagelinks']").html("")
 }
 
-function addBrowserHints($: any) {
-    $(`<link rel="preconnect" href="https://fonts.googleapis.com">`).insertAfter(`meta[name='viewport']`)
-    $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(`meta[name='viewport']`)
+function addBrowserHints($: cheerio.CheerioAPI) {
+    const insertAfter = `meta[name='viewport']`
+    $(`<link rel="preconnect" href="https://fonts.googleapis.com">`).insertAfter(insertAfter)
+    $(`<link rel="preconnect" href="https://fonts.gstatic.com">`).insertAfter(insertAfter)
+    $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(insertAfter)
 }
 
-function processScripts($: any) {
+function processScripts($: cheerio.CheerioAPI) {
     const scripts = $("script")
 
     for (let i = 0; i < scripts.length; i++) {
@@ -73,12 +105,13 @@ const disclaimer = `<div class="markdown">
 </div>
 `
 
-function addDisclaimer($: any) {
+function addDisclaimer($: cheerio.CheerioAPI) {
     $(disclaimer).insertAfter("h1.pagetitle");
 }
 
 // Procecsses a downloaded CSS file and gets remote content, and modifies the file
-async function processCss(path: string, contentHandler: StaticContentHandler) {
+async function processCss(contentHandler: StaticContentHandler) {
+    const path = "public/styles/gmod.css"
     const current = await fs.readFile(path, "utf-8")
     let newContent = await contentHandler.processContent(current, true)
     newContent = `${newContent} #sidebar details[open] > ul { display: block; }\n`
@@ -96,6 +129,15 @@ const { title, description, views, updated } = Astro.props;
 ${content}
 `
 
+async function addDarkMode($: cheerio.CheerioAPI) {
+    const pagelinks = $("ul[id='pagelinks']")
+    pagelinks.append(`<li><button id="toggle-dark-mode">Toggle Dark Mode</button></li>`)
+
+    $(`<script src="/darkmode.js" is:inline></script>`).insertAfter("div.footer")
+
+    await fs.copyFile("build/darkmode.js", "public/darkmode.js")
+}
+
 export async function setup(api: ApiInterface, contentHandler: StaticContentHandler) {
     const rawPage = await api.get("/gmod")
     const index = await contentHandler.processContent(rawPage, false)
@@ -107,29 +149,11 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     processScripts($)
     addDisclaimer($)
     addBrowserHints($)
-
-    let sidebar = extractSidebar($)
-    sidebar = sidebar.trim()
-    sidebar = sidebar.replace(/\/gmod\//g, "/")
-    sidebar = sidebar.replaceAll("meth ", "")
-    sidebar = sidebar.replaceAll("memb ", "")
-    sidebar = sidebar.replaceAll("ToggleClass", "window.ToggleClass")
-    sidebar = htmlMinify(sidebar, { collapseWhitespace: true, removeComments: true })
-    await fs.writeFile("src/components/Sidebar.astro", sidebar)
-
-    let layout = $.html()
-    layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
-    layout = layout.replace(/\/gmod\//g, "/")
-    layout = layout.replace(/"{title}"/g, "{title}")
-    layout = layout.replace(/"{description}"/g, "{description}")
-    await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
-
-    await processCss("public/styles/gmod.css", contentHandler)
-
-    await fs.mkdir("src/pages", { recursive: true })
-    await fs.mkdir("public/content", { recursive: true })
-
-    const minifiedJs = await minify("build/script.js", { js: { mangle: true } })
-    await fs.writeFile("public/script.js", minifiedJs)
-    await fs.copyFile("build/[...slug].astro", "src/pages/[...slug].astro")
+    await processSidebar($)
+    await addDarkMode($)
+    await processLayout($)
+    await processCss(contentHandler)
+    await setupFolders()
+    await processMainScript()
+    await moveAstroFiles()
 }

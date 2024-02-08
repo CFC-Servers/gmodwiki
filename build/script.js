@@ -6,7 +6,6 @@ class Navigate {
     static Init() {
         this.pageContent = document.getElementById("pagecontent");
         this.pageTitle = document.getElementById("pagetitle");
-        this.pageLinks = document.getElementById("pagelinks");
         this.pageFooter = document.getElementById("pagefooter");
         this.pageTitle2 = document.getElementById("tabs_page_title");
         this.sideBar = document.getElementById("sidebar");
@@ -32,7 +31,7 @@ class Navigate {
             .then(json => {
             newData = json;
         }).catch((e) => {
-            newData = { html: "Failed to load page <b>" + address + "</b>" + (e ? "<p>" + e.toString() + "</p>" : ""), title: "Failed to load page", footer: "", pageLinks: [] };
+            newData = { html: "Failed to load page <b>" + address + "</b>" + (e ? "<p>" + e.toString() + "</p>" : ""), title: "Failed to load page", footer: "" };
             console.warn("Failed to fetch " + address);
         }).then(() => {
             if (push) {
@@ -62,7 +61,6 @@ class Navigate {
             this.pageContent.innerHTML = json.html;
             this.pageTitle.innerText = json.title;
             this.pageFooter.innerHTML = json.footer;
-            this.pageLinks.innerHTML = "";
             this.pageTitle2.innerText = "";
 
             requestAnimationFrame(() => {
