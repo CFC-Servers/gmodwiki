@@ -244,7 +244,7 @@ async function setupDarkMode($: cheerio.CheerioAPI) {
     const pagelinks = $("ul[id='pagelinks']")
     pagelinks.append(`<li><button id="toggle-dark-mode">Toggle Dark Mode</button></li>`)
 
-    $(`<script src="/darkmode.js" is:inline></script>`).insertAfter("div.footer")
+    $(`<script src="/darkmode.js" is:inline></script>`).insertAfter("meta[name='viewport']")
 
     await fs.copyFile("build/fragments/darkmode.js", "public/darkmode.js")
 }
