@@ -85,7 +85,6 @@ const transitions = `
       transition: background-color 0.2s border 0.2s;
     }
 `;
-const button = document.getElementById("toggle-dark-mode");
 
 function addTransitions() {
     const head = document.getElementsByTagName("head")[0];
@@ -142,8 +141,9 @@ function toggleDarkMode() {
     checkDarkMode()
 }
 
-button.addEventListener("click", toggleDarkMode)
 window.addEventListener("DOMContentLoaded", () => {
     addTransitions()
     checkDarkMode()
+    const button = document.getElementById("toggle-dark-mode")
+    button.addEventListener("click", toggleDarkMode)
 })
