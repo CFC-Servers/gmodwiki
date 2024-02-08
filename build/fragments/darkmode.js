@@ -68,6 +68,12 @@ const style = `
   }
 `;
 
+const permanentStyle = `
+    body.widescreen {
+        max-width: 100% !important;
+    }
+`
+  
 const transitions = `
     .body, div.footer, div.content {
       transition: background-color 0.2s;
@@ -79,12 +85,26 @@ const transitions = `
       transition: background-color 0.2s;
     }
     a.active {
-      transition: background-color 0.2s color 0.2s;
+      transition: background-color 0.2s, color 0.2s;
     }
     .markdown, .markdown .code, .markdown code, .markdown span.key, .markdown h2, .markdown h3, .body-tabs ul li a, .markdown table td, .markdown table th, .member_line, .member_line a.subject, .highlight {
-      transition: background-color 0.2s border 0.2s;
+      transition: background-color 0.2s, border 0.2s;
+    }
+    body {
+        transition: max-width 0.1s;
     }
 `;
+
+function addPermanentStyles() {
+    const head = document.getElementsByTagName("head")[0];
+    if (!head) { return; }
+
+    const styleElement = document.createElement("style");
+    styleElement.id = "dark-mode-permanent";
+    styleElement.type = "text/css";
+    styleElement.innerHTML = permanentStyle;
+    head.appendChild(styleElement);
+}
 
 function addTransitions() {
     const head = document.getElementsByTagName("head")[0];
@@ -113,37 +133,69 @@ function removeGlobalStyle() {
     if (style) style.remove();
 }
 
-function setDarkMode(value) {
-    localStorage.setItem("darkMode", value);
+function setSetting(setting, value) {
+    localStorage.setItem(setting, value);
 }
 
-function getDarkMode() {
-    return localStorage.getItem("darkMode");
+function getSetting(setting) {
+    return localStorage.getItem(setting) === "true";
 }
-
-let darkModeEnabled = getDarkMode() === "true";
 
 function checkDarkMode() {
-  if (darkModeEnabled) {
-      addGlobalStyle();
-  } else {
-      removeGlobalStyle();
-  }
+    const darkModeEnabled = getSetting("dark-mode");
+    if (darkModeEnabled) {
+        addGlobalStyle();
+    } else {
+        removeGlobalStyle();
+    }
 }
 
 function toggleDarkMode() {
-    darkModeEnabled = !darkModeEnabled
+    const darkModeEnabled = getSetting("dark-mode");
     if (darkModeEnabled) {
-        setDarkMode("true");
+        setSetting("dark-mode", "false");
     } else {
-        setDarkMode("false");
+        setSetting("dark-mode", "true");
     }
-    checkDarkMode()
+
+    requestAnimationFrame(checkDarkMode)
+}
+
+function checkWidescreen() {
+    const widescreenEnabled = getSetting("widescreen");
+    if (widescreenEnabled) {
+        document.body.classList.add("widescreen")
+    } else {
+        document.body.classList.remove("widescreen")
+    }
+}
+
+function toggleWidescreen() {
+    const widescreenEnabled = getSetting("widescreen");
+    if (widescreenEnabled) {
+        setSetting("widescreen", "false");
+    } else {
+        setSetting("widescreen", "true");
+    }
+
+    requestAnimationFrame(checkWidescreen)
 }
 
 window.addEventListener("load", () => {
-    addTransitions()
     checkDarkMode()
-    const button = document.getElementById("toggle-dark-mode")
-    button.addEventListener("click", toggleDarkMode)
+    checkWidescreen()
+    addPermanentStyles()
+    setTimeout( addTransitions, 500 );
+
+    const darkModeButton = document.getElementById("toggle-dark-mode")
+    darkModeButton.addEventListener("click", (e) => {
+      toggleDarkMode()
+      e.preventDefault()
+    })
+
+    const widescreenButton = document.getElementById("toggle-widescreen")
+    widescreenButton.addEventListener("click", (e) => {
+      toggleWidescreen()
+      e.preventDefault()
+    })
 })

@@ -162,10 +162,16 @@ function removeDeadStyles(content: string) {
         return false
     }
 
+    const usesBadStyles = (block: string) => {
+        if (block.startsWith("#sidebar details.level1 > summary")) return true
+        return false
+    }
+
     const shouldKeep = (block: string) => {
         if (isBadMdi(block)) return false
         if (usesDeadClass(block)) return false
         if (isEdit(block)) return false
+        if (usesBadStyles(block)) return false
         return true
     }
 
@@ -198,6 +204,10 @@ function optimizeCss(content: string) {
     content = content.replace(/#sidebar details > ul > li:nth\-child\(odd\) {/g, "details[open] > ul > li:nth-child(2n+1) {")
     content = content.replace(/#sidebar details a {/g, "details[open] a {")
     content = content.replace(/#sidebar details\.level1 > ul > li > a {/g, "details[open].level1 > ul > li > a {")
+
+    // Style fixes
+    content = content.replace(/cursor: hand;/g, "cursor: pointer;")
+    content = content.replace(/\s+-moz-osx-font-smoothing: grayscale;/g, "")
 
     return content
 }
@@ -242,9 +252,10 @@ ${content}
 
 async function setupDarkMode($: cheerio.CheerioAPI) {
     const pagelinks = $("ul[id='pagelinks']")
+    pagelinks.append(`<li><button id="toggle-widescreen">Toggle Widescreen</button></li>`)
     pagelinks.append(`<li><button id="toggle-dark-mode">Toggle Dark Mode</button></li>`)
 
-    $(`<script src="/darkmode.js" is:inline></script>`).insertAfter("meta[name='viewport']")
+    $(`<script src="/darkmode.js" is:inline></script>`).insertAfter(".footer[id='pagefooter']")
 
     await fs.copyFile("build/fragments/darkmode.js", "public/darkmode.js")
 }

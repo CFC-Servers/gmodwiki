@@ -5,7 +5,7 @@ const { title, description, views, updated } = Astro.props;
 ---
 <!DOCTYPE html><html lang="en"><head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="/darkmode.js" is:inline=""></script><link rel="preconnect" href="https://i.imgur.com"><link rel="preconnect" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://fonts.googleapis.com">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="preconnect" href="https://i.imgur.com"><link rel="preconnect" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://fonts.googleapis.com">
 	<title>{title}</title>
 	<link rel="stylesheet" href="/styles/gmod.css">
 	<link rel="icon" type="image/png" href="/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.webp">
@@ -51,7 +51,7 @@ const { title, description, views, updated } = Astro.props;
 
 				<div class="pagetitle" id="tabs_page_title"><a href="/" class="parent">Home</a> / <a href="/">Garry's Mod Wiki</a></div>
 
-				<ul id="pagelinks"><li><button id="toggle-dark-mode">Toggle Dark Mode</button></li></ul>
+				<ul id="pagelinks"><li><button id="toggle-widescreen">Toggle Widescreen</button></li><li><button id="toggle-dark-mode">Toggle Dark Mode</button></li></ul>
 			</div>
 
 		<div class="content">
@@ -63,7 +63,7 @@ const { title, description, views, updated } = Astro.props;
 
 </div>
 
-<div class="footer" id="pagefooter">{views} <br> {updated}</div><div class="markdown">
+<div class="footer" id="pagefooter">{views} <br> {updated}</div><script src="/darkmode.js" is:inline=""></script><div class="markdown">
   <div class="note">
     <div class="inner">
       <p><a target="_blank" href="https://github.com/CFC-Servers/gmodwiki">This site</a> is a community mirror of the <a target="_blank" href="https://wiki.facepunch.com">official Garry's Mod wiki.</a>. This site is not maintained by Facepunch Studios.</p>
