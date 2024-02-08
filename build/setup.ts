@@ -252,6 +252,7 @@ ${content}
 
 async function setupDarkMode($: cheerio.CheerioAPI) {
     const pagelinks = $("ul[id='pagelinks']")
+    pagelinks.append(`<li><a id="copy-button" style="cursor: pointer"><i class="mdi mdi-content-copy"></i>Copy</a></li>`)
     pagelinks.append(`<li><button id="toggle-widescreen">Toggle Widescreen</button></li>`)
     pagelinks.append(`<li><button id="toggle-dark-mode">Toggle Dark Mode</button></li>`)
 

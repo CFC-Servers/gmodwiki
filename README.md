@@ -7,27 +7,28 @@ It also includes a number of enhancments over the original.
 You may use the [public site](https://gmodwiki.com), or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for super fast offline access!
 
 ### Features
-- Custom Darkmode support _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
+- :dark_sunglasses: **Custom Darkmode support** _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
     - Alternatively, this mirror plays nicely with DarkReader!
-- Self-hosting support with Docker
-- Loading and in-browser performance enhancements over the original
+- :ship: **Self-hosting support with Docker**
+- :racing_car: **Loading and in-browser performance enhancements over the original**
     - Significant performance improvements for CSS styling
     - Reduced the total stylesheet size by 80+%
     - Noticeable improvements to "Page-to-page" navigation speed
     - Vastly improved navigation performance on Firefox
-- Memory usage improvements
+- :brain: **Memory usage improvements**
     - Caches page content in browser cache rather than Javascript memory
-- Fast searching 
+- :mag_right: **Fast searching **
     - Both basic and full-site searching are implemented
     - Search results are not paginated
-- All images are mirrored and optimized
+- :framed_picture: **All images are mirrored and optimized**
     - Image size reduced by > 40% with only a small loss in quality
-- Hosted entirely on the cloud
+- :cloud:**Hosted entirely on the cloud**
     - Very reliable, it should only go down if Cloudflare has a major outage
-- Automatic content updates every three days
+- robot: **Automatic content updates every three days**
     - All page content is pulled from the live site automatically
-- `?format=json` support
-- `~pagelist` support _(json format only)_
+- **`?format=json` support**
+- **`~pagelist` support _(json format only)_**
+- **"Copy markdown link" button** _([Thanks TankNut!](https://github.com/TankNut))_
 
 ### Limitations
 Current limitations:

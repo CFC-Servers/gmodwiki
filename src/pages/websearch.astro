@@ -15,7 +15,7 @@ const response: string[][] = await getSearchResults(query)
 const formatted = response.map((result) => {
     const href = result[0]
     const context = result[1]
-    const index = context.toLowerCase().indexOf(query)
+    const index = context.toLowerCase().indexOf(query.toLowerCase())
 
     const pre = context.substring(0, index)
     const match = context.substring(index, index + query.length)

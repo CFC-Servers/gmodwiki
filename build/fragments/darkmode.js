@@ -1,3 +1,6 @@
+// This isn't just Darkmode anymore, it's a whole "features" file now
+// TODO: Rename
+
 // from incredible-gmod.ru with <3
 // https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js
 // Modified by github.com/brandonsturgeon for use in github.com/CFC-Servers/gmodwiki
@@ -197,5 +200,16 @@ window.addEventListener("load", () => {
     widescreenButton.addEventListener("click", (e) => {
       toggleWidescreen()
       e.preventDefault()
+    })
+
+    // Thanks to https://github.com/TankNut
+    const copyButton = document.getElementById("copy-button")
+    copyButton.addEventListener("click", (e) => {
+        let path = window.location.pathname
+        path = path.replace(/\//g, "")
+        path = path.replace(/_/g, " ")
+
+        navigator.clipboard.writeText(`[${path}](${window.location.href})`);
+        e.preventDefault()
     })
 })
