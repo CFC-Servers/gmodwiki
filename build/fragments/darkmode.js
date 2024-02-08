@@ -143,5 +143,7 @@ function toggleDarkMode() {
 }
 
 button.addEventListener("click", toggleDarkMode)
-window.addEventListener("load", addTransitions)
-window.addEventListener("load", checkDarkMode)
+window.addEventListener("DOMContentLoaded", () => {
+    addTransitions()
+    checkDarkMode()
+})
