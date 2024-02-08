@@ -27,8 +27,10 @@ class ApiInterface {
     }
 
     async _get(url: string): Promise<any> {
-        console.log(chalk.blue("GET"), url)
-        return this.limiter.schedule(() => ky.get(url))
+        return this.limiter.schedule(() => {
+            console.log(chalk.blue("GET"), url)
+            return ky.get(url)
+        })
     }
 
     async getRaw(endpoint: string): Promise<any> {
@@ -47,7 +49,6 @@ class ApiInterface {
         const cachePath = `build/cache/${endpoint}.html`
 
         if (await fileExists(cachePath)) {
-            console.log(chalk.yellow("Using cached index for"), endpoint)
             const contents = await fs.readFile(cachePath)
             return contents.toString()
         }
@@ -67,7 +68,6 @@ class ApiInterface {
         const cachePath = `build/cache/${cacheEndpoint}.json`
 
         if (await fileExists(cachePath)) {
-            console.log(chalk.yellow("Using cached index for"), cacheEndpoint)
             const contents = await fs.readFile(cachePath)
             try {
                 return JSON.parse(contents.toString())

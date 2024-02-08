@@ -1,6 +1,7 @@
 // Finds, acquires, writes, and stubs any static content found in a given html file
 import path from "path"
 import sharp from "sharp"
+import chalk from "chalk"
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
 import type ApiInterface from "./api_interface.js"
@@ -80,8 +81,8 @@ class StaticContentHandler {
 
         // We replace all images with webp
         if (isImage.has(fileExtension)) {
-            filePath = filePath.replace(fileExtension, ".webp")
-            newURL = newURL.replace(fileExtension, ".webp")
+            filePath = filePath.replaceAll(fileExtension, ".webp")
+            newURL = newURL.replaceAll(fileExtension, ".webp")
         }
 
         if (fileExtension !== ".css" && await fileExists(filePath)) {
@@ -93,6 +94,7 @@ class StaticContentHandler {
 
         let data = await this.api.getRawFull(resolvedUrl)
         if (isImage.has(fileExtension)) {
+            console.log(chalk.green("Optimizing"), resolvedUrl)
             data = await this.optimizeImage(data)
         }
 
@@ -166,7 +168,11 @@ class StaticContentHandler {
     }
 
     public async processContent(content: string, isCss: boolean = false): Promise<string> {
-        return isCss ? this.processCss(content) : this.processHtml(content)
+        if (isCss) {
+            return await this.processCss(content)
+        } else {
+            return await this.processHtml(content)
+        }
     }
 }
 

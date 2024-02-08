@@ -34,12 +34,12 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     }
 
     const struct: PageResponse = await api.getJSON(`/gmod/${link}`)
-    console.log(chalk.green("Building"), link) 
+    // console.log(chalk.green("Building"), link) 
 
     let pageContent = await contentManager.processContent(struct.html, false)
     pageContent = pageContent.replace(/<html><head><\/head><body>/g, "")
     pageContent = pageContent.replace(/<\/body><\/html>/g, "")
-    pageContent = struct.html.replace(/https:\/\/wiki\.facepunch\.com\/gmod\//g, "/")
+    pageContent = pageContent.replace(/https:\/\/wiki\.facepunch\.com\/gmod\//g, "/")
     pageContent = pageContent.replaceAll(/\/gmod\//g, "/")
 
     delete struct.wikiName
