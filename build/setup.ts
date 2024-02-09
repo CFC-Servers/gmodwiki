@@ -235,7 +235,12 @@ async function processCss(contentHandler: StaticContentHandler) {
     newContent = `${newContent} ul#pagelinks > li { padding-right: 1rem; }\n`
 
     // Add the "Mirror" tag/label to the icon
-    newContent = `${newContent} #ident > h1 > a::after { content: "Mirror"; color: #0082ff; font-size: 10px; text-transform: uppercase; padding: 2px; margin-left: 8px; display: inline-block; position: relative; top: -4px; }`
+    newContent = `${newContent} #ident > h1 > a::after { content: "Mirror"; color: #0082ff; font-size: 10px; text-transform: uppercase; padding: 2px; margin-left: 8px; display: inline-block; position: relative; top: -4px; }\n`
+
+    // Fix sidebar focus/hover color styling
+    newContent = `${newContent} #sidebar .section > a:focus, #sidebar .section > details.level1 > summary > div:focus { background-color: rgba(0, 130, 255, 0.5); }\n`
+    newContent = `${newContent} #sidebar details > ul > li > a:focus { background-color: rgba(0, 130, 255, 0.5); }\n`
+    newContent = `${newContent} #searchresults > a:focus, #searchresults > a:hover { background-color: rgba(0, 130, 255, 0.5); }\n`
 
     newContent = removeDeadStyles(newContent)
     newContent = optimizeCss(newContent)
