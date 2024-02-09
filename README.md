@@ -12,7 +12,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :ship: **Self-hosting support with Docker**
 - :racing_car: **Loading and in-browser performance enhancements over the original**
     - Significant performance improvements for CSS styling
-    - Reduced the total stylesheet size by 80+%
+    - Reduced the total stylesheet size by 80%+
     - Noticeable improvements to "Page-to-page" navigation speed
     - Vastly improved navigation performance on Firefox
 - :brain: **Memory usage improvements**
@@ -24,7 +24,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
     - Image size reduced by > 40% with only a small loss in quality
 - :cloud:**Hosted entirely on the cloud**
     - Very reliable, it should only go down if Cloudflare has a major outage
-- robot: **Automatic content updates every three days**
+- :robot: **Automatic content updates every three days**
     - All page content is pulled from the live site automatically
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
