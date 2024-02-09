@@ -61,6 +61,13 @@ docker stop --time 1 gmodwiki
 ```
 
 #### With [`docker compose`](https://docs.docker.com/compose/)
+_Useful if you want to leave the site running at all times_
+
+<details>
+    <summary>:eyes: Instructions</summary>
+
+<br>
+
 Download the [`docker-compose.yml`](https://github.com/CFC-Servers/gmodwiki/blob/main/docker-compose.yml) file from this repository and put it somewhere on your machine.
 
 Then, simply `docker compose up` _(or `docker-compose up` for older `docker` engines)_.
@@ -82,10 +89,20 @@ If you want to expose the wiki instance to the world _(not recommended without a
 - Set `GMODWIKI_HOST=0.0.0.0`
 - Forward your chosen port _(`4321` by default)_ in your router/firewall
 - Visit your public IP in your browser: `http://<your IP>:<your port>`
+    
+</details>
 
 
 ### Hosting your own public instance
+_If you want to run another global instance for redundancy / host your own version_
+
+<details>
+    <summary>:eyes: Instructions</summary>
+
+<br>
+
 This mirror is made to run on Cloudflare. Deploying is really easy, simply clone the project and run:
+    
 ```sh
 npm i;
 npm run build;
@@ -121,8 +138,15 @@ Now, set up the special `?format=json` redirect rule:
         - Status Code: 301
     - Click "Deploy"
     - Wait about 30 seconds, and then try visiting: `https://<YOUR DOMAIN>/Player_Animations?format=json` and verify that you're redirected to: `https://<YOUR DOMAIN>/content/Player_Animations.json`
+</details>
 
 ## Dev
+
+<details>
+    <summary>:eyes: Instructions</summary>
+
+<br>
+
 Development should be fairly simple:
 ```
 npm i;
@@ -138,3 +162,4 @@ npm run preview;
     - All downloaded static content will be cached to `./public/`
     - You can remove either of these directories if you need to re-parse the remote content again
 - By default, `npm run astrobuild` will build the site for **self hosting**, not **cloud hosting**. If you need to test the cloud environment, you can run `export BUILD_ENV=production` before running the build/preview commands
+</details>
