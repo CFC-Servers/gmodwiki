@@ -29,6 +29,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
 - **"Copy markdown link" button** _([Thanks TankNut!](https://github.com/TankNut))_
+- **Full keyboard navigation capabilities for the sidebar/searchresults**
 
 ### Limitations
 Current limitations:
