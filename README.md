@@ -17,7 +17,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
     - Vastly improved navigation performance on Firefox
 - :brain: **Memory usage improvements**
     - Caches page content in browser cache rather than Javascript memory
-- :mag_right: **Fast searching **
+- :mag_right: **Fast searching**
     - Both basic and full-site searching are implemented
     - Search results are not paginated
 - :framed_picture: **All images are mirrored and optimized**
