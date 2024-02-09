@@ -12,7 +12,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :ship: **Self-hosting support with Docker**
 - :racing_car: **Loading and in-browser performance enhancements over the original**
     - Significant performance improvements for CSS styling
-    - Reduced the total stylesheet size by 80%+
+    - Reduced the total stylesheet size by nearly 90%
     - Noticeable improvements to "Page-to-page" navigation speed
     - Vastly improved navigation performance on Firefox
 - :brain: **Memory usage improvements**
@@ -35,7 +35,6 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 Current limitations:
 - No Editing _(will not implement)_
 - No change history _(probably won't implement)_
-- Copy button _(on textareas)_ is temporary nonfunctional
 - All images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp)
 - The main page script.js is self-hosted and modified (for performance), meaning any useful updates will need to be manually backported
 
