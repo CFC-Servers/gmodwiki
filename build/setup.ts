@@ -30,19 +30,19 @@ async function setupSidebar($: cheerio.CheerioAPI) {
     sidebar.html("<Sidebar></Sidebar>")
 
     contents = contents.trim()
-    contents = contents.replace(/\/gmod\//g, "/")
-    contents = contents.replaceAll("meth ", "")
-    contents = contents.replaceAll("memb ", "")
-    contents = contents.replaceAll("ToggleClass", "window.ToggleClass")
+    contents = contents.replace(/\/gmod\//g, "/") // We don't use the /gmod prefix
+    contents = contents.replaceAll("meth ", "") // Unused class
+    contents = contents.replaceAll("memb ", "") // Unused class
+    contents = contents.replaceAll("ToggleClass", "window.ToggleClass") // Astro/rocket-loader doesn't allow us to reference functions without putting them on the widnwos
     contents = htmlMinify(contents, { collapseWhitespace: true, removeComments: true })
     await fs.writeFile("src/components/Sidebar.astro", contents)
 }
 
 async function setupLayout($: cheerio.CheerioAPI) {
     let layout = $.html()
-    layout = layout.replace("<sidebar></sidebar>", "<Sidebar />")
-    layout = layout.replace(/\/gmod\//g, "/")
-    layout = layout.replace(/"{title}"/g, "{title}")
+    layout = layout.replace("<sidebar></sidebar>", "<Sidebar />") // When we insert our element it automatically gets formatted, so we have to fix it in a second pass
+    layout = layout.replace(/\/gmod\//g, "/") // We don't use the /gmod prefix
+    layout = layout.replace(/"{title}"/g, "{title}") // When we insert this code from js it wraps our frontmatter variables in quotes so we have to unwrap them again
     layout = layout.replace(/"{description}"/g, "{description}")
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 }
@@ -64,7 +64,7 @@ async function setupFragments() {
 function setupPageVariables($: cheerio.CheerioAPI) {
     $("title").html("{title}")
     $("meta[name='og:title']").attr("content", "{title}")
-    $("meta[name='og:description']").attr("content", "{description}")
+    $("meta[name='og:description']").attr("content", "{description}") // We have to correct these in a second pass
     $("ul[id='pagelinks']").html("")
 }
 
@@ -72,7 +72,7 @@ function setupBrowserHints($: cheerio.CheerioAPI) {
     const insertAfter = `meta[name='viewport']`
     $(`<link rel="preconnect" href="https://fonts.googleapis.com">`).insertAfter(insertAfter)
     $(`<link rel="preconnect" href="https://fonts.gstatic.com">`).insertAfter(insertAfter)
-    $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(insertAfter)
+    $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(insertAfter) // Some images are hosted on imgur
 }
 
 function setupScriptTags($: cheerio.CheerioAPI) {
@@ -100,6 +100,7 @@ async function setupDisclaimer($: cheerio.CheerioAPI) {
     $(disclaimer).insertAfter("div.footer[id='pagefooter']");
 }
 
+// Generated from `npm run get_used_mdis`
 const mdiWhitelist = [
     ".mdi-account",
     ".mdi-book",
@@ -138,6 +139,7 @@ const mdiWhitelist = [
 ]
 
 function removeDeadStyles(content: string) {
+    // Unused mdi selectors can be removed
     const isBadMdi = (block: string) => {
         const isMdi = block.startsWith(".mdi-")
         if (!isMdi) return false
@@ -148,6 +150,7 @@ function removeDeadStyles(content: string) {
         return false
     }
 
+    // Classes that are unused
     const usesDeadClass = (block: string) => {
         if (block.startsWith(".contentbar")) return true
         if (block.startsWith(".card")) return true
@@ -155,6 +158,7 @@ function removeDeadStyles(content: string) {
         return false
     }
 
+    // Anything related to editing or previewing is not needed
     const isEdit = (block: string) => {
         if (block.startsWith("#edit_")) return true
         if (block.startsWith("#preview")) return true
@@ -163,7 +167,7 @@ function removeDeadStyles(content: string) {
     }
 
     const usesBadStyles = (block: string) => {
-        if (block.startsWith("#sidebar details.level1 > summary")) return true
+        if (block.startsWith("#sidebar details.level1 > summary")) return true // This selector exclusively adds a bad rule that errors and doesn't do anything
         return false
     }
 
@@ -206,8 +210,8 @@ function optimizeCss(content: string) {
     content = content.replace(/#sidebar details\.level1 > ul > li > a {/g, "details[open].level1 > ul > li > a {")
 
     // Style fixes
-    content = content.replace(/cursor: hand;/g, "cursor: pointer;")
-    content = content.replace(/\s+-moz-osx-font-smoothing: grayscale;/g, "")
+    content = content.replace(/cursor: hand;/g, "cursor: pointer;") // cursor: hand is invalid
+    content = content.replace(/\s+-moz-osx-font-smoothing: grayscale;/g, "") // This rule is an error in every modern browser
 
     return content
 }
@@ -227,13 +231,10 @@ async function processCss(contentHandler: StaticContentHandler) {
     // Remove the weird dot matrix thing that breaks Darkreader
     newContent = `${newContent} .body > .content, #pagelinks a.active { background-image: none !important; }\n`
 
-    // Add padding to the "Toggle Dark Mode" button
+    // Add padding to the feature buttons
     newContent = `${newContent} ul#pagelinks > li { padding-right: 1rem; }\n`
 
-    // Override the padding for the first element on the page (it's a little too long with our disclaimer)
-    newContent = `${newContent} #pagecontent > :first-child { margin-top: 2rem !important; }\n`
-
-    // Add the "Mirror" tag/lable to the icon
+    // Add the "Mirror" tag/label to the icon
     newContent = `${newContent} #ident > h1 > a::after { content: "Mirror"; color: #0082ff; font-size: 10px; text-transform: uppercase; padding: 2px; margin-left: 8px; display: inline-block; position: relative; top: -4px; }`
 
     newContent = removeDeadStyles(newContent)
@@ -250,7 +251,7 @@ const { title, description, views, updated } = Astro.props;
 ${content}
 `
 
-async function setupDarkMode($: cheerio.CheerioAPI) {
+async function setupFeatures($: cheerio.CheerioAPI) {
     const pagelinks = $("ul[id='pagelinks']")
     pagelinks.append(`<li><a id="copy-button" style="cursor: pointer"><i class="mdi mdi-content-copy"></i>Copy</a></li>`)
     pagelinks.append(`<li><button id="toggle-widescreen">Toggle Widescreen</button></li>`)
@@ -278,7 +279,7 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     setupBrowserHints($)
     await setupDisclaimer($)
     await setupSidebar($)
-    await setupDarkMode($)
+    await setupFeatures($)
     await setupLayout($)
     await processCss(contentHandler)
     await setupFolders()

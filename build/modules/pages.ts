@@ -37,11 +37,11 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     // console.log(chalk.green("Building"), link) 
 
     let pageContent = await contentManager.processContent(struct.html, false)
-    pageContent = pageContent.replace(/<html><head><\/head><body>/g, "")
-    pageContent = pageContent.replace(/<\/body><\/html>/g, "")
+    pageContent = pageContent.replace(/<html><head><\/head><body>/g, "") // Remove unnecessary tags
+    pageContent = pageContent.replace(/<\/body><\/html>/g, "") // Remove unnecessary tags
     pageContent = pageContent.replace(/https:\/\/wiki\.facepunch\.com\/gmod\//g, "/")
-    pageContent = pageContent.replaceAll(/\/gmod\//g, "/")
-    pageContent = pageContent.replaceAll(/CopyCode/g, "window.CopyCode")
+    pageContent = pageContent.replaceAll(/\/gmod\//g, "/") // We've removed the /gmod prefix
+    pageContent = pageContent.replaceAll(/CopyCode/g, "window.CopyCode") // Because we use astro/rocket loader, we can't access the function without it being on the window
 
     delete struct.wikiName
     delete struct.wikiIcon
