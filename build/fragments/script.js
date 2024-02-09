@@ -261,18 +261,20 @@ window.ToggleClass = function(element, classname) {
 }
 
 
-function CopyCode(event) {
+window.CopyCode = function(event) {
     var code = event.target.closest("div.code").innerText;
-    navigator.clipboard.writeText(code);
-    var btn = event.target.closest("copy");
-    var icn = btn.querySelector(".mdi");
-    icn.classList.replace("mdi-content-copy", "mdi-check");
-    btn.classList.add("copied");
-    clearTimeout(icn.copyTimeout);
-    icn.copyTimeout = setTimeout(function () {
-        icn.classList.replace("mdi-check", "mdi-content-copy");
-        btn.classList.remove("copied");
-    }, 5000);
+    navigator.clipboard.writeText(code).then(() => {
+        var btn = event.target.closest("copy");
+        var icn = btn.querySelector(".mdi");
+        icn.classList.replace("mdi-content-copy", "mdi-check");
+        btn.classList.add("copied");
+        clearTimeout(icn.copyTimeout);
+        icn.copyTimeout = setTimeout(function () {
+            icn.classList.replace("mdi-check", "mdi-content-copy");
+            btn.classList.remove("copied");
+        }, 5000);
+    })
+    event.preventDefault()
 }
 
 

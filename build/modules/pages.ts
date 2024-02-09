@@ -41,6 +41,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     pageContent = pageContent.replace(/<\/body><\/html>/g, "")
     pageContent = pageContent.replace(/https:\/\/wiki\.facepunch\.com\/gmod\//g, "/")
     pageContent = pageContent.replaceAll(/\/gmod\//g, "/")
+    pageContent = pageContent.replaceAll(/CopyCode/g, "window.CopyCode")
 
     delete struct.wikiName
     delete struct.wikiIcon

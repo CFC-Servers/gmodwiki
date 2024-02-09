@@ -204,12 +204,12 @@ window.addEventListener("load", () => {
 
     // Thanks to https://github.com/TankNut
     const copyButton = document.getElementById("copy-button")
-    copyButton.addEventListener("click", (e) => {
+    copyButton.addEventListener("click", async (e) => {
         let path = window.location.pathname
         path = path.replace(/\//g, "")
         path = path.replace(/_/g, " ")
 
-        navigator.clipboard.writeText(`[${path}](${window.location.href})`);
         e.preventDefault()
+        await navigator.clipboard.writeText(`[${path}](${window.location.href})`);
     })
 })
