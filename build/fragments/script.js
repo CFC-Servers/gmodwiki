@@ -290,7 +290,7 @@ function InitSearch() {
     SidebarContents = document.getElementById("contents");
     SearchInput.addEventListener("input", e => {
         clearTimeout(SearchDelay);
-        SearchDelay = setTimeout(UpdateSearch, 200);
+        SearchDelay = setTimeout(UpdateSearch, 10);
     });
     SearchInput.addEventListener("keyup", e => {
         if (e.keyCode == 13) {
@@ -300,8 +300,10 @@ function InitSearch() {
 }
 
 function UpdateSearch(limitResults = true) {
+    const limitedResultCount = 500
+
     if (limitResults)
-        MaxResultCount = 100;
+        MaxResultCount = limitedResultCount;
     else
         MaxResultCount = 2000;
     var child = SearchResults.lastElementChild;
@@ -352,7 +354,7 @@ function UpdateSearch(limitResults = true) {
         var moreresults = document.createElement('a');
         moreresults.href = "#";
         moreresults.classList.add('noresults');
-        moreresults.innerHTML = (ResultCount - 100) + ' more results - show more?';
+        moreresults.innerHTML = (ResultCount - limitedResultCount) + ' more results - show more?';
         moreresults.onclick = (e) => { UpdateSearch(false); return false; };
         SearchResults.append(moreresults);
     }
@@ -445,9 +447,10 @@ function AddSearchTitle() {
 window.addEventListener('keydown', (e) => {
     if (e.keyCode != 191)
         return;
-    if (document.activeElement.tagName == "INPUT")
+    const tagName = document.activeElement.tagName;
+    if (tagName == "INPUT")
         return;
-    if (document.activeElement.tagName == "TEXTAREA")
+    if (tagName == "TEXTAREA")
         return;
     SearchInput.focus();
     SearchInput.value = "";
