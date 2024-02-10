@@ -64,7 +64,7 @@ docker stop --time 1 gmodwiki
 _Useful if you want to leave the site running at all times_
 
 <details>
-    <summary>:eyes: Instructions</summary>
+    <summary>:point_up_2: Instructions</summary>
 
 <br>
 
@@ -97,7 +97,7 @@ If you want to expose the wiki instance to the world _(not recommended without a
 _If you want to run another global instance for redundancy / host your own version_
 
 <details>
-    <summary>:eyes: Instructions</summary>
+    <summary>:point_up_2: Instructions</summary>
 
 <br>
 
@@ -143,7 +143,7 @@ Now, set up the special `?format=json` redirect rule:
 ## Dev
 
 <details>
-    <summary>:eyes: Instructions</summary>
+    <summary>:point_up_2: Instructions</summary>
 
 <br>
 
