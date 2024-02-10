@@ -23,7 +23,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :framed_picture: **Optimized images**
     - Image size reduced by > 40% with only a small loss in quality
 - :cloud: **Hosted entirely on The Cloud**
-    - Very reliable, it should only go down if Cloudflare has a major outage
+    - Very reliable! Should almost never go down
 - :robot: **Automatic content updates**
     - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) every three days
 - :hammer_and_wrench: **UI bug fixes**
