@@ -7,29 +7,30 @@ It also includes a number of enhancments over the original.
 You may use the [public site](https://gmodwiki.com), or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for super fast offline access!
 
 ### Features
-- :dark_sunglasses: **Custom Darkmode support** _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
+- :dark_sunglasses: **Custom Darkmode** _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
     - Alternatively, this mirror plays nicely with DarkReader!
-- :ship: **Self-hosting support with Docker**
-- :racing_car: **Loading and in-browser performance enhancements over the original**
+- :ship: **Self-hosting with Docker**
+- :racing_car: **Performance enhancements over the original**
     - Significant performance improvements for CSS styling
     - Reduced the total stylesheet size by nearly 90%
     - Noticeable improvements to "Page-to-page" navigation speed
     - Vastly improved navigation performance on Firefox
-- :brain: **Memory usage improvements**
+- :brain: **Optimizezd memory usage**
     - Caches page content in browser cache rather than Javascript memory
 - :mag_right: **Fast searching**
     - Both basic and full-site searching are implemented
     - Search results are not paginated
-- :framed_picture: **All images are mirrored and optimized**
+- :framed_picture: **Optimized images**
     - Image size reduced by > 40% with only a small loss in quality
-- :cloud:**Hosted entirely on the cloud**
+- :cloud: **Hosted entirely on The Cloud**
     - Very reliable, it should only go down if Cloudflare has a major outage
-- :robot: **Automatic content updates every three days**
-    - All page content is pulled from the live site automatically
+- :robot: **Automatic content updates**
+    - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) every three days
+- :hammer_and_wrench: **UI bug fixes**
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
 - **"Copy markdown link" button** _([Thanks TankNut!](https://github.com/TankNut))_
-- **Full keyboard navigation capabilities for the sidebar/searchresults**
+- **Keyboard navigation support for the sidebar**
 
 ### Limitations
 Current limitations:
