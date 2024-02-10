@@ -15,7 +15,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
     - Reduced the total stylesheet size by nearly 90%
     - Noticeable improvements to "Page-to-page" navigation speed
     - Vastly improved navigation performance on Firefox
-- :brain: **Optimizezd memory usage**
+- :brain: **Optimized memory usage**
     - Caches page content in browser cache rather than Javascript memory
 - :mag_right: **Fast searching**
     - Both basic and full-site searching are implemented
