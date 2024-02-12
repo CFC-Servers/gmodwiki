@@ -123,30 +123,50 @@ Then:
 If you have your own domain:
 - Go to the "Custom Domains" tab and click "Set up a custom domain" to connect your own domain
 
-Now, set up the special `?format=json` redirect rule:
-- Click on "Websites" in the sidebar
-- Find your website, click on it
-- Expand the "Rules" section in the sidebar
-- Go to "Redirect rules"
-- "Create a new Rule"
-    - Name it "Json Format" or similar (doesn't matter)
-    - "Custom filter expression"
-    - "When incoming requests match...":
-        - Field: "URI Query String"
-        - Operator: "equals"
-        - Value: `format=json`
-    - "Then":
-        - Type: "Dynamic"
-        - Expression: `concat("https://<YOUR DOMAIN>/content", http.request.uri.path, ".json")`
-        - Status Code: 301
-    - Click "Deploy"
-    - Wait about 30 seconds, and then try visiting: `https://<YOUR DOMAIN>/Player_Animations?format=json` and verify that you're redirected to: `https://<YOUR DOMAIN>/content/Player_Animations.json`
+### Now, set up the redirect rules:
+Navigate to Cache Rules:
+
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/fc89fe0f-57fd-4e34-ac0d-bd7b1ddddfca)
+
+**`?format=json` redirect**
+
+_⚠️ Be sure to replace `gmodwiki.com` with your domain!_
+
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/3329e11f-eed0-487e-8901-906fee2f8039)
+
+**`/gmod/` redirect**
+
+_⚠️ This needs to be the second rule in the rules list!_
+
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/b64b92a2-028d-498e-8040-a117fe2ee3b6)
+
+Now, wait about 30 seconds, and then try:
+- Visiting: `https://<YOUR DOMAIN>/Player_Animations?format=json` and verify that you're redirected to: `https://<YOUR DOMAIN>/content/Player_Animations.json`
+- Visiting: `https://<YOUR DOMAIN>/gmod/Player_Animations` and verify that you're redirected to: `https://<YOUR DOMAIN>/Player_Animations`
+
+### Then, you'll need to set up your caching rules:
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/9854e77b-6f3d-4932-adaa-896bffcbbafa)
+
+**Search Caching Rule** (needs to be first in the rule list):
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/70f2d777-7e35-4a86-9429-4f5556cdfb5b)
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/61b58cfb-205f-41a3-9634-84b654d20318)
+
+
+**Primary Caching Rule:**
+- Edge Cache: 3 days
+- Brower Cache: 1 day
+
+_⚠️ Be sure to replace `gmodwiki.com` with your domain!_
+
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/0dd7cbac-d3e8-486c-9549-344b8f453f27)
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/34b267ae-5036-45e1-91a1-b948702a89e2)
+![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/e8133bac-c12a-4bbe-a7bf-fff30d1e2850)
 </details>
 
 ## Dev
 
 <details>
-    <summary>:point_up_2: Instructions</summary>
+    <summary>:point_up_2: Instructions/Details</summary>
 
 <br>
 
