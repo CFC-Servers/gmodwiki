@@ -29,6 +29,8 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :hammer_and_wrench: **UI bug fixes**
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
+- **`/gmod/` redirect support**
+  - _This means you can safely redirect all gmod links from `wiki.facepunch.com` to `gmodwiki.com`_
 - **"Copy markdown link" button** _([Thanks TankNut!](https://github.com/TankNut))_
 - **Keyboard navigation support for the sidebar**
 
