@@ -457,6 +457,25 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
 });
 
+function timeAgoDaysAndHours(isoDate) {
+  const now = new Date();
+  const past = new Date(isoDate);
+  const diff = now - past;
+  const diffHours = diff / 3600000; // Convert milliseconds to hours
+  const days = Math.floor(diffHours / 24);
+  const hours = Math.floor(diffHours % 24);
+
+  if (days === 0 && hours === 0) {
+    return "<1 hour ago";
+  } else if (days === 0) {
+    return `${hours} hours ago`;
+  } else if (hours === 0) {
+    return `${days} days ago`;
+  } else {
+    return `${days} days, ${hours} hours ago`;
+  }
+}
+
 window.addEventListener("load", () => {
     requestAnimationFrame(() => {
         var sidebar = document.getElementById( "sidebar" )
@@ -468,6 +487,11 @@ window.addEventListener("load", () => {
 
         requestAnimationFrame(() => {
             InitSearch()
+
+            const lastParseElement = document.getElementById("last-parse");
+            const contents = lastParseElement.textContent;
+            const newContents = timeAgoDaysAndHours(contents);
+            lastParseElement.textContent = newContents;
 
             requestAnimationFrame(() => {
                 Navigate.Install()

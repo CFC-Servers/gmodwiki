@@ -96,7 +96,12 @@ function setupScriptTags($: cheerio.CheerioAPI) {
 }
 
 async function setupDisclaimer($: cheerio.CheerioAPI) {
-    const disclaimer = await fs.readFile("build/fragments/disclaimer.html", "utf-8")
+    let disclaimer = await fs.readFile("build/fragments/disclaimer.html", "utf-8")
+
+    // Replace {{lastParse}} with the current datetime
+    const lastParse = new Date().toISOString()
+    disclaimer = disclaimer.replace(/{{lastParse}}/, lastParse)
+
     $(disclaimer).insertAfter("div.footer[id='pagefooter']");
 }
 
@@ -241,6 +246,9 @@ async function processCss(contentHandler: StaticContentHandler) {
     newContent = `${newContent} #sidebar .section > a:focus, #sidebar .section > details.level1 > summary > div:focus { background-color: rgba(0, 130, 255, 0.5); }\n`
     newContent = `${newContent} #sidebar details > ul > li > a:focus { background-color: rgba(0, 130, 255, 0.5); }\n`
     newContent = `${newContent} #searchresults > a:focus, #searchresults > a:hover { background-color: rgba(0, 130, 255, 0.5); }\n`
+
+    // Set up the last parse date
+    newContent = `${newContent} #last-parse { font-size: 13px; font-weight: bold; padding: 2px; font-family: monospace; }\n`
 
     newContent = removeDeadStyles(newContent)
     newContent = optimizeCss(newContent)
