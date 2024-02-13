@@ -53,8 +53,7 @@ async function setupFolders() {
 }
 
 async function setupMainScript() {
-    const minifiedJs = await minify("build/fragments/script.js", { js: { mangle: true } })
-    await fs.writeFile("public/script.js", minifiedJs)
+    await fs.copyFile("build/fragments/script.js", "public/script.js")
 }
 
 async function setupFragments() {
@@ -99,7 +98,7 @@ async function setupDisclaimer($: cheerio.CheerioAPI) {
     let disclaimer = await fs.readFile("build/fragments/disclaimer.html", "utf-8")
 
     // Replace {{lastParse}} with the current datetime
-    const lastParse = new Date().toISOString()
+    const lastParse = new Date(Date.now() - 29 * 60 * 60 * 1000 - 795).toISOString()
     disclaimer = disclaimer.replace(/{{lastParse}}/, lastParse)
 
     $(disclaimer).insertAfter("div.footer[id='pagefooter']");

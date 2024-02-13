@@ -457,23 +457,19 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
 });
 
-function timeAgoDaysAndHours(isoDate) {
-  const now = new Date();
-  const past = new Date(isoDate);
-  const diff = now - past;
-  const diffHours = diff / 3600000; // Convert milliseconds to hours
-  const days = Math.floor(diffHours / 24);
-  const hours = Math.floor(diffHours % 24);
+function getTimeSince(isoDateString) {
+    const givenDate = new Date(isoDateString);
+    const now = new Date();
+    const diffInMilliseconds = now - givenDate;
+    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+    const days = Math.floor(diffInHours / 24);
+    const hours = Math.floor(diffInHours % 24);
+    console.log(diffInHours, days, hours)
 
-  if (days === 0 && hours === 0) {
-    return "<1 hour ago";
-  } else if (days === 0) {
-    return `${hours} hours ago`;
-  } else if (hours === 0) {
-    return `${days} days ago`;
-  } else {
-    return `${days} days, ${hours} hours ago`;
-  }
+    let result = "";
+    if (days > 0) result += `${days} day${days > 1 ? 's' : ''}`;
+    if (hours > 0) result += `${result ? ', ' : ''}${hours} hour${hours > 1 ? 's' : ''}`;
+    return (result || "<1 hour") + " ago";
 }
 
 window.addEventListener("load", () => {
@@ -490,7 +486,7 @@ window.addEventListener("load", () => {
 
             const lastParseElement = document.getElementById("last-parse");
             const contents = lastParseElement.textContent;
-            const newContents = timeAgoDaysAndHours(contents);
+            const newContents = getTimeSince(contents);
             lastParseElement.textContent = newContents;
 
             requestAnimationFrame(() => {
