@@ -35,7 +35,7 @@ jobs:
           npm run build
 
       - name: Upload search index
-        uses: cloudflare/wrangler-action@3.0.0
+        uses: cloudflare/wrangler-action@v3
         with:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
@@ -50,7 +50,7 @@ jobs:
           npm run astrobuild
 
       - name: Publish Site
-        uses: cloudflare/wrangler-action@3.0.0
+        uses: cloudflare/wrangler-action@v3
         with:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
