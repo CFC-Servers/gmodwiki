@@ -1,5 +1,7 @@
 # GMod Wiki Mirror
-
+<p align="left">
+    <a href="https://discord.gg/5JUqZjzmYJ" alt="Discord Invite"><img src="https://img.shields.io/discord/981394195812085770?label=Support&logo=discord&logoColor=white" /></a>
+</p>
 This project scrapes and mirrors the GMod Wiki.
 
 It also includes a number of enhancments over the original.
