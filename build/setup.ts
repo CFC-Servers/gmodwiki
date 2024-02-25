@@ -220,7 +220,7 @@ function optimizeCss(content: string) {
     return content
 }
 
-// Procecsses a downloaded CSS file and gets remote content, and modifies the file
+// Processes a downloaded CSS file, gets remote content, and modifies the file
 async function processCss(contentHandler: StaticContentHandler) {
     const path = "public/styles/gmod.css"
     const current = await fs.readFile(path, "utf-8")
@@ -249,6 +249,9 @@ async function processCss(contentHandler: StaticContentHandler) {
     // Set up the last parse date
     newContent = `${newContent} #last-parse { font-size: 13px; font-weight: bold; padding: 2px; font-family: monospace; }\n`
 
+    // Add scrollbar for the body tabs
+    newContent = `${newContent} .body-tabs { overflow-x: auto; }\n`
+
     newContent = removeDeadStyles(newContent)
     newContent = optimizeCss(newContent)
 
@@ -265,6 +268,7 @@ ${content}
 
 async function setupFeatures($: cheerio.CheerioAPI) {
     const pagelinks = $("ul[id='pagelinks']")
+    pagelinks.append(`<li><a id="live-button" style="cursor: pointer"><i class="mdi mdi-history"></i>Live</a></li>`)
     pagelinks.append(`<li><a id="copy-button" style="cursor: pointer"><i class="mdi mdi-content-copy"></i>Copy</a></li>`)
     pagelinks.append(`<li><button id="toggle-widescreen">Toggle Widescreen</button></li>`)
     pagelinks.append(`<li><button id="toggle-dark-mode">Toggle Dark Mode</button></li>`)

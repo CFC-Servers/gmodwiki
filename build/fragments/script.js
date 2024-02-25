@@ -4,14 +4,18 @@ var Preview;
 var Decorator;
 class Navigate {
     static Init() {
-        this.pageContent = document.getElementById("pagecontent");
-        this.pageTitle = document.getElementById("pagetitle");
-        this.pageFooter = document.getElementById("pagefooter");
-        this.pageTitle2 = document.getElementById("tabs_page_title");
-        this.sideBar = document.getElementById("sidebar");
-        this.links = this.sideBar.getElementsByTagName("a");
-        this.details = this.sideBar.getElementsByTagName("details");
+        requestAnimationFrame(() => {
+          this.pageContent = document.getElementById("pagecontent");
+          this.pageTitle = document.getElementById("pagetitle");
+          this.pageFooter = document.getElementById("pagefooter");
+          this.pageTitle2 = document.getElementById("tabs_page_title");
+          this.sideBar = document.getElementById("sidebar");
+          this.liveButton = document.getElementById("live-button")
+          this.links = this.sideBar.getElementsByTagName("a");
+          this.details = this.sideBar.getElementsByTagName("details");
+        });
     }
+
     static ToPage(address, push = true) {
         if (this.pageContent == null) {
             window.location.href = address;
@@ -64,6 +68,8 @@ class Navigate {
             this.pageTitle.innerText = json.title;
             this.pageFooter.innerHTML = json.footer;
             this.pageTitle2.innerText = "";
+            this.liveButton.href = `https://wiki.facepunch.com/gmod${window.location.pathname}`
+            this.liveButton.target = "_blank"
 
             requestAnimationFrame(() => {
                 var a = document.createElement("a");
@@ -80,7 +86,6 @@ class Navigate {
                 document.title = json.title + siteTitle;
             })
         })
-
     }
 
     static UpdateSidebar() {
@@ -481,6 +486,10 @@ window.addEventListener("load", () => {
             active[0].scrollIntoView( { smooth: true, block: "center" } )
         }
 
+        var liveButton = document.getElementById("live-button")
+        liveButton.href = `https://wiki.facepunch.com/gmod${window.location.pathname}`
+        liveButton.target = "_blank"
+
         requestAnimationFrame(() => {
             InitSearch()
 
@@ -493,5 +502,6 @@ window.addEventListener("load", () => {
                 Navigate.Install()
             });
         });
+
     });
 })
