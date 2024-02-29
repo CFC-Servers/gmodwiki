@@ -4,60 +4,58 @@ import Sidebar from "../components/Sidebar.astro";
 const { title, description, views, updated } = Astro.props;
 ---
 <!DOCTYPE html><html lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="preconnect" href="https://i.imgur.com"><link rel="preconnect" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://fonts.googleapis.com">
-    <title>{title}</title>
-    <link rel="stylesheet" href="/styles/gmod.css">
-    <link rel="icon" type="image/png" href="/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.webp">
-    <script src="/script.js" is:inline=""></script>
-    <link rel="search" title="Garry's Mod Wiki" type="application/opensearchdescription+xml" href="/~searchmanifest">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="preconnect" href="https://i.imgur.com"><link rel="preconnect" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://fonts.googleapis.com">
+	<title>{title}</title>
+	<script src="/public/cdn-cgi/apps/head/JodREY1zTjWBVnPepvx61z0haaQ.js" is:inline=""></script><link rel="stylesheet" href="/public/styles/gmod.css">
+	<link rel="icon" type="image/png" href="/public/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.webp">
+	<script src="/public/script.js" is:inline=""></script>
+	<link rel="search" title="Garry's Mod Wiki" type="application/opensearchdescription+xml" href="/~searchmanifest">
 
-    <meta name="twitter:site" content="@fcpnchstds">
-    <meta name="twitter:card" content="summary">
-    <meta name="theme-color" content="#0082ff">
+	<meta name="twitter:site" content="@fcpnchstds">
+	<meta name="twitter:card" content="summary">
+	<meta name="theme-color" content="#0082ff">
 
-    <meta property="og:title" name="og:title" content={title}>
-    <meta property="og:site_name" name="og:site_name" content="Garry's Mod Wiki">
-    <meta property="og:type" name="og:type" content="website">
-        <meta property="og:description" name="og:description" content={description}>
-        <meta property="og:image" name="og:image" content="//files.facepunch.com/wiki/files/353/8d8c63b684d38b4.png">
+	<meta property="og:title" name="og:title" content={title}>
+	<meta property="og:site_name" name="og:site_name" content="Garry's Mod Wiki">
+	<meta property="og:type" name="og:type" content="website">
+	<meta property="og:description" name="og:description" content={description}>
+	<meta property="og:image" name="og:image" content="//files.facepunch.com/wiki/files/353/8d8c63b684d38b4.png">
 
-    
+	
 
 </head>
 <body>
 
-<div id="toolbar">
+	<div id="toolbar">
 
-    <div>
+		<div>
 
-        <div>
-            <button onclick="ToggleClass( 'sidebar', 'visible' )">
-                <i class="mdi mdi-menu"></i>
-            </button>
-        </div>
+			<div>
+				<button onclick="ToggleClass( 'sidebar', 'visible' )"><i class="mdi mdi-menu"></i></button>
+			</div>
 
-        <div class="grow"></div>
+			<div class="grow"></div>
 
-        <h1 class="title">
-            <a href="/">Garry's Mod Wiki</a>
-        </h1>
+			<h1 class="title">
+				<a href="/">Garry's Mod Wiki</a>
+			</h1>
 
-    </div>
+		</div>
 
-</div>
+	</div>
 
-<div class="body">
+	<div class="body">
 
-        <div class="body-tabs">
+			<div class="body-tabs">
 
-            <div class="pagetitle" id="tabs_page_title"><a href="/" class="parent">Home</a> / <a href="/">Garry's Mod Wiki</a></div>
+				<div class="pagetitle" id="tabs_page_title"><a href="/" class="parent">Home</a> / <a href="/">Garry's Mod Wiki</a></div>
 
-            <ul id="pagelinks"><li><a id="live-button" style="cursor: pointer"><i class="mdi mdi-history"></i>Live</a></li><li><a id="copy-button" style="cursor: pointer"><i class="mdi mdi-content-copy"></i>Copy</a></li><li><button id="toggle-widescreen">Toggle Widescreen</button></li><li><button id="toggle-dark-mode">Toggle Dark Mode</button></li></ul>
-        </div>
+				<ul id="pagelinks"><li><a id="live-button" style="cursor: pointer"><i class="mdi mdi-history"></i>Live</a></li><li><a id="copy-button" style="cursor: pointer"><i class="mdi mdi-content-copy"></i>Copy</a></li><li><button id="toggle-widescreen">Toggle Widescreen</button></li><li><button id="toggle-dark-mode">Toggle Dark Mode</button></li></ul>
+			</div>
 
-    <div class="content">
-        
+		<div class="content">
+			
 <div class="content">
 
         <h1 class="pagetitle" id="pagetitle">Garry's Mod Wiki</h1>
@@ -70,23 +68,24 @@ const { title, description, views, updated } = Astro.props;
     <div class="inner">
       <p><a target="_blank" href="https://github.com/CFC-Servers/gmodwiki">This site</a> is a community mirror of the <a target="_blank" href="https://wiki.facepunch.com">official Garry's Mod wiki.</a>. This site is not maintained by Facepunch Studios.</p>
       <p>Page content is automatically updated every two days. Edits and history are not available.</p>
-      <p>Last Parsed: <span id="last-parse">2024-02-28T01:18:57.797Z</span></p>
+      <p>Last Parsed: <span id="last-parse">2024-02-28T03:23:32.766Z</span></p>
     </div>
   </div>
 </div>
 
 
-    </div>
+		</div>
 
-    
+		
 
-</div>
-
-
-<div id="sidebar"><Sidebar /></div>
+	</div>
 
 
+		<div id="sidebar"><Sidebar /></div>
 
+		
+
+	
 
 
 

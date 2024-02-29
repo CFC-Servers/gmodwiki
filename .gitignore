@@ -26,3 +26,4 @@ public/
 slim.report.json
 
 .wrangler
+.vscode/settings.json
