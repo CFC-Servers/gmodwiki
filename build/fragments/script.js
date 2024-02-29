@@ -4,16 +4,14 @@ var Preview;
 var Decorator;
 class Navigate {
     static Init() {
-        requestAnimationFrame(() => {
-          this.pageContent = document.getElementById("pagecontent");
-          this.pageTitle = document.getElementById("pagetitle");
-          this.pageFooter = document.getElementById("pagefooter");
-          this.pageTitle2 = document.getElementById("tabs_page_title");
-          this.sideBar = document.getElementById("sidebar");
-          this.liveButton = document.getElementById("live-button")
-          this.links = this.sideBar.getElementsByTagName("a");
-          this.details = this.sideBar.getElementsByTagName("details");
-        });
+        this.pageContent = document.getElementById("pagecontent");
+        this.pageTitle = document.getElementById("pagetitle");
+        this.pageFooter = document.getElementById("pagefooter");
+        this.pageTitle2 = document.getElementById("tabs_page_title");
+        this.sideBar = document.getElementById("sidebar");
+        this.liveButton = document.getElementById("live-button")
+        this.links = this.sideBar.getElementsByTagName("a");
+        this.details = this.sideBar.getElementsByTagName("details");
     }
 
     static ToPage(address, push = true) {
@@ -135,8 +133,7 @@ class Navigate {
         this.Init();
         window.onpopstate = e => this.OnNavigated(e);
 
-        if (this.pageContent == null)
-            return true;
+        if (this.pageContent == null) return true;
 
         var thisHost = window.location.host;
         this.sideBar.addEventListener("click", (e) => {
@@ -160,6 +157,7 @@ class Navigate {
 
         this.pageContent.addEventListener("click", (e) => {
             var a = e.target;
+
             if (a.host != thisHost)
                 return;
 
@@ -469,7 +467,6 @@ function getTimeSince(isoDateString) {
     const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
     const days = Math.floor(diffInHours / 24);
     const hours = Math.floor(diffInHours % 24);
-    console.log(diffInHours, days, hours)
 
     let result = "";
     if (days > 0) result += `${days} day${days > 1 ? 's' : ''}`;
