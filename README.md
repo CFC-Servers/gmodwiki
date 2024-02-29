@@ -27,7 +27,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :cloud: **Hosted entirely on The Cloud**
     - Very reliable! Should almost never go down
 - :robot: **Automatic content updates**
-    - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) every three days
+    - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) every two days
 - :hammer_and_wrench: **UI bug fixes**
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
