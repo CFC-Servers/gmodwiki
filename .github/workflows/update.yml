@@ -104,13 +104,13 @@ jobs:
       # This only deploys on Monday if it was a scheduled run
       # It always deploys for manual runs
       - name: Build starter image
-        if: ${{ github.event_name != "schedule" || (format('{{date:u}}')) == "1" }}
+        if: ${{ github.event_name != 'schedule' || (format('{{date:u}}')) == '1' }}
         run: |
           mv --verbose ./search_index.json ./public/
           docker build --tag ghcr.io/cfc-servers/gmodwiki:latest .
 
       - name: Login to GitHub Container Registry
-        if: ${{ github.event_name != "schedule" || (format('{{date:u}}')) == "1" }}
+        if: ${{ github.event_name != 'schedule' || (format('{{date:u}}')) == '1' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -118,7 +118,7 @@ jobs:
           password: ${{ secrets.GH_TOKEN }}
 
       - name: Tag and push image
-        if: ${{ github.event_name != "schedule" || (format('{{date:u}}')) == "1" }}
+        if: ${{ github.event_name != 'schedule' || (format('{{date:u}}')) == '1' }}
         run: |
           docker push ghcr.io/cfc-servers/gmodwiki --all-tags
 
