@@ -91,6 +91,14 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           command: pages deploy --project-name=gmodwiki ./dist
 
+      - name: Clear CF Cache
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CLOUDFLARE_CACHE_API_KEY: ${{ secrets.CF_CACHE_API_TOKEN }}
+        run: |
+          npm run clear_cloudflare_cache
+          rm deleted_files.txt
+
 
       # Docker
       # This only deploys on Monday if it was a scheduled run

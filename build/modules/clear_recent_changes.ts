@@ -1,11 +1,11 @@
 import * as chrono from 'chrono-node'
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
-import ApiInterface from "./modules/api_interface.js"
+import ApiInterface from "./api_interface.js"
 
 const getLastBuildTime = async () => {
   const lastBuildTime = await fs.readFile("build/cache/last_build.txt", "utf8")
-  return new Date(lastBuildTime)
+  return new Date(lastBuildTime.trim())
 }
 
 const getURLFromRow = ($: cheerio.CheerioAPI, row: cheerio.Element) => {
@@ -84,6 +84,11 @@ const deleteFiles = async (files: string[]) => {
   return successful
 }
 
+const saveDeletedFiles = async (files: string[]) => {
+  const content = JSON.stringify(files, null)
+  await fs.writeFile("deleted_files.json", content)
+}
+
 (async () => {
   const api = new ApiInterface("https://wiki.facepunch.com")
 
@@ -91,9 +96,11 @@ const deleteFiles = async (files: string[]) => {
   const $ = cheerio.load(rawPage)
 
   const lastBuildTime = await getLastBuildTime()
+  console.log("Last build time", lastBuildTime)
 
   const changes = await getChangedPages($, lastBuildTime)
   const changedPaths = convertURLsToFiles(changes)
+  await saveDeletedFiles(changedPaths)
   
   const deletedCount = await deleteFiles(changedPaths)
   console.log("Deleted", deletedCount, "cached files that were changed since", lastBuildTime)
