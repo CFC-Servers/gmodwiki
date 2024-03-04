@@ -14,20 +14,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Docker Slim is having some kind of access issue so we're not using it for now
-      #- name: Get docker-slim
-      #  run: |
-      #    SLIM_VERSION=1.40.10
-
-      #    curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/$SLIM_VERSION/dist_linux.tar.gz
-      #    tar -xvzf ds.tar.gz
-
-      #    mv dist_linux/* $GITHUB_WORKSPACE/
-      #    rm -rfv ds.tar.gz dist_linux/
-
       - name: Setup
         run: |
           npm i
+
+
+      - name: Get remote caches
+        run: |
+          curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip
+          unzip build_cache.zip
+          rm -v build_cache.zip
+
+          curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip
+          unzip public_cache.zip
+          rm -v public_cache.zip
+
+      - name: Remove expired files
+        run: |
+          npm run clear_recent_changes
+
 
       - name: Scrape and Build
         env:
@@ -35,12 +40,14 @@ jobs:
         run: |
           npm run build
 
+
       - name: Upload search index
         uses: cloudflare/wrangler-action@v3
         with:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
           command: r2 object put gmodwiki/search_index.json --file ./public/search_index.json
+
 
       - name: Build final pack
         env:
@@ -50,6 +57,33 @@ jobs:
           mv --verbose ./public/search_index.json .
           npm run astrobuild
 
+
+      # Remote cache
+      - name: Prepare remote cache files
+        run: |
+          zip --recurse-paths -9 --quiet public_cache.zip ./public
+          zip --recurse-paths -9 --quiet build_cache.zip ./build/cache
+
+      - name: Upload public cache
+        uses: cloudflare/wrangler-action@v3
+        with:
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip
+
+      - name: Upload build cache
+        uses: cloudflare/wrangler-action@v3
+        with:
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip
+
+      - name: Remove build caches
+        run: |
+          rm -v public_cache.zip build_cache.zip
+
+
+      # CF Publish
       - name: Publish Site
         uses: cloudflare/wrangler-action@v3
         with:
@@ -57,22 +91,12 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           command: pages deploy --project-name=gmodwiki ./dist
 
+
+      # Docker
       - name: Build starter image
         run: |
           mv --verbose ./search_index.json ./public/
           docker build --tag ghcr.io/cfc-servers/gmodwiki:latest .
-
-      #- name: Make slim image
-      #  run: |
-      #    $GITHUB_WORKSPACE/docker-slim build \
-      #      --target gmodwiki_fat:latest \
-      #      --include-path /app/dist \
-      #      --include-path /app/node_modules \
-      #      --http-probe-off \
-      #      --remove-file-artifacts \
-      #      --continue-after 10 \
-      #      --show-clogs --show-blogs \
-      #      --tag ghcr.io/cfc-servers/gmodwiki:latest \
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -84,3 +108,4 @@ jobs:
       - name: Tag and push image
         run: |
           docker push ghcr.io/cfc-servers/gmodwiki --all-tags
+

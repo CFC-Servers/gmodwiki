@@ -302,4 +302,6 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await setupMainScript()
     await setupFragments()
     await getRemoteFiles(api)
+
+    await fs.writeFile("build/cache/last_build.txt", new Date().toISOString())
 }

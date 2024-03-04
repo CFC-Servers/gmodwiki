@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "pages:dev": "wrangler pages dev --compatibility-date=2024-01-29 -- astro dev",
     "pages:deploy": "astro build && wrangler pages deploy ./dist",
-    "get_used_mdis": "rg -Io \"mdi-[\\w-]+\" ./build/cache/ | sort | uniq"
+    "get_used_mdis": "rg -Io \"mdi-[\\w-]+\" ./build/cache/ | sort | uniq",
+    "clear_recent_changes": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/clear_recent_changes.ts"
   },
   "devDependencies": {
     "@astrojs/check": "^0.4.1",
@@ -25,6 +26,7 @@
     "bottleneck": "^2.19.5",
     "chalk": "^5.3.0",
     "cheerio": "^1.0.0-rc.12",
+    "chrono-node": "^2.7.5",
     "html-minifier": "^4.0.0",
     "ky": "^1.2.0",
     "minify": "^11.0.1",

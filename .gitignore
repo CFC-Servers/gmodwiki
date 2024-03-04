@@ -26,3 +26,6 @@ public/
 slim.report.json
 
 .wrangler
+
+build_cache.zip
+public_cache.zip
