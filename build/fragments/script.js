@@ -15,6 +15,9 @@ class Navigate {
     }
 
     static ToPage(address, push = true) {
+        if (!address.startsWith("/"))
+            address = `/${address}`;
+
         if (this.pageContent == null) {
             window.location.href = address;
             return true;
@@ -22,9 +25,8 @@ class Navigate {
 
         address = address.replaceAll(window.location.origin, "");
 
-        if (address === "" || address === "/") {
+        if (address === "" || address === "/")
             address = "/index";
-        }
 
         var newData;
         this.pageTitle2.innerText = "Loading..";
@@ -91,9 +93,9 @@ class Navigate {
     static UpdateSidebar() {
         let links = this.links;
         let address = location.href;
-        if (address.indexOf("#") > 0) {
+        if (address.indexOf("#") > 0)
             address = address.substring(0, address.indexOf("#"));
-        }
+
         for (var i = 0; i < links.length; i++) {
             var a = links[i];
 
@@ -124,9 +126,8 @@ class Navigate {
 
     static OnNavigated(event) {
         let address = document.location.href;
-        if (address.indexOf("#") > 0) {
+        if (address.indexOf("#") > 0)
             address = address.substring(0, address.indexOf("#"));
-        }
 
         this.ToPage(address, false);
     }
