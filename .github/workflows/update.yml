@@ -97,7 +97,7 @@ jobs:
           CLOUDFLARE_CACHE_API_KEY: ${{ secrets.CF_CACHE_API_TOKEN }}
         run: |
           npm run clear_cloudflare_cache
-          rm deleted_files.txt
+          rm deleted_files.json
 
 
       # Docker
