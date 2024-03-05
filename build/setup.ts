@@ -1,7 +1,6 @@
 // Sets up the layout and components files
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
-import { minify } from "minify";
 import { minify as htmlMinify } from "html-minifier"
 import type ApiInterface from "./modules/api_interface.js"
 import type StaticContentHandler from "./modules/static.js"
@@ -274,11 +273,32 @@ async function setupFeatures($: cheerio.CheerioAPI) {
 }
 
 async function getRemoteFiles(api: ApiInterface) {
-    const pagelist = await api.get("/gmod/~pagelist?format=json")
-    await fs.writeFile("public/~pagelist.json", pagelist)
+    const pagelist = await api.getJSON("/gmod/~pagelist")
+    await fs.writeFile("public/~pagelist.json", JSON.stringify(pagelist))
+}
+
+// Files that should be re-acquired on every build
+const uncachedFiles = [
+  "public/styles/gmod.css",
+  "build/cache/gmod/~pagelist.json",
+  "build/cache/gmod/~recentchanges.html",
+]
+
+async function clearLocalCache() {
+  console.log("Clearing uncached files...")
+
+  for (const file of uncachedFiles) {
+    try {
+      await fs.unlink(file)
+    } catch (e: any) {
+      console.error(`Failed to delete ${file} (maybe it didn't exist?): ${e.message}`)
+    }
+  }
 }
 
 export async function setup(api: ApiInterface, contentHandler: StaticContentHandler) {
+    await clearLocalCache()
+
     const rawPage = await api.get("/gmod")
     const index = await contentHandler.processContent(rawPage, false)
     const $ = cheerio.load(index)
