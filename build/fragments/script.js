@@ -478,8 +478,7 @@ function setupLastParsed() {
   const lastParseElement = document.getElementById("last-parse");
 
   fetch("/last_build.txt", { method: "GET" }).then(r => {
-    const lastBuild = r.text()
-    lastParseElement.textContent = getTimeSince(parseInt(lastBuild, 10));
+    r.text().then(t => lastParseElement.textContent = getTimeSince(parseInt(t, 10)));
   }).catch(e => {
     console.warn("Failed to fetch last parsed date", e);
     lastParseElement.textContent = "Unknown";
