@@ -26,12 +26,9 @@ jobs:
 
       - name: Get remote caches
         run: |
-          (curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip && unzip -q build_cache.zip) &
-          (curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip && unzip -q public_cache.zip) &
-
+          (curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip && unzip -q build_cache.zip && rm -v build_cache.zip) &
+          (curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip && unzip -q public_cache.zip && rm -v public_cache.zip) &
           wait
-
-          rm -v build_cache.zip public_cache.zip
 
       - name: Remove expired files
         run: |
@@ -45,19 +42,12 @@ jobs:
           npm run build
 
 
-      - name: Upload search index
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: |
-          npx wrangler r2 object put gmodwiki/search_index.json --file ./public/search_index.json
-
-
       - name: Build final pack
         env:
           BUILD_ENV: production
         run: |
           # Temporarily move it out of the public dir to keep it out of the Cloudflare bundle
+          # (it's too big, we upload it to R2 but include it in the docker image)
           mv --verbose ./public/search_index.json .
           npm run astrobuild
 
@@ -69,17 +59,15 @@ jobs:
           zip --recurse-paths -9 --quiet build_cache.zip ./build/cache &
           wait
 
-      - name: Upload cache packages
+      - name: Upload storage assets
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
-          npx wrangler r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip &
-          npx wrangler r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip &
-
+          (npx wrangler r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip && rm -v public_cache.zip) &
+          (npx wrangler r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip && rm -v build_cache.zip) &
+          (npx wrangler r2 object put gmodwiki/search_index.json --file ./search_index.json && mv ./search_index.json ./public/) &
           wait
-
-          rm -v public_cache.zip build_cache.zip
 
 
       # CF Publish
