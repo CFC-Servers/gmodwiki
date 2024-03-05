@@ -7,7 +7,7 @@ on:
         type: boolean
         description: "Should this build also build a new Docker image"
   schedule:
-    - cron: '32 4 1-31/2 * *'
+    - cron: '41 */12 * * *'
 
 
 jobs:
