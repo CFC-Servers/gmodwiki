@@ -2,6 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      build_container:
+        type: boolean
+        description: "Should this build also build a new Docker image"
   schedule:
     - cron: '32 4 1-31/2 * *'
 
@@ -101,24 +105,16 @@ jobs:
 
 
       # Docker
-      # This only deploys on Monday if it was a scheduled run
-      # It always deploys for manual runs
-      - name: Build starter image
-        if: ${{ github.event_name != 'schedule' || (format('{{date:u}}')) == '1' }}
-        run: |
-          mv --verbose ./search_index.json ./public/
-          docker build --tag ghcr.io/cfc-servers/gmodwiki:latest .
-
       - name: Login to GitHub Container Registry
-        if: ${{ github.event_name != 'schedule' || (format('{{date:u}}')) == '1' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.GH_TOKEN }}
 
-      - name: Tag and push image
-        if: ${{ github.event_name != 'schedule' || (format('{{date:u}}')) == '1' }}
-        run: |
-          docker push ghcr.io/cfc-servers/gmodwiki --all-tags
-
+      - name: Build & Push Docker Image
+        if: ${{ (github.event_name == 'schedule' && (format('{{date:u}}')) == '1') || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_container == 'true') }}
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ghcr.io/cfc-servers/gmodwiki:latest
