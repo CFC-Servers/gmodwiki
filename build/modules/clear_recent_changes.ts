@@ -4,7 +4,7 @@ import { promises as fs } from "fs"
 import ApiInterface from "./api_interface.js"
 
 const getLastBuildTime = async () => {
-  const lastBuildTime = await fs.readFile("build/cache/last_build.txt", "utf8")
+  const lastBuildTime = await fs.readFile("public/last_build.txt", "utf8")
   return new Date(lastBuildTime.trim())
 }
 

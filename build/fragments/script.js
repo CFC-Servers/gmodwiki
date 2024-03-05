@@ -475,6 +475,18 @@ function getTimeSince(isoDateString) {
     return (result || "<1 hour") + " ago";
 }
 
+function setupLastParsed() {
+  const lastParseElement = document.getElementById("last-parse");
+
+  fetch("/last_build.txt", { method: "GET" }).then(r => {
+    const lastBuild = r.text()
+    lastParseElement.textContent = getTimeSince(lastBuild);
+  }).catch(e => {
+    console.warn("Failed to fetch last parsed date", e);
+    lastParseElement.textContent = "Unknown";
+  })
+}
+
 window.addEventListener("load", () => {
     requestAnimationFrame(() => {
         var sidebar = document.getElementById( "sidebar" )
@@ -489,17 +501,9 @@ window.addEventListener("load", () => {
         liveButton.target = "_blank"
 
         requestAnimationFrame(() => {
-            InitSearch()
-
-            const lastParseElement = document.getElementById("last-parse");
-            const contents = lastParseElement.textContent;
-            const newContents = getTimeSince(contents);
-            lastParseElement.textContent = newContents;
-
-            requestAnimationFrame(() => {
-                Navigate.Install()
-            });
+          InitSearch()
+          Navigate.Install()
+          setupLastParsed()
         });
-
     });
 })
