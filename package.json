@@ -10,8 +10,8 @@
     "pages:dev": "wrangler pages dev --compatibility-date=2024-01-29 -- astro dev",
     "pages:deploy": "astro build && wrangler pages deploy ./dist",
     "get_used_mdis": "rg -Io \"mdi-[\\w-]+\" ./build/cache/ | sort | uniq",
-    "clear_recent_changes": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/modules/clear_recent_changes.ts",
-    "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
+    "clear_recent_changes": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_recent_changes.ts",
+    "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
   },
   "devDependencies": {
     "@astrojs/check": "^0.4.1",
