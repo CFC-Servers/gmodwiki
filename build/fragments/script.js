@@ -25,7 +25,7 @@ class Navigate {
 
         address = address.replaceAll(window.location.origin, "");
 
-        if (address === "" || address === "/")
+        if (address === "" || address === "/" || address === "//")
             address = "/index";
 
         var newData;
