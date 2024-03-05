@@ -25,13 +25,19 @@ jobs:
 
       - name: Get remote caches
         run: |
-          curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip
-          unzip -q build_cache.zip
-          rm -v build_cache.zip
+          (
+            curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip
+            unzip -q build_cache.zip
+          ) &
 
-          curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip
-          unzip -q public_cache.zip
-          rm -v public_cache.zip
+          (
+            curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip
+            unzip -q public_cache.zip
+          ) &
+
+          wait
+
+          rm -v build_cache.zip public_cache.zip
 
       - name: Remove expired files
         run: |
@@ -65,26 +71,22 @@ jobs:
       # Remote cache
       - name: Prepare remote cache files
         run: |
-          zip --recurse-paths -9 --quiet public_cache.zip ./public
-          zip --recurse-paths -9 --quiet build_cache.zip ./build/cache
+          zip --recurse-paths -9 --quiet public_cache.zip ./public &
+          zip --recurse-paths -9 --quiet build_cache.zip ./build/cache &
+          wait
 
-      - name: Upload public cache
+      - name: Upload cache packages
         uses: cloudflare/wrangler-action@v3
         with:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip
+          command: |
+            r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip &
+            r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip &
 
-      - name: Upload build cache
-        uses: cloudflare/wrangler-action@v3
-        with:
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip
+            wait
 
-      - name: Remove build caches
-        run: |
-          rm -v public_cache.zip build_cache.zip
+            rm -v public_cache.zip build_cache.zip
 
 
       # CF Publish
