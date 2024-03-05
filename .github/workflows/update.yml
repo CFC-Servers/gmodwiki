@@ -20,12 +20,7 @@ jobs:
 
       - name: Setup
         run: |
-          npm i
-          npm i wrangler@3.13.2
-
-
-      - name: Get remote caches
-        run: |
+          npm ci &
           (curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip && unzip -q build_cache.zip && rm -v build_cache.zip) &
           (curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip && unzip -q public_cache.zip && rm -v public_cache.zip) &
           wait
@@ -33,7 +28,6 @@ jobs:
       - name: Remove expired files
         run: |
           npm run clear_recent_changes
-
 
       - name: Scrape and Build
         env:
