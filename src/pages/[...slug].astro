@@ -21,7 +21,7 @@ try {
         return new Response(JSON.stringify(json), { status: 404 })
     }
 
-    const resource = `${Astro.url.protocol}//${Astro.url.host}/content/${slug}.json`
+    const resource = `${Astro.url.protocol}//${Astro.url.host}/content/${slug.toLowerCase()}.json`
     const response = await fetch(resource)
     if (response.status === 404) {
         // Otherwise, we return a formatted 404 page. This happens if someone visits a missing page directly.

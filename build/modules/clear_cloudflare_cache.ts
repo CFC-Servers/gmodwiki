@@ -16,10 +16,13 @@ const translatePaths = (paths: string[]) => {
   const adjusted = paths.flatMap((path) => {
     // "./build/cache/gmod/Beginner_Tutorial_Variables.json"
 
-    // "Beginner_Tutorial_Variables.json"
+    // "./build/cache/gmod/beginner_tutorial_variables.json"
+    path = path.toLowerCase()
+
+    // "beginner_tutorial_variables.json"
     path = path.replace("./build/cache/gmod/", "")
 
-    // "Beginner_Tutorial_Variables"
+    // "beginner_tutorial_variables"
     path = path.replace(".json", "")
 
     // We clear both the content JSON and the page itself

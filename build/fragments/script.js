@@ -32,7 +32,7 @@ class Navigate {
         this.pageTitle2.innerText = "Loading..";
         this.pageContent.parentElement.classList.add("loading");
 
-        fetch(`/content${address}.json`, { method: 'GET' })
+        fetch(`/content${address.toLowerCase()}.json`, { method: 'GET' })
             .then(r => r.json())
             .then(json => {
             newData = json;
