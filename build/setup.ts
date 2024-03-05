@@ -33,6 +33,7 @@ async function setupSidebar($: cheerio.CheerioAPI) {
     contents = contents.replaceAll("meth ", "") // Unused class
     contents = contents.replaceAll("memb ", "") // Unused class
     contents = contents.replaceAll("ToggleClass", "window.ToggleClass") // Astro/rocket-loader doesn't allow us to reference functions without putting them on the widnwos
+    contents = contents.replace(/(href=|src=)".*?"/g, (m) => m.replace(/\\+/g, '/')) // For some reason, URLs are being parsed incorrectly, this should fix that.
     contents = htmlMinify(contents, { collapseWhitespace: true, removeComments: true })
     await fs.writeFile("src/components/Sidebar.astro", contents)
 }
@@ -43,6 +44,7 @@ async function setupLayout($: cheerio.CheerioAPI) {
     layout = layout.replace(/\/gmod\//g, "/") // We don't use the /gmod prefix
     layout = layout.replace(/"{title}"/g, "{title}") // When we insert this code from js it wraps our frontmatter variables in quotes so we have to unwrap them again
     layout = layout.replace(/"{description}"/g, "{description}")
+    layout = layout.replace(/(href=|src=)".*?"/g, (m) => m.replace(/\\+/g, '/')) // For some reason, URLs are being parsed incorrectly, this should fix that.
     await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout))
 }
 
@@ -147,7 +149,7 @@ function removeDeadStyles(content: string) {
 
         const mdi = block.split("::before")[0]
         if (!mdiWhitelist.includes(mdi)) return true
-        
+
         return false
     }
 
@@ -276,8 +278,9 @@ async function setupFeatures($: cheerio.CheerioAPI) {
 }
 
 async function getRemoteFiles(api: ApiInterface) {
+    const fileName = sanitizeForWindows("~pagelist")
     const pagelist = await api.getJSON("/gmod/~pagelist")
-    await fs.writeFile("public/~pagelist.json", JSON.stringify(pagelist))
+    await fs.writeFile(`public/${fileName}.json`, JSON.stringify(pagelist))
 }
 
 // Files that should be re-acquired on every build
@@ -321,4 +324,12 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await getRemoteFiles(api)
 
     await fs.writeFile("public/last_build.txt", new Date().getTime().toString())
+}
+
+// Replaces any invalid characters in a string with underscores
+export function sanitizeForWindows(filename: string): string {
+    // We don't need to sanitize filenames on non-windows platforms
+    if (process.platform !== "win32") return filename;
+
+    return filename.replace(/[<>:"|?]+/g, '_');
 }

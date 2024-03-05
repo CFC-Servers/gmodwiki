@@ -5,6 +5,13 @@ import { promises as fs } from "fs"
 import Bottleneck from "bottleneck"
 import type { KyResponse } from "ky"
 
+function sanitizeForWindows(input: string): string {
+    // We don't need to sanitize filenames on non-windows platforms
+    if (process.platform !== "win32") return input;
+
+    return input.replace(/[<>:"|?*]+/g, '_');
+}
+
 async function fileExists(path: string) {
     try {
         await fs.access(path)
@@ -39,7 +46,7 @@ class ApiInterface {
         const buff = await response.arrayBuffer()
         return Buffer.from(buff)
     }
-    
+
     async getRawFull(url: string): Promise<Buffer> {
         const response = await this._get(url)
         const buff = await response.arrayBuffer()
@@ -47,7 +54,7 @@ class ApiInterface {
     }
 
     async get(endpoint: string): Promise<string> {
-        const cachePath = `build/cache/${endpoint}.html`
+        const cachePath = `build/cache/${sanitizeForWindows(endpoint)}.html`
 
         if (await fileExists(cachePath)) {
             const contents = await fs.readFile(cachePath)
@@ -55,7 +62,7 @@ class ApiInterface {
         }
 
         const response = await this._get(`${this.baseUrl}${endpoint}`)
-        const contents = await response.text() 
+        const contents = await response.text()
 
         const dir = path.dirname(cachePath)
         await fs.mkdir(dir, { recursive: true })

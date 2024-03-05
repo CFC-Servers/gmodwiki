@@ -182,6 +182,10 @@ npm run preview;
 
 ### Some dev notes:
 - The first `npm run build` will take awhile as it scrapes the main website
+- Those building on windows may need to run the following command to fix issues with `sharp`
+```
+npm install --force @img/sharp-win32-x64
+```
 - Once built:
     - All downloaded page content will be cached into `./build/cache/`
     - All downloaded static content will be cached to `./public/`

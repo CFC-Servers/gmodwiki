@@ -37,7 +37,8 @@ class Navigate {
             .then(json => {
             newData = json;
         }).catch((e) => {
-            newData = { html: "Failed to load page <b>" + address + "</b>" + (e ? "<p>" + e.toString() + "</p>" : ""), title: "Failed to load page", footer: "" };
+            newData = { html: "Failed to load page <b>" + address + "</b>" + (e ? "<p>" + e.toString() + "</p>" : ""), title: "Failed to load page", footer: "" };
+
             console.warn("Failed to fetch " + address);
         }).then(() => {
             if (push) {
@@ -82,8 +83,9 @@ class Navigate {
                 a2.text = json.title;
                 a2.href = `/${json.address}`;
                 this.pageTitle2.appendChild(a2);
-                var siteTitle = document.title.substring(document.title.lastIndexOf(" - "));
-                document.title = json.title + siteTitle;
+                var title = json.title + " - Garry's Mod Wiki";
+                title = title.replace("Garry's Mod Wiki - ", "") // Fix for the home page
+                document.title = title
             })
         })
     }
