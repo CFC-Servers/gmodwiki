@@ -25,7 +25,10 @@ if (buildEnv === "production") {
         "/rubat/*",
         "/lewis/*",
         "/garry/*",
-        "/fonts/*"
+        "/fonts/*",
+        "/*.webp",
+        "/cdn-cgi/*",
+        "/last_build.txt",
       ]
     }
   });

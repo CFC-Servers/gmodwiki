@@ -12,5 +12,8 @@
     "paths": {
         "@layouts/*": ["src/layouts/*"]
     }
+  },
+  "ts-node": {
+    "transpileOnly": true
   }
 }

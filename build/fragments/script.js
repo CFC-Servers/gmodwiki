@@ -25,14 +25,14 @@ class Navigate {
 
         address = address.replaceAll(window.location.origin, "");
 
-        if (address === "" || address === "/")
+        if (address === "" || address === "/" || address === "//")
             address = "/index";
 
         var newData;
         this.pageTitle2.innerText = "Loading..";
         this.pageContent.parentElement.classList.add("loading");
 
-        fetch(`/content${address}.json`, { method: 'GET' })
+        fetch(`/content${address.toLowerCase()}.json`, { method: 'GET' })
             .then(r => r.json())
             .then(json => {
             newData = json;
@@ -463,10 +463,9 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
 });
 
-function getTimeSince(isoDateString) {
-    const givenDate = new Date(isoDateString);
-    const now = new Date();
-    const diffInMilliseconds = now - givenDate;
+function getTimeSince(utcTimestamp) {
+    const now = new Date().getTime();
+    const diffInMilliseconds = now - utcTimestamp;
     const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
     const days = Math.floor(diffInHours / 24);
     const hours = Math.floor(diffInHours % 24);
@@ -475,6 +474,17 @@ function getTimeSince(isoDateString) {
     if (days > 0) result += `${days} day${days > 1 ? 's' : ''}`;
     if (hours > 0) result += `${result ? ', ' : ''}${hours} hour${hours > 1 ? 's' : ''}`;
     return (result || "<1 hour") + " ago";
+}
+
+function setupLastParsed() {
+  const lastParseElement = document.getElementById("last-parse");
+
+  fetch("/last_build.txt", { method: "GET" }).then(r => {
+    r.text().then(t => lastParseElement.textContent = getTimeSince(parseInt(t, 10)));
+  }).catch(e => {
+    console.warn("Failed to fetch last parsed date", e);
+    lastParseElement.textContent = "Unknown";
+  })
 }
 
 window.addEventListener("load", () => {
@@ -491,17 +501,9 @@ window.addEventListener("load", () => {
         liveButton.target = "_blank"
 
         requestAnimationFrame(() => {
-            InitSearch()
-
-            const lastParseElement = document.getElementById("last-parse");
-            const contents = lastParseElement.textContent;
-            const newContents = getTimeSince(contents);
-            lastParseElement.textContent = newContents;
-
-            requestAnimationFrame(() => {
-                Navigate.Install()
-            });
+          InitSearch()
+          Navigate.Install()
+          setupLastParsed()
         });
-
     });
 })

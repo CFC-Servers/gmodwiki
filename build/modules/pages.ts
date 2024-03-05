@@ -57,7 +57,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     let address = struct.address.length > 0 ? struct.address : "index"
     address = address.replaceAll("/gmod/", "/")
 
-    const jsonDestination = `./public/content/${address}.json`
+    const jsonDestination = `./public/content/${address.toLowerCase()}.json`
     const dirPath = path.dirname(jsonDestination)
     await fs.mkdir(dirPath, { recursive: true })
 

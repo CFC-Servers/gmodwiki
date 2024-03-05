@@ -97,50 +97,48 @@ function setupScriptTags($: cheerio.CheerioAPI) {
 
 async function setupDisclaimer($: cheerio.CheerioAPI) {
     let disclaimer = await fs.readFile("build/fragments/disclaimer.html", "utf-8")
-
-    // Replace {{lastParse}} with the current datetime
-    const lastParse = new Date(Date.now() - 29 * 60 * 60 * 1000 - 795).toISOString()
-    disclaimer = disclaimer.replace(/{{lastParse}}/, lastParse)
-
     $(disclaimer).insertAfter("div.footer[id='pagefooter']");
 }
 
 // Generated from `npm run get_used_mdis`
 const mdiWhitelist = [
-    ".mdi-account",
-    ".mdi-book",
-    ".mdi-bookshelf",
-    ".mdi-calendar",
-    ".mdi-code-braces",
-    ".mdi-code-not-equal",
-    ".mdi-content-copy",
-    ".mdi-cube-outline",
-    ".mdi-database",
-    ".mdi-file",
-    ".mdi-file-download",
-    ".mdi-fire",
-    ".mdi-floor-plan",
-    ".mdi-format-list-numbered",
-    ".mdi-gamepad-variant",
-    ".mdi-github-box",
-    ".mdi-history",
-    ".mdi-hook",
-    ".mdi-image-broken-variant",
-    ".mdi-language-lua",
-    ".mdi-library-shelves",
-    ".mdi-link-variant",
-    ".mdi-menu",
-    ".mdi-pencil",
-    ".mdi-robot",
-    ".mdi-server",
-    ".mdi-source-branch",
-    ".mdi-source-pull",
-    ".mdi-steam",
-    ".mdi-television-guide",
-    ".mdi-test-tube",
-    ".mdi-tools",
-    ".mdi-vector-triangle",
-    ".mdi-view-quilt",
+  ".mdi-account",
+  ".mdi-book",
+  ".mdi-bookshelf",
+  ".mdi-calendar",
+  ".mdi-code-braces",
+  ".mdi-code-not-equal",
+  ".mdi-content-copy",
+  ".mdi-controller-classic-outline",
+  ".mdi-cube-outline",
+  ".mdi-database",
+  ".mdi-file",
+  ".mdi-file-download",
+  ".mdi-fire",
+  ".mdi-floor-plan",
+  ".mdi-format-list-numbered",
+  ".mdi-gamepad-circle-down",
+  ".mdi-gamepad-variant",
+  ".mdi-github-box",
+  ".mdi-history",
+  ".mdi-hook",
+  ".mdi-image-broken-variant",
+  ".mdi-language-lua",
+  ".mdi-library-shelves",
+  ".mdi-link-variant",
+  ".mdi-menu",
+  ".mdi-pencil",
+  ".mdi-robot",
+  ".mdi-security",
+  ".mdi-server",
+  ".mdi-source-branch",
+  ".mdi-source-pull",
+  ".mdi-steam",
+  ".mdi-television-guide",
+  ".mdi-test-tube",
+  ".mdi-tools",
+  ".mdi-vector-triangle",
+  ".mdi-view-quilt"
 ]
 
 function removeDeadStyles(content: string) {
@@ -281,11 +279,31 @@ async function setupFeatures($: cheerio.CheerioAPI) {
 
 async function getRemoteFiles(api: ApiInterface) {
     const fileName = sanitizeForWindows("~pagelist")
-    const pagelist = await api.get("/gmod/~pagelist?format=json")
-    await fs.writeFile(`public/${fileName}`, pagelist)
+    const pagelist = await api.getJSON("/gmod/~pagelist")
+    await fs.writeFile(`public/${fileName}.json`, JSON.stringify(pagelist))
+}
+
+// Files that should be re-acquired on every build
+const uncachedFiles = [
+  "public/styles/gmod.css",
+  "build/cache/gmod/~pagelist.json",
+]
+
+async function clearLocalCache() {
+  console.log("Clearing uncached files...")
+
+  for (const file of uncachedFiles) {
+    try {
+      await fs.unlink(file)
+    } catch (e: any) {
+      console.error(`Failed to delete ${file} (maybe it didn't exist?): ${e.message}`)
+    }
+  }
 }
 
 export async function setup(api: ApiInterface, contentHandler: StaticContentHandler) {
+    await clearLocalCache()
+
     const rawPage = await api.get("/gmod")
     const index = await contentHandler.processContent(rawPage, false)
     const $ = cheerio.load(index)
@@ -304,6 +322,8 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await setupMainScript()
     await setupFragments()
     await getRemoteFiles(api)
+
+    await fs.writeFile("public/last_build.txt", new Date().getTime().toString())
 }
 
 // Replaces any invalid characters in a string with underscores

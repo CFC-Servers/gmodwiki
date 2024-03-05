@@ -17,4 +17,4 @@ async function init() {
     await buildSearchIndex(searchManager)
 }
 
-init();
+init()

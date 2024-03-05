@@ -9,7 +9,7 @@ It also includes a number of enhancments over the original.
 You may use the [public site](https://gmodwiki.com), or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for super fast offline access!
 
 ### Features
-- :dark_sunglasses: **Custom Darkmode** _([Thanks Be1zebub!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
+- :dark_sunglasses: **Custom Darkmode** _([Thanks @Be1zebub/@Phoenixf129!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
     - Alternatively, this mirror plays nicely with DarkReader!
 - :ship: **Self-hosting with Docker**
 - :racing_car: **Performance enhancements**
@@ -27,7 +27,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :cloud: **Hosted entirely on The Cloud**
     - Very reliable! Should almost never go down
 - :robot: **Automatic content updates**
-    - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) every two days
+    - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) twice a day
 - :hammer_and_wrench: **UI bug fixes**
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
