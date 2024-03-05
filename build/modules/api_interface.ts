@@ -3,6 +3,7 @@ import path from "path"
 import chalk from "chalk"
 import { promises as fs } from "fs"
 import Bottleneck from "bottleneck"
+import type { KyResponse } from "ky"
 
 async function fileExists(path: string) {
     try {
@@ -26,14 +27,14 @@ class ApiInterface {
         });
     }
 
-    async _get(url: string): Promise<any> {
+    async _get(url: string): Promise<KyResponse> {
         return this.limiter.schedule(() => {
             console.log(chalk.blue("GET"), url)
             return ky.get(url)
         })
     }
 
-    async getRaw(endpoint: string): Promise<any> {
+    async getRaw(endpoint: string): Promise<Buffer> {
         const response = await this._get(`${this.baseUrl}${endpoint}`)
         const buff = await response.arrayBuffer()
         return Buffer.from(buff)

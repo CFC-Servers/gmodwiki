@@ -461,10 +461,9 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
 });
 
-function getTimeSince(isoDateString) {
-    const givenDate = new Date(isoDateString);
-    const now = new Date();
-    const diffInMilliseconds = now - givenDate;
+function getTimeSince(utcTimestamp) {
+    const now = new Date().getTime();
+    const diffInMilliseconds = now - utcTimestamp;
     const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
     const days = Math.floor(diffInHours / 24);
     const hours = Math.floor(diffInHours % 24);
@@ -480,7 +479,7 @@ function setupLastParsed() {
 
   fetch("/last_build.txt", { method: "GET" }).then(r => {
     const lastBuild = r.text()
-    lastParseElement.textContent = getTimeSince(lastBuild);
+    lastParseElement.textContent = getTimeSince(parseInt(lastBuild, 10));
   }).catch(e => {
     console.warn("Failed to fetch last parsed date", e);
     lastParseElement.textContent = "Unknown";

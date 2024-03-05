@@ -1,18 +1,18 @@
-import * as chrono from 'chrono-node'
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
 import ApiInterface from "./api_interface.js"
 
+// Stores a UTC timestamp of the last build
 const getLastBuildTime = async () => {
   const lastBuildTime = await fs.readFile("public/last_build.txt", "utf8")
-  return new Date(lastBuildTime.trim())
+  return parseInt(lastBuildTime, 10)
 }
 
 const getURLFromRow = ($: cheerio.CheerioAPI, row: cheerio.Element) => {
   return $(row).find("div.address a").attr("href")
 }
 
-const getChangedPages = async ($: cheerio.CheerioAPI, since: Date) => {
+const getChangedPages = async ($: cheerio.CheerioAPI, since: number) => {
   const changedPages = new Map<string, boolean>()
 
   const holder = $("table.changelist tbody")
@@ -22,17 +22,21 @@ const getChangedPages = async ($: cheerio.CheerioAPI, since: Date) => {
     const row = rows[i]
     const rowClass = row.attribs.class
 
-    if (rowClass === "grouphead") {
-      // If we're at a grouphead, check if we've passed our time
-      const groupTime = $(row).find("td").text()
-      const parsedTime = chrono.parseDate(groupTime)
+    if (rowClass === "entry") {
+      const timeHolder = $(row).find("div.address a")
+      const rowTime = timeHolder.attr("title")
 
-      if (parsedTime && parsedTime < since) {
-        console.log("Breaking, passed our time", groupTime)
+      if (!rowTime) {
+        console.error("No time found", $(row).html())
+        continue
+      }
+
+      const parsedTime = new Date(rowTime).getTime()
+      if (parsedTime < since) {
+        console.log(`Found all updated page, stopping before: '${rowTime}'`)
         break
       }
 
-    } else if (rowClass === "entry") {
       // If we're at an entry, add it to our list
       const url = getURLFromRow($, row)
 
@@ -90,13 +94,16 @@ const saveDeletedFiles = async (files: string[]) => {
 }
 
 (async () => {
-  const api = new ApiInterface("https://wiki.facepunch.com")
+  const siteURL = "https://wiki.facepunch.com"
+  const api = new ApiInterface(siteURL)
 
-  const rawPage = await api.get("/gmod/~recentchanges")
-  const $ = cheerio.load(rawPage)
+  // Skip the cache but still use the API interface
+  const rawPage = await api._get(`${siteURL}/gmod/~recentchanges`)
+  const pageContent = await rawPage.text()
+  const $ = cheerio.load(pageContent)
 
   const lastBuildTime = await getLastBuildTime()
-  console.log("Last build time", lastBuildTime)
+  console.log("Last build time: ", lastBuildTime)
 
   const changes = await getChangedPages($, lastBuildTime)
   const changedPaths = convertURLsToFiles(changes)

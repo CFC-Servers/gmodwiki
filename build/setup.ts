@@ -281,7 +281,6 @@ async function getRemoteFiles(api: ApiInterface) {
 const uncachedFiles = [
   "public/styles/gmod.css",
   "build/cache/gmod/~pagelist.json",
-  "build/cache/gmod/~recentchanges.html",
 ]
 
 async function clearLocalCache() {
@@ -318,5 +317,5 @@ export async function setup(api: ApiInterface, contentHandler: StaticContentHand
     await setupFragments()
     await getRemoteFiles(api)
 
-    await fs.writeFile("public/last_build.txt", new Date().toISOString())
+    await fs.writeFile("public/last_build.txt", new Date().getTime().toString())
 }
