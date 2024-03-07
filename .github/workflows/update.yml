@@ -109,4 +109,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/cfc-servers/gmodwiki:latest brandonsturgeon/gmodwiki:latest
+          tags: |
+            ghcr.io/cfc-servers/gmodwiki:latest
+            brandonsturgeon/gmodwiki:latest
