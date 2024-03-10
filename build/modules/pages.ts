@@ -42,6 +42,7 @@ async function buildPage(api: ApiInterface, contentManager: StaticContentHandler
     pageContent = pageContent.replace(/https:\/\/wiki\.facepunch\.com\/gmod\//g, "/")
     pageContent = pageContent.replaceAll(/\/gmod\//g, "/") // We've removed the /gmod prefix
     pageContent = pageContent.replaceAll(/CopyCode/g, "window.CopyCode") // Because we use astro/rocket loader, we can't access the function without it being on the window
+    pageContent = pageContent.replaceAll(/href="https:/g, `target="_blank" href="https:`) // Open external links in a new tab
 
     delete struct.wikiName
     delete struct.wikiIcon
