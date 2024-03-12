@@ -210,6 +210,6 @@ window.addEventListener("load", () => {
         path = path.replace(/_/g, " ")
 
         e.preventDefault()
-        await navigator.clipboard.writeText(`[${path}](${window.location.href})`)
+        await navigator.clipboard.writeText(`[\`${path}\`](<${window.location.href}>)`)
     })
 })
