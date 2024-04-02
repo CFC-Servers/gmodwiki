@@ -147,17 +147,30 @@ function removeDeadStyles(content: string) {
         const isMdi = block.startsWith(".mdi-")
         if (!isMdi) return false
 
-        const mdi = block.split("::before")[0]
-        if (!mdiWhitelist.includes(mdi)) return true
+        const mdi = block.split(":before")[0].split(/[\s:,]/)[0]
+        if (!mdiWhitelist.includes(mdi)) {
+            // console.debug(`Removing unused mdi: ${mdi}`)
+            return true
+        }
 
         return false
     }
 
     // Classes that are unused
     const usesDeadClass = (block: string) => {
-        if (block.startsWith(".contentbar")) return true
-        if (block.startsWith(".card")) return true
-        if (block.startsWith(".infocard")) return true
+        const deadClassPrefixes = [
+            ".contentbar",
+            ".card",
+            ".infocard"
+        ]
+
+        for (const prefix of deadClassPrefixes) {
+            if (block.startsWith(prefix)) {
+                // console.debug(`Removing block for unused class: ${prefix}`)
+                return true
+            }
+        }
+
         return false
     }
 
@@ -170,11 +183,19 @@ function removeDeadStyles(content: string) {
     }
 
     const usesBadStyles = (block: string) => {
-        if (block.startsWith("#sidebar details.level1 > summary")) return true // This selector exclusively adds a bad rule that errors and doesn't do anything
+        // This selector exclusively adds a bad rule that errors and doesn't do anything
+        if (block.indexOf("#sidebar details.level1 > summary {\n  padding-left: -16px;") !== -1) {
+            // console.debug("Removing bad style")
+            // console.debug(block)
+            return true 
+        }
+
         return false
     }
 
     const shouldKeep = (block: string) => {
+        block = block.trim()
+
         if (isBadMdi(block)) return false
         if (usesDeadClass(block)) return false
         if (isEdit(block)) return false
@@ -182,10 +203,9 @@ function removeDeadStyles(content: string) {
         return true
     }
 
-    const blocks = content.split("}\n\n")
+    const blocks = content.split("}\n")
     const keptBlocks = blocks.filter(shouldKeep)
-
-    return keptBlocks.join("}\n\n")
+    return keptBlocks.join("}\n")
 }
 
 function optimizeCss(content: string) {
@@ -211,6 +231,8 @@ function optimizeCss(content: string) {
     content = content.replace(/#sidebar details > ul > li:nth\-child\(odd\) {/g, "details[open] > ul > li:nth-child(2n+1) {")
     content = content.replace(/#sidebar details a {/g, "details[open] a {")
     content = content.replace(/#sidebar details\.level1 > ul > li > a {/g, "details[open].level1 > ul > li > a {")
+    content = content.replace(/#sidebar details > ul > li > a\.cm:before {/g, "details[open] > ul > li > a.cm:before {")
+    content = content.replace(/#sidebar details\.level2 > ul > li > a:before {/g, "details[open].level2 > ul > li > a:before {")
 
     // Style fixes
     content = content.replace(/cursor: hand;/g, "cursor: pointer;") // cursor: hand is invalid
@@ -238,7 +260,7 @@ async function processCss(contentHandler: StaticContentHandler) {
     newContent = `${newContent} ul#pagelinks > li { padding-right: 1rem; }\n`
 
     // Add the "Mirror" tag/label to the icon
-    newContent = `${newContent} #ident > h1 > a::after { content: "Mirror"; color: #F6FAFE; background-color: #0183FF; font-size: 10px; text-transform: uppercase; padding: 1px 4px; margin-left: 8px; display: inline-block; position: relative; top: -4px; }\n`
+    newContent = `${newContent} #ident > h1 > a:after { content: "Mirror"; color: #F6FAFE; background-color: #0183FF; font-size: 10px; text-transform: uppercase; padding: 1px 4px; margin-left: 8px; display: inline-block; position: relative; top: -4px; }\n`
 
     // Fix sidebar focus/hover color styling
     newContent = `${newContent} #sidebar .section > a:focus, #sidebar .section > details.level1 > summary > div:focus { background-color: rgba(0, 130, 255, 0.5); }\n`
