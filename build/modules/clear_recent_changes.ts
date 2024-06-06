@@ -2,9 +2,23 @@ import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
 import ApiInterface from "./api_interface.js"
 
+const fileExists = async (path: string) => {
+    try {
+        await fs.access(path)
+        return true
+    } catch {
+        return false
+    }
+}
+
 // Stores a UTC timestamp of the last build
 const getLastBuildTime = async () => {
-  const lastBuildTime = await fs.readFile("public/last_build.txt", "utf8")
+  const lastBuildPath = "public/last_build.txt"
+  if (!fileExists(lastBuildPath)) {
+    return 0
+  }
+
+  const lastBuildTime = await fs.readFile(lastBuildPath, "utf8")
   return parseInt(lastBuildTime, 10)
 }
 
@@ -59,15 +73,6 @@ const convertURLsToFiles = (urls: string[]) => {
   return urls.map(urlPathToFile)
 }
 
-const fileExists = async (path: string) => {
-    try {
-        await fs.access(path)
-        return true
-    } catch {
-        return false
-    }
-}
-
 const deleteFiles = async (files: string[]) => {
   let successful = 0
 
@@ -94,6 +99,14 @@ const saveDeletedFiles = async (files: string[]) => {
 }
 
 (async () => {
+  const lastBuildTime = await getLastBuildTime()
+  if (lastBuildTime === 0) {
+    console.error("No last build time found - skipping deletion of recent changes")
+    return
+  }
+
+  console.log("Last build time: ", lastBuildTime)
+
   const siteURL = "https://wiki.facepunch.com"
   const api = new ApiInterface(siteURL)
 
@@ -101,9 +114,6 @@ const saveDeletedFiles = async (files: string[]) => {
   const rawPage = await api._get(`${siteURL}/gmod/~recentchanges`)
   const pageContent = await rawPage.text()
   const $ = cheerio.load(pageContent)
-
-  const lastBuildTime = await getLastBuildTime()
-  console.log("Last build time: ", lastBuildTime)
 
   const changes = await getChangedPages($, lastBuildTime)
   const changedPaths = convertURLsToFiles(changes)
