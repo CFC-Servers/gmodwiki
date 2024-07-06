@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 type Realm = 'client' | 'menu' | 'server';
 
@@ -38,6 +38,11 @@ interface FunctionSource {
   lineEnd?: number;
 }
 
+interface FunctionOverload {
+  name: string;
+  arguments: Array<FunctionArgument>;
+}
+
 interface Function {
   name: string;
   parent: string;
@@ -45,6 +50,7 @@ interface Function {
   description?: string;
   realms: Array<Realm>;
   arguments?: Array<FunctionArgument>;
+  overloads?: Array<FunctionOverload>;
   returnValues?: Array<FunctionReturnValue>;
 }
 
@@ -100,21 +106,21 @@ export class WikiScraper {
 
       const _class: Class = classes.get(className) ?? { name: className };
 
-      if (this.isPanelPage(wikiPage.content)) {
-        const panel = this.parsePanelPage(wikiPage.content);
+      if (this.isPanelPage(wikiPage.markup)) {
+        const panel = this.parsePanelPage(wikiPage.markup);
         _class.parent = panel.parent;
 
         if (panel.description) {
           _class.description = panel.description;
         }
-      } else if (this.isTypePage(wikiPage.content)) {
-        const type = this.parseTypePage(wikiPage.content);
+      } else if (this.isTypePage(wikiPage.markup)) {
+        const type = this.parseTypePage(wikiPage.markup);
 
         if (type.description) {
           _class.description = type.description;
         }
-      } else if (this.isFunctionPage(wikiPage.content)) {
-        const _function = this.parseFunctionPage(wikiPage.content);
+      } else if (this.isFunctionPage(wikiPage.markup)) {
+        const _function = this.parseFunctionPage(wikiPage.markup);
 
         _class.functions = _class.functions ?? [];
         _class.functions.push(_function);
@@ -137,28 +143,46 @@ export class WikiScraper {
     const realmsRaw = this.trimMultiLineString($('function > realm').text());
     const realms = this.parseRealms(realmsRaw);
     const args: Array<FunctionArgument> = [];
+    const overloads: Array<FunctionOverload> = [];
     const returnValues: Array<FunctionReturnValue> = [];
 
-    $('function > args')
-      .children()
-      .each((i, element) => {
-        const description = $(element).html();
+    const parseArg = (arg: cheerio.Element) => {
+        const description = $(arg).html();
 
         const argument: FunctionArgument = {
-          name: element.attribs.name,
-          type: element.attribs.type,
+          name: arg.attribs.name,
+          type: arg.attribs.type,
         };
 
-        if (element.attribs.default) {
-          argument.default = element.attribs.default;
+        if (arg.attribs.default) {
+          argument.default = arg.attribs.default;
         }
 
         if (description && description !== '') {
           argument.description = this.trimMultiLineString(description);
         }
 
-        args.push(argument);
-      });
+        return argument
+    }
+
+    const $argsBlocks = $("function > args");
+
+    $($argsBlocks[0]).children().each((_: number, arg: cheerio.Element) => {
+        args.push(parseArg(arg))
+    })
+
+    for (let i = 1; i < $argsBlocks.length; i++) {
+        const overload: FunctionOverload = {
+            name: $argsBlocks[i].attribs.name,
+            arguments: []
+        }
+
+        $($argsBlocks[i]).children().each((_: number, arg: cheerio.Element) => {
+            overload.arguments.push(parseArg(arg))
+        })
+
+        overloads.push(overload)
+    }
 
     $('function > rets')
       .children()
@@ -193,6 +217,10 @@ export class WikiScraper {
 
     if (args.length > 0) {
       _function.arguments = args;
+    }
+
+    if (overloads.length > 0) {
+      _function.overloads = overloads;
     }
 
     if (returnValues.length > 0) {
@@ -388,7 +416,7 @@ export class WikiScraper {
     return $('structure').length > 0;
   }
 
-  private parseContent(content: string): CheerioStatic {
+  private parseContent(content: string): cheerio.CheerioAPI {
     return cheerio.load(content, { decodeEntities: false });
   }
 
