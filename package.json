@@ -11,6 +11,8 @@
     "pages:deploy": "astro build && wrangler pages deploy ./dist",
     "get_used_mdis": "rg -Io \"mdi-[\\w-]+\" ./build/cache/ | sort | uniq",
     "upload_caches": "/bin/bash ./build/modules/upload_caches.sh",
+    "upload_categories": "/bin/bash ./build/modules/categories/upload_categories.sh",
+    "build_categories": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/categories/build_categories.ts",
     "clear_recent_changes": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_recent_changes.ts",
     "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
   },
@@ -28,6 +30,7 @@
     "bottleneck": "^2.19.5",
     "chalk": "^5.3.0",
     "cheerio": "^1.0.0-rc.12",
+    "gmod-wiki-scraper": "github:NullEnt1ty/gmod-wiki-scraper",
     "html-minifier": "^4.0.0",
     "ky": "^1.2.0",
     "minify": "^11.0.1",

@@ -34,10 +34,17 @@ class ApiInterface {
         });
     }
 
-    async _get(url: string): Promise<KyResponse> {
+    _get(url: string): Promise<KyResponse> {
         return this.limiter.schedule(() => {
             console.log(chalk.blue("GET"), url)
             return ky.get(url)
+        })
+    }
+
+    _post(url: string, data: object): Promise<KyResponse> {
+        return this.limiter.schedule(() => {
+            console.log(chalk.blue("POST"), url, data)
+            return ky.post(url, { json: data })
         })
     }
 
@@ -91,6 +98,19 @@ class ApiInterface {
         const dir = path.dirname(cachePath)
         await fs.mkdir(dir, { recursive: true })
         await fs.writeFile(cachePath, text)
+
+        try {
+            return JSON.parse(text)
+        } catch (e) {
+            console.error("Failed to parse JSON", e, `endpoint: '${endpoint}'`)
+            console.error(text)
+            throw e
+        }
+    }
+
+    async postJSON(endpoint: string, data: object): Promise<any> {
+        const response = await this._post(`${this.baseUrl}${endpoint}`, data)
+        const text = await response.text()
 
         try {
             return JSON.parse(text)

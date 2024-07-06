@@ -4,6 +4,7 @@ import { promises as fs } from "fs"
 import { minify as htmlMinify } from "html-minifier"
 import type ApiInterface from "./modules/api_interface.js"
 import type StaticContentHandler from "./modules/static.js"
+import { getAllPagesForCategory } from "./modules/get_page_manifest.js"
 
 function setupFooters($: cheerio.CheerioAPI) {
     const footers = $("div.footer")
