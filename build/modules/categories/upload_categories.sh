@@ -28,12 +28,12 @@ for file in ./public/categories/parsed/*.json; do
 done
 wait
 
-zip --recurse-paths -9 --quiet manifests.zip ./public/categories/manifests &
-zip --recurse-paths -9 --quiet contents.zip ./public/categories/contents &
-zip --recurse-paths -9 --quiet parsed.zip ./public/categories/parsed &
+zip --recurse-paths -9 --quiet --junk-paths manifests.zip ./public/categories/manifests &
+zip --recurse-paths -9 --quiet --junk-paths contents.zip ./public/categories/contents &
+zip --recurse-paths -9 --quiet --junk-paths parsed.zip ./public/categories/parsed &
 wait
 
-(npx wrangler r2 object put gmodwiki/categories/manifests/all.zip --file ./manifests.zip && rm -v ./manifests.zip)
-(npx wrangler r2 object put gmodwiki/categories/contents/all.zip --file ./contents.zip && rm -v ./contents.zip)
-(npx wrangler r2 object put gmodwiki/categories/parsed/all.zip --file ./parsed.zip && rm -v ./parsed.zip)
+(npx wrangler r2 object put gmodwiki/categories/manifests/all.zip --file ./manifests.zip && rm -v ./manifests.zip) &
+(npx wrangler r2 object put gmodwiki/categories/contents/all.zip --file ./contents.zip && rm -v ./contents.zip) &
+(npx wrangler r2 object put gmodwiki/categories/parsed/all.zip --file ./parsed.zip && rm -v ./parsed.zip) &
 wait

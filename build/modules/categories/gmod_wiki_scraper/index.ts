@@ -146,11 +146,11 @@ export class WikiScraper {
     const overloads: Array<FunctionOverload> = [];
     const returnValues: Array<FunctionReturnValue> = [];
 
-    const parseArg = (arg: cheerio.Element) => {
+    const parseArg = (arg: cheerio.Element, i: number) => {
         const description = $(arg).html();
 
         const argument: FunctionArgument = {
-          name: arg.attribs.name,
+          name: arg.attribs.name || `arg${i+1}`,
           type: arg.attribs.type,
         };
 
@@ -167,8 +167,8 @@ export class WikiScraper {
 
     const $argsBlocks = $("function > args");
 
-    $($argsBlocks[0]).children().each((_: number, arg: cheerio.Element) => {
-        args.push(parseArg(arg))
+    $($argsBlocks[0]).children().each((i: number, arg: cheerio.Element) => {
+        args.push(parseArg(arg, i))
     })
 
     for (let i = 1; i < $argsBlocks.length; i++) {
@@ -177,8 +177,8 @@ export class WikiScraper {
             arguments: []
         }
 
-        $($argsBlocks[i]).children().each((_: number, arg: cheerio.Element) => {
-            overload.arguments.push(parseArg(arg))
+        $($argsBlocks[i]).children().each((i: number, arg: cheerio.Element) => {
+            overload.arguments.push(parseArg(arg, i))
         })
 
         overloads.push(overload)
