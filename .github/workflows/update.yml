@@ -41,15 +41,6 @@ jobs:
         run: |
           npm run build
 
-      - name: Build and upload category pages
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: |
-          npm run build_categories
-          npm run upload_categories
-          rm -rfv ./public/categories
-
       - name: Build final pack
         env:
           BUILD_ENV: production
