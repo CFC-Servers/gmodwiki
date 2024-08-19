@@ -308,6 +308,7 @@ async function getRemoteFiles(api: ApiInterface) {
 
 // Files that should be re-acquired on every build
 const uncachedFiles = [
+  "build/cache/gmod.html",
   "public/styles/gmod.css",
   "build/cache/gmod/~pagelist.json",
 ]
