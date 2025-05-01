@@ -25,6 +25,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
+
+      - name: Setup
+        run: |
+          npm --no-audit --progress=false ci
 
       - name: Scrape and Build
         env:
@@ -40,6 +45,7 @@ jobs:
           # (it's too big, we upload it to R2 but include it in the docker image)
           mv --verbose ./public/search_index.json .
           npm run astrobuild
+
 
       # Remote cache
       - name: Prepare remote cache files
