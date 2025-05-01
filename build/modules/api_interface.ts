@@ -37,7 +37,10 @@ class ApiInterface {
     _get(url: string): Promise<KyResponse> {
         return this.limiter.schedule(() => {
             console.log(chalk.blue("GET"), url)
-            return ky.get(url)
+            return ky.get(url, {
+                retry: { limit: 3 },
+                timeout: 20000
+            })
         })
     }
 
