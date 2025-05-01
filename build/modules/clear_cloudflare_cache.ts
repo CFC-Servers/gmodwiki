@@ -8,8 +8,13 @@ import { promises as fs } from "fs"
 
 
 const readDeletedFiles = async () => {
-  const content = await fs.readFile("deleted_files.json", "utf-8")
-  return JSON.parse(content)
+  try {
+      const content = await fs.readFile("deleted_files.json", "utf-8")
+      return JSON.parse(content)
+  } catch {
+      console.log("Couldn't find deleted_files.json. Returning empty array.")
+      return []
+  }
 }
 
 const translatePaths = (paths: string[]) => {
