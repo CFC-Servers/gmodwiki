@@ -1,0 +1,96 @@
+# Does a full parse and build of the wiki, not using any cached data.
+name: Full Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_image:
+        type: boolean
+        description: "Should this build skip the docker image build?"
+        default: false
+
+  schedule:
+    - cron: '12 5 1 * *' # At 05:12 on day-of-month 1.
+
+
+jobs:
+  full-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Scrape and Build
+        env:
+          BUILD_ENV: production
+        run: |
+          npm run build
+
+      - name: Build final pack
+        env:
+          BUILD_ENV: production
+        run: |
+          # Temporarily move it out of the public dir to keep it out of the Cloudflare bundle
+          # (it's too big, we upload it to R2 but include it in the docker image)
+          mv --verbose ./public/search_index.json .
+          npm run astrobuild
+
+
+      # Remote cache
+      - name: Prepare remote cache files
+        run: |
+          zip --recurse-paths -9 --quiet public_cache.zip ./public &
+          zip --recurse-paths -9 --quiet build_cache.zip ./build/cache &
+          wait
+
+      - name: Upload storage assets
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          (npx wrangler r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip && rm -v public_cache.zip) &
+          (npx wrangler r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip && rm -v build_cache.zip) &
+          (npx wrangler r2 object put gmodwiki/search_index.json --file ./search_index.json && mv ./search_index.json ./public/) &
+          wait
+
+      # CF Publish
+      - name: Publish Site
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          npx wrangler pages deploy --project-name=gmodwiki ./dist
+
+      - name: Clear CF Cache
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CLOUDFLARE_CACHE_API_KEY: ${{ secrets.CF_CACHE_API_TOKEN }}
+        run: |
+          npm run clear_cloudflare_cache
+          rm --verbose deleted_files.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Docker
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Build & Push Docker Image
+        if: ${{ github.event.inputs.skip_image != 'true' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/cfc-servers/gmodwiki:latest
