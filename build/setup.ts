@@ -35,7 +35,7 @@ async function setupSidebar($: cheerio.CheerioAPI) {
     contents = contents.replaceAll("memb ", "") // Unused class
     contents = contents.replaceAll("ToggleClass", "window.ToggleClass") // Astro/rocket-loader doesn't allow us to reference functions without putting them on the widnwos
     contents = contents.replace(/(href=|src=)".*?"/g, (m) => m.replace(/\\+/g, '/')) // For some reason, URLs are being parsed incorrectly, this should fix that.
-    contents = htmlMinify(contents, { collapseWhitespace: true, removeComments: true })
+    contents = await htmlMinify(contents, { collapseWhitespace: true, removeComments: true })
     await fs.writeFile("src/components/Sidebar.astro", contents)
 }
 
