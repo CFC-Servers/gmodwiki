@@ -76,7 +76,7 @@ class StaticContentHandler {
 
         const fileName = path.basename(resolvedUrl).split('?')[0]
         const fileExtension = path.extname(fileName).toLowerCase()
-        let filePath = path.join(fullPath, fileName);
+        let filePath = path.join(fullPath, fileName).replaceAll("\\", "/");
         let newURL = `/${filePath}`.replaceAll("public/", "")
 
         // We replace all images with webp
