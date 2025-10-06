@@ -1,7 +1,7 @@
 // Sets up the layout and components files
 import * as cheerio from "cheerio"
 import { promises as fs } from "fs"
-import { minify as htmlMinify } from "html-minifier"
+import { minify as htmlMinify } from "html-minifier-next"
 import type ApiInterface from "./modules/api_interface.js"
 import type StaticContentHandler from "./modules/static.js"
 import { getAllPagesForCategory } from "./modules/get_page_manifest.js"
