@@ -17,7 +17,7 @@
     "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.4.1",
+    "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^12.6.9",
     "@astrojs/internal-helpers": "^0.7.3",
     "@astrojs/node": "^9.4.4",
