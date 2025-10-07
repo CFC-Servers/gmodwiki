@@ -19,7 +19,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.4.1",
     "@astrojs/cloudflare": "^12.6.9",
-    "@astrojs/internal-helpers": "^0.2.1",
+    "@astrojs/internal-helpers": "^0.7.3",
     "@astrojs/node": "^9.4.4",
     "@cloudflare/workers-types": "^4.20240129.0",
     "@types/cheerio": "^0.22.35",
