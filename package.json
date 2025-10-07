@@ -22,7 +22,7 @@
     "@astrojs/internal-helpers": "^0.2.1",
     "@astrojs/node": "^9.4.4",
     "@cloudflare/workers-types": "^4.20240129.0",
-    "@types/cheerio": "^0.22.35",
+    "@types/cheerio": "^1.0.0",
     "@types/html-minifier": "^4.0.5",
     "@types/minify": "^9.1.4",
     "@types/node": "^20.11.16",
