@@ -1,5 +1,6 @@
 // Downloads and builds all of the gmod pages
 import path from "path";
+import * as cheerio from "cheerio";
 import { PagesAPI } from "./pages_api.js";
 import { promises as fs } from "fs";
 import { getAllPageLinks } from "./get_page_manifest.js";
@@ -24,16 +25,37 @@ interface PageResponse {
   pageLinks?: any[];
 }
 
+const ellipsis = (str: string, max: number): string => {
+  if (str.length <= max) {
+    return str;
+  }
+
+  const ellipsisChars = "...";
+  const trimLength = max - ellipsisChars.length;
+
+  const lastSpaceIndex = str.lastIndexOf(" ", trimLength);
+
+  const cutIndex = lastSpaceIndex > -1 ? lastSpaceIndex : trimLength;
+
+  return str.substring(0, cutIndex) + ellipsisChars;
+};
+
+const stripMarkdownLinks = (text: string): string => {
+  return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1");
+};
+
 // Builds the description that'll be used in the og:meta tag
 const buildDescription = (markup: string) => {
-  let description = markup;
+  let $ = cheerio.load(markup);
 
-  description = description.replaceAll(/<[^>]*>/g, ""); // Remove tags
-  description = description.replaceAll(/\s+/g, " "); // Remove extra whitespace
-  description = description.trim();
-  description = description.substring(0, 200); // Limit to 200 characters
+  let summary = $("summary").first().text();
+  if (summary.length === 0) {
+    summary = $("description").first().text();
+  }
 
-  return description;
+  summary = stripMarkdownLinks(summary);
+
+  return ellipsis(summary, 200);
 };
 
 // Excluded to keep the bundle size under 25mb (cloudflare limit)
