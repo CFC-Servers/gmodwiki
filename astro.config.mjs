@@ -12,26 +12,6 @@ if (buildEnv === "production") {
   console.log("Building for Cloudflare adapter");
   adapter = cloudflare({
     imageService: "passthrough",
-    routes: {
-      extend: {
-        include: [{ pattern: "/*" }],
-        exclude: [
-          { pattern: "/content/*" },
-          { pattern: "/script.js" },
-          { pattern: "/search_index.json" },
-          { pattern: "/~pagelist.json" },
-          { pattern: "/styles/gmod.css" },
-          { pattern: "/wiki/files/*" },
-          { pattern: "/rubat/*" },
-          { pattern: "/lewis/*" },
-          { pattern: "/garry/*" },
-          { pattern: "/fonts/*" },
-          { pattern: "/*.webp" },
-          { pattern: "/cdn-cgi/*" },
-          { pattern: "/last_build.txt" },
-        ],
-      },
-    },
   });
 } else {
   console.log("Building for Node adapter");
