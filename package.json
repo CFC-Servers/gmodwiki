@@ -18,26 +18,28 @@
     "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/internal-helpers": "^0.7.3",
     "@cloudflare/workers-types": "^4.20240129.0",
     "@types/html-minifier": "^4.0.5",
     "@types/minify": "^9.1.4",
     "@types/node": "^22.0.0",
-    "typescript": "^5.3.3",
-    "gmod-wiki-scraper": "github:NullEnt1ty/gmod-wiki-scraper",
-    "wrangler": "^4.42.0",
-    "@astrojs/check": "^0.9.4",
+    "astro": "^5.14.1",
+    "bottleneck": "^2.19.5",
     "chalk": "^5.3.0",
     "cheerio": "^1.1.2",
+    "gmod-wiki-scraper": "github:NullEnt1ty/gmod-wiki-scraper",
+    "html-minifier-next": "^2.1.6",
     "ky": "^1.2.0",
     "sharp": "^0.34.4",
     "ts-node": "^10.9.2",
-    "bottleneck": "^2.19.5",
-    "astro": "^5.14.1",
-    "@astrojs/internal-helpers": "^0.7.3",
-    "html-minifier-next": "^2.1.6"
+    "typescript": "^5.3.3",
+    "wrangler": "^4.42.0"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.9",
-    "@astrojs/node": "^9.4.4"
+    "@astrojs/node": "^9.4.4",
+    "downloadjs": "^1.4.7",
+    "html-to-image": "^1.11.13"
   }
 }

@@ -44,18 +44,26 @@ const stripMarkdownLinks = (text: string): string => {
   return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1");
 };
 
-// Builds the description that'll be used in the og:meta tag
-const buildDescription = (markup: string) => {
+// Builds the description that'll be used in the og:description meta tag
+const buildDescription = (markup: string, pageContent: string) => {
   let $ = cheerio.load(markup);
 
+  // Try summary, then description
   let summary = $("summary").first().text();
   if (summary.length === 0) {
     summary = $("description").first().text();
   }
 
-  summary = stripMarkdownLinks(summary);
+  // Fallback to first paragraph of the html
+  if (summary.length === 0) {
+    $ = cheerio.load(pageContent);
+    summary = $("p").first().text();
+  } else {
+    // If we found a summary or description tag, we need to strip markdown
+    summary = stripMarkdownLinks(summary);
+  }
 
-  return ellipsis(summary, 200);
+  return ellipsis(summary, 254);
 };
 
 // Excluded to keep the bundle size under 25mb (cloudflare limit)
@@ -94,7 +102,7 @@ async function buildPage(
 
   const page: Page = {
     title: struct.title,
-    description: buildDescription(struct.markup || ""),
+    description: buildDescription(struct.markup || "", pageContent),
     tags: struct.tags,
     address: address,
     html: pageContent,

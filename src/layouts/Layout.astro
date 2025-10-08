@@ -1,7 +1,9 @@
 
 ---
+// This file is auto-generated, do not edit it directly!
+// See build/setup.ts for more information
 import Sidebar from "../components/Sidebar.astro";
-const { title, description, views, updated } = Astro.props;
+const { title, description, image, views, updated } = Astro.props;
 ---
 <!DOCTYPE html><html lang="en"><head>
 	<meta charset="utf-8">
@@ -20,7 +22,7 @@ const { title, description, views, updated } = Astro.props;
 	<meta property="og:site_name" name="og:site_name" content="Garry's Mod Wiki">
 	<meta property="og:type" name="og:type" content="website">
 	<meta property="og:description" name="og:description" content={description}>
-	<meta property="og:image" name="og:image" content="//files.facepunch.com/wiki/files/353/8d8c63b684d38b4.png">
+	<meta property="og:image" name="og:image" content={image}>
 
 	
 

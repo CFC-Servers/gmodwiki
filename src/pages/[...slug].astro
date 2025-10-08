@@ -36,16 +36,44 @@ try {
     json.html = "Failed to load page <b>" + slug + "</b>" + (e ? "<p>" + e.toString() + "</p>" : "")
 }
 
-let title = json.title
-let description = json.description
-let content = json.html
-let footer = json.footer
+const images = {
+    server: "/states/server.png",
+    client: "/states/client.png",
+    menu: "/states/menu.png",
 
+    "server-client": "/states/server-client.png",
+    "client-menu": "/states/client-menu.png",
+    "server-client-menu": "/states/server-client-menu.png",
+
+    "default": "/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.webp"
+}
+
+const getOpenGraphImage = (tags: string[]) => {
+    const hasServer = tags.includes("realm-server")
+    const hasClient = tags.includes("realm-client")
+    const hasMenu = tags.includes("realm-menu")
+
+    if (hasServer && hasClient && hasMenu) return images["server-client-menu"]
+    if (hasServer && hasClient) return images["server-client"]
+    if (hasClient && hasMenu) return images["client-menu"]
+
+    if (hasServer) return images["server"]
+    if (hasClient) return images["client"]
+    if (hasMenu) return images["menu"]
+
+    return images["default"]
+}
+
+const tags = json.tags
+const tagArray = tags ? tags.split(" ").map((tag: string) => tag.trim()) : []
+const ogImage = getOpenGraphImage(tagArray)
+
+const footer = json.footer
 const footerInfo = footer.split("<br>")
 let views = footerInfo[0] || "0 views"
 let updated = footerInfo[1] || ""
 ---
 
-<Layout title={title} description={description} views={views} updated={updated}>
-    <Fragment set:html={content} />
+<Layout title={json.title} image={ogImage} description={json.description} views={views} updated={updated}>
+    <Fragment set:html={json.html} />
 </Layout>

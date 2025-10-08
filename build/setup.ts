@@ -4,7 +4,6 @@ import { promises as fs } from "fs";
 import { minify as htmlMinify } from "html-minifier-next";
 import type ApiInterface from "./modules/api_interface.js";
 import type StaticContentHandler from "./modules/static.js";
-import { getAllPagesForCategory } from "./modules/get_page_manifest.js";
 
 function setupFooters($: cheerio.CheerioAPI) {
   const footers = $("div.footer");
@@ -18,6 +17,7 @@ function setupFooters($: cheerio.CheerioAPI) {
   secondFooter.remove();
 }
 
+// Set up a slot for our dynamic content
 function setupContent($: cheerio.CheerioAPI) {
   const content = $("div[id='pagecontent']");
   content.html("<slot />");
@@ -50,6 +50,7 @@ async function setupLayout($: cheerio.CheerioAPI) {
   layout = layout.replace(/\/gmod\//g, "/"); // We don't use the /gmod prefix
   layout = layout.replace(/"{title}"/g, "{title}"); // When we insert this code from js it wraps our frontmatter variables in quotes so we have to unwrap them again
   layout = layout.replace(/"{description}"/g, "{description}");
+  layout = layout.replace(/"{image}"/g, "{image}");
   layout = layout.replace(/(href=|src=)".*?"/g, (m) => m.replace(/\\+/g, "/")); // For some reason, URLs are being parsed incorrectly, this should fix that.
   await fs.writeFile("src/layouts/Layout.astro", makeLayoutHeader(layout));
 }
@@ -63,18 +64,18 @@ async function setupMainScript() {
   await fs.copyFile("build/fragments/script.js", "public/script.js");
 }
 
-async function setupFragments() {
-  await fs.copyFile(
-    "build/fragments/[...slug].astro",
-    "src/pages/[...slug].astro",
-  );
+async function setupAssets() {
+  await fs.cp("build/assets", "public", { recursive: true });
 }
 
 function setupPageVariables($: cheerio.CheerioAPI) {
+  // We have to correct these in a second pass
   $("title").html("{title}");
   $("meta[name='og:title']").attr("content", "{title}");
-  $("meta[name='og:description']").attr("content", "{description}"); // We have to correct these in a second pass
-  $("meta[name='og:image']").attr("content", "{image}"); // We have to correct these in a second pass
+  $("meta[name='og:description']").attr("content", "{description}");
+  $("meta[name='og:image']").attr("content", "{image}");
+
+  // Remove the View/Edit/History links - we put our own stuff there
   $("ul[id='pagelinks']").html("");
 }
 
@@ -86,9 +87,11 @@ function setupBrowserHints($: cheerio.CheerioAPI) {
   $(`<link rel="preconnect" href="https://fonts.gstatic.com">`).insertAfter(
     insertAfter,
   );
+
+  // Some images are hosted on imgur
   $(`<link rel="preconnect" href="https://i.imgur.com">`).insertAfter(
     insertAfter,
-  ); // Some images are hosted on imgur
+  );
 }
 
 function setupScriptTags($: cheerio.CheerioAPI) {
@@ -341,8 +344,10 @@ async function processCss(contentHandler: StaticContentHandler) {
 
 const makeLayoutHeader = (content: string) => `
 ---
+// This file is auto-generated, do not edit it directly!
+// See build/setup.ts for more information
 import Sidebar from "../components/Sidebar.astro";
-const { title, description, views, updated } = Astro.props;
+const { title, description, image, views, updated } = Astro.props;
 ---
 ${content}
 `;
@@ -383,7 +388,7 @@ const uncachedFiles = [
 ];
 
 async function clearLocalCache() {
-  console.log("Clearing uncached files...");
+  console.log("Clearing uncached files (to force re-acquire them)...");
 
   for (const file of uncachedFiles) {
     try {
@@ -418,7 +423,7 @@ export async function setup(
   await processCss(contentHandler);
   await setupFolders();
   await setupMainScript();
-  await setupFragments();
+  await setupAssets();
   await getRemoteFiles(api);
 
   await fs.writeFile("public/last_build.txt", new Date().getTime().toString());

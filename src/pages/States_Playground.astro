@@ -1,14 +1,15 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import StatesPlayground from "@components/StatesPlayground.astro";
+import Modal from "../components/StatesPlayground/Modal.astro";
+import StatesPlayground from "../components/StatesPlayground/index.astro";
 
 const title = "States Playground";
 const description = "Interactive UI to play with / create state icons/images."
-const views = "probably not very many";
-const updated = "rarely";
+const views = "Page Views: probably not very many";
+const updated = "Updated: rarely";
 ---
 
-<Layout title={"States Playground} description={description} views={views} updated={updated}>
+<Layout title={"States Playground"} description={description} views={views} updated={updated}>
     <div>
         <div class="note">
             <div class="inner">This page is provided by Gmodwiki and is not mirrored from the official Wiki</div>
@@ -22,9 +23,9 @@ const updated = "rarely";
             <a name="description" class="anchor_offset"></a>
         </h1>
 
-        <div class="struct_description section">
-            <p>This is a utility that provides a handy utility for viewing/generating logos/images of the Garry's Mod wiki States colors</p>
-        </div>
+        <p>This is a utility that provides a handy utility for viewing/generating images of the Garry's Mod wiki States colors</p>
+        <p>It generates the State icons in the exact same way as the Garry's Mod wiki, and allows you to resize & download them to use however you like</p>
+        <p>(Read more about States on the <a href="/States">States page</a>)</p>
 
         <h1>
             Playground
@@ -34,8 +35,10 @@ const updated = "rarely";
             <a name="playground" class="anchor_offset"></a>
         </h1>
 
-        <div class="section">
+        <div>
+            <p>Click on one of the icons to download it in the size/format that you prefer</p>
             <StatesPlayground />
+            <Modal />
         </div>
     </div>
 </Layout>
