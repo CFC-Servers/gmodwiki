@@ -1,6 +1,6 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
-import node from '@astrojs/node';
+import node from "@astrojs/node";
 import cloudflare from "@astrojs/cloudflare";
 
 const buildEnv = process.env.BUILD_ENV;
@@ -11,38 +11,39 @@ const buildConfig = { split: true };
 if (buildEnv === "production") {
   console.log("Building for Cloudflare adapter");
   adapter = cloudflare({
-    mode: "advanced",
+    imageService: "passthrough",
     routes: {
-      strategy: "include",
-      include: ["/*"],
-      exclude: [
-        "/content/*",
-        "/script.js",
-        "/search_index.json",
-        "/~pagelist.json",
-        "/styles/gmod.css",
-        "/wiki/files/*",
-        "/rubat/*",
-        "/lewis/*",
-        "/garry/*",
-        "/fonts/*",
-        "/*.webp",
-        "/cdn-cgi/*",
-        "/last_build.txt",
-      ]
-    }
+      extend: {
+        include: [{ pattern: "/*" }],
+        exclude: [
+          { pattern: "/content/*" },
+          { pattern: "/script.js" },
+          { pattern: "/search_index.json" },
+          { pattern: "/~pagelist.json" },
+          { pattern: "/styles/gmod.css" },
+          { pattern: "/wiki/files/*" },
+          { pattern: "/rubat/*" },
+          { pattern: "/lewis/*" },
+          { pattern: "/garry/*" },
+          { pattern: "/fonts/*" },
+          { pattern: "/*.webp" },
+          { pattern: "/cdn-cgi/*" },
+          { pattern: "/last_build.txt" },
+        ],
+      },
+    },
   });
 } else {
   console.log("Building for Node adapter");
   adapter = node({ mode: "standalone" });
-  
+
   buildConfig.rollupOptions = {
-    external: ["fs", "node:fs", "path", "node:path"]
-  }
+    external: ["fs", "node:fs", "path", "node:path"],
+  };
 }
 
 export default defineConfig({
   build: buildConfig,
   output: "server",
-  adapter: adapter
+  adapter: adapter,
 });

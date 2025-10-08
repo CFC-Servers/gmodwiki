@@ -1,32 +1,55 @@
-FROM node:21 AS builder
-
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends python3-minimal && rm -rf /var/lib/apt/lists/*
-
+FROM node:22-slim AS base
 WORKDIR /app
+COPY package.json package-lock.json ./
 
-COPY package.json /app
-COPY package-lock.json /app
-COPY node_modules /app/node_modules
-RUN npm install
 
-COPY ./build /app/build
-COPY ./public /app/public
-COPY astro.config.mjs .
-COPY tsconfig.json /app/tsconfig.json
-COPY src /app/src
+FROM base AS prod-deps
+RUN npm ci --omit=dev
+# Remove a bunch of unnecessary stuff to slim down the image
+RUN rm -rf \
+    /app/node_modules/@astrojs/cloudflare \
+    /app/node_modules/typescript \
+    /app/node_modules/@shikijs \
+    /app/node_modules/@esbuild \
+    /app/node_modules/@cloudflare \
+    /app/node_modules/fontkit \
+    /app/node_modules/@babel \
+    /app/node_modules/prismjs \
+    /app/node_modules/shiki \
+    /app/node_modules/rollup \
+    /app/node_modules/vite \
+    /app/node_modules/@types \
+    /app/node_modules/terser \
+    /app/node_modules/@rollup \
+    /app/node_modules/esbuild \
+    /app/node_modules/sharp \
+    /app/node_modules/@img \
+    /app/node_modules/astro
 
+
+FROM base AS build-deps
+RUN npm ci
+
+
+FROM build-deps AS builder
+COPY astro.config.mjs tsconfig.json ./
+COPY .astro ./
+COPY src ./src
+COPY build ./build
+COPY public ./public
 ENV BUILD_ENV=docker
 RUN npm run build
 RUN npm run astrobuild
 
-FROM node:21-alpine
-WORKDIR /app
-COPY --from=builder /app/dist /app/dist
 
+# Final Image
+FROM gcr.io/distroless/nodejs22-debian12 AS final
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
-ENV NODE_ENV=production
-RUN npm i cookie kleur clsx cssesc server-destroy send path-to-regexp@6.2.1 html-escaper
-RUN du -sh /app/node_modules
-CMD ["node", "/app/dist/server/entry.mjs"]
+EXPOSE 4321
+
+CMD ["/app/dist/server/entry.mjs"]
