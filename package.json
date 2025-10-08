@@ -8,7 +8,7 @@
     "astrobuild": "astro build",
     "preview": "astro preview",
     "pages:dev": "wrangler pages dev ./dist",
-    "pages:deploy": "BUILD_ENV=production astro build && wrangler pages deploy ./dist",
+    "pages:deploy": "BUILD_ENV=production astro build && wrangler pages deploy --project-name=gmodwiki ./dist",
     "get_used_mdis": "rg -Io \"mdi-[\\w-]+\" ./build/cache/ | sort | uniq",
     "upload_caches": "/bin/bash ./build/modules/upload_caches.sh",
     "download_caches": "/bin/bash ./build/modules/download_caches.sh",
