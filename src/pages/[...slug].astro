@@ -67,13 +67,14 @@ const getOpenGraphImage = (tags: string[]) => {
 const tags = json.tags
 const tagArray = tags ? tags.split(" ").map((tag: string) => tag.trim()) : []
 const ogImage = getOpenGraphImage(tagArray)
+const ogImageUrl = `${Astro.url.protocol}//${Astro.url.host}${ogImage}`
 
 const footer = json.footer
 const footerInfo = footer.split("<br>")
-let views = footerInfo[0] || "0 views"
-let updated = footerInfo[1] || ""
+const views = footerInfo[0] || "0 views"
+const updated = footerInfo[1] || ""
 ---
 
-<Layout title={json.title} image={ogImage} description={json.description} views={views} updated={updated}>
+<Layout title={json.title} image={ogImageUrl} description={json.description} views={views} updated={updated}>
     <Fragment set:html={json.html} />
 </Layout>
