@@ -21,6 +21,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/internal-helpers": "^0.7.3",
     "@cloudflare/workers-types": "^4.20240129.0",
+    "@frsource/is-animated": "^1.0.5",
     "@types/html-minifier": "^4.0.5",
     "@types/minify": "^9.1.4",
     "@types/node": "^22.0.0",
