@@ -1,0 +1,108 @@
+<style>
+    .icon {
+      border-radius: 27.3%;
+      width: var(--icon-size, 50px);
+      height: var(--icon-size, 50px);
+      cursor: pointer;
+    }
+
+    .client {
+      background-color: #dea909;
+    }
+
+    .server {
+      background-color: #03a9f4;
+    }
+
+    .menu {
+      background-color: #4caf50;
+    }
+
+    .server-client {
+      background: linear-gradient(45deg, #dea909 53%, #03a9f4 53.001%);
+    }
+
+    .server-client-menu {
+      background: linear-gradient(45deg, #4caf50 35.99%, #dea909 36%, #dea909 63%, #03a9f4 63.01%);
+    }
+
+    .client-menu {
+      background: linear-gradient(45deg, #dea909 53%, #4caf50 53.001%);
+    }
+
+    .icon-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-group {
+      display: flex;
+      flex-direction: column;
+
+      flex-grow: 1;
+      flex-basis: 250px;
+
+      gap: 0.5rem;
+      padding: 1rem;
+
+      align-items: center;
+      justify-content: center;
+    }
+
+</style>
+
+<div class="icon-container">
+
+    <div class="icon-group">
+        <h2>Client</h2>
+        <div class="icon client"></div>
+    </div>
+
+    <div class="icon-group">
+        <h2>Server</h2>
+        <div class="icon server"></div>
+    </div>
+
+    <div class="icon-group">
+        <h2>Menu</h2>
+        <div class="icon menu"></div>
+    </div>
+
+    <div class="icon-group">
+        <h2>Server/Client</h2>
+        <div class="icon server-client"></div>
+    </div>
+
+    <div class="icon-group">
+        <h2>Client/Menu</h2>
+        <div class="icon client-menu"></div>
+    </div>
+
+    <div class="icon-group">
+        <h2>Server/Client/Menu</h2>
+        <div class="icon server-client-menu"></div>
+    </div>
+
+</div>
+
+
+<script>
+    const iconContainer = document.querySelector(".icon-container");
+
+    iconContainer.addEventListener("click", (event) => {
+        const iconGroup = event.target.closest(".icon-group");
+        if (!iconGroup) return;
+
+        const iconElement = iconGroup.querySelector(".icon");
+        const title = iconGroup.querySelector("h2").textContent.trim();
+
+        const openModalEvent = new CustomEvent("openModal", {
+            bubbles: true,
+            detail: { iconElement, title }
+        });
+        iconGroup.dispatchEvent(openModalEvent);
+    });
+</script>

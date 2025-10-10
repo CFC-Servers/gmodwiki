@@ -21,7 +21,9 @@ pnpm-debug.log*
 .DS_Store
 
 build/cache/
-public/
+
+public/*
+!public/.gitkeep
 
 slim.report.json
 
