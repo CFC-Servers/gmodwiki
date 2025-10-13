@@ -38,6 +38,6 @@
     "wrangler": "^4.42.0"
   },
   "dependencies": {
-    "html-minifier-next": "^2.1.6"
+    "html-minifier-next": "^2.1.7"
   }
 }
