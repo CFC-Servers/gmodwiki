@@ -1,15 +1,15 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Modal from "../components/StatesPlayground/Modal.astro";
-import StatesPlayground from "../components/StatesPlayground/index.astro";
+import Modal from "../components/RealmsPlayground/Modal.astro";
+import RealmsPlayground from "../components/RealmsPlayground/index.astro";
 
-const title = "States Playground";
-const description = "Interactive UI to play with / create state icons/images."
+const title = "Realm Icons Playground";
+const description = "Interactive UI to play with / create realm icons/images."
 const views = "Page Views: probably not very many";
 const updated = "Updated: rarely";
 ---
 
-<Layout title={"States Playground"} description={description} views={views} updated={updated}>
+<Layout title={title} description={description} views={views} updated={updated}>
     <div>
         <div class="note">
             <div class="inner">This page is provided by Gmodwiki and is not mirrored from the official Wiki</div>
@@ -23,12 +23,12 @@ const updated = "Updated: rarely";
             <a name="description" class="anchor_offset"></a>
         </h1>
 
-        <p>This is a utility that provides a handy utility for viewing/generating images of the Garry's Mod wiki States colors</p>
-        <p>It generates the State icons in the exact same way as the Garry's Mod wiki, and allows you to resize & download them to use however you like</p>
-        <p>(Read more about States on the <a href="/States">States page</a>)</p>
+        <p>This is a utility for viewing/generating images of the Garry's Mod wiki Realms colors</p>
+        <p>It generates the Realm icons in the exact same way as the Garry's Mod wiki, and allows you to resize & download them to use however you like</p>
+        <p>(Read more about Realms on the <a href="/States">States page</a>)</p>
 
         <h1>
-            Playground
+            Utility
             <a class="anchor" href="#playground">
                 <i class="mdi mdi-link-variant"></i>
             </a>
@@ -37,7 +37,7 @@ const updated = "Updated: rarely";
 
         <div>
             <p>Click on one of the icons to download it in the size/format that you prefer</p>
-            <StatesPlayground />
+            <RealmsPlayground />
             <Modal />
         </div>
     </div>

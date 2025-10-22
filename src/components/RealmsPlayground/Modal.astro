@@ -1,0 +1,277 @@
+<div id="modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close-btn">&times;</button>
+        <h2>Download Icon</h2>
+        <div id="modal-icon-display" class="modal-icon-display"></div>
+        <div class="modal-controls">
+            <div class="control-group">
+                <label>Format</label>
+                <div id="format-radios" class="format-radios">
+                    <input type="radio" id="format-png" name="format" value="png" checked>
+                    <label for="format-png">PNG</label>
+                    <input type="radio" id="format-jpeg" name="format" value="jpeg">
+                    <label for="format-jpeg">JPEG</label>
+                    <input type="radio" id="format-svg" name="format" value="svg">
+                    <label for="format-svg">SVG</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="modal-size-input">Size (px)</label>
+                <div id="size-selector" class="size-selector">
+                    <input id="modal-size-input" type="number" value="128" placeholder="Custom">
+                    <button type="button" class="size-selector-arrow" aria-label="Toggle size presets" aria-haspopup="listbox" aria-expanded="false">
+                        <svg xmlns="http://www.w.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="size-selector-presets-panel" role="listbox">
+                        <ul>
+                            <li><button role="option" data-size="16">16</button></li>
+                            <li><button role="option" data-size="32">32</button></li>
+                            <li><button role="option" data-size="64">64</button></li>
+                            <li><button role="option" data-size="128">128</button></li>
+                            <li><button role="option" data-size="256">256</button></li>
+                            <li><button role="option" data-size="512">512</button></li>
+                            <li><button role="option" data-size="1024">1024</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="download-btn" class="download-btn">Download</button>
+    </div>
+</div>
+
+<style>
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000;}
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: white; padding: 2rem; border-radius: 8px; position: relative; width: 90%; max-width: 480px; }
+    .modal-close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 2rem; cursor: pointer; color: #888; }
+    .modal-icon-display { padding: 2rem; margin: 1rem 0; display: grid; place-content: center; background-color: #f0f0f0; border-radius: 5px; }
+    .modal-icon-display .icon { width: 250px; height: 250px; border-radius: 27.3%; }
+    .modal-controls { display: flex; justify-content: space-around; gap: 1rem; margin: 1.5rem 0; }
+    .control-group { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+    .control-group input, .control-group select { padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+
+    .format-radios {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .format-radios input[type="radio"] {
+        display: none;
+    }
+    .format-radios label {
+        flex: 1;
+        padding: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #fff;
+        color: #555;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        border-left: 1px solid #eee;
+    }
+    .format-radios label:first-of-type {
+        border-left: none;
+    }
+    .format-radios input[type="radio"]:checked + label {
+        background-color: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+    }
+    .format-radios label:hover {
+        background-color: #f0f0f0;
+    }
+    .format-radios input[type="radio"]:checked + label:hover {
+        background-color: #45a049;
+    }
+
+    .size-selector {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .size-selector input[type="number"] {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: none;
+        width: 100%;
+        -moz-appearance: textfield; /* Firefox */
+    }
+    .size-selector input[type="number"]::-webkit-inner-spin-button,
+    .size-selector input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .size-selector-arrow {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-left: 1px solid #eee;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        display: grid;
+        place-content: center;
+    }
+    .size-selector-arrow:hover {
+        background-color: #f0f0f0;
+    }
+    .size-selector-arrow svg {
+        transition: transform 0.2s ease-in-out;
+        color: #333;
+    }
+    .size-selector.is-open .size-selector-arrow svg {
+        transform: rotate(180deg);
+    }
+
+    .size-selector-presets-panel {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        z-index: 20;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+    .size-selector.is-open .size-selector-presets-panel {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .size-selector-presets-panel ul {
+        list-style: none;
+        margin: 0;
+        padding: 0.25rem;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .size-selector-presets-panel button {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 4px;
+        color: #333;
+    }
+    .size-selector-presets-panel button:hover {
+        background-color: #f0f0f0;
+    }
+    .download-btn { display: block; width: 100%; padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: white; background-color: #4CAF50; border: none; border-radius: 5px; cursor: pointer; }
+</style>
+
+<script>
+    import { toPng, toJpeg, toSvg } from "html-to-image";
+    import download from "downloadjs";
+
+    const modalOverlay = document.getElementById("modal-overlay");
+    const modalCloseBtn = document.querySelector(".modal-close-btn");
+    const modalIconDisplay = document.getElementById("modal-icon-display");
+    const modalSizeInput = document.getElementById("modal-size-input");
+    const downloadBtn = document.getElementById("download-btn");
+
+    // --- Custom Size Selector Logic ---
+    const sizeSelector = document.getElementById("size-selector");
+    const sizeSelectorArrow = sizeSelector.querySelector(".size-selector-arrow");
+    const sizeSelectorPanel = sizeSelector.querySelector(".size-selector-presets-panel");
+
+    function closePresets() {
+        sizeSelector.classList.remove("is-open");
+        sizeSelectorArrow.setAttribute("aria-expanded", "false");
+    }
+
+    function togglePresets() {
+        const isOpen = sizeSelector.classList.toggle("is-open");
+        sizeSelectorArrow.setAttribute("aria-expanded", isOpen.toString());
+    }
+
+    sizeSelectorArrow.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePresets();
+    });
+
+    sizeSelectorPanel.addEventListener("click", (e) => {
+        if (e.target.matches("button[data-size]")) {
+            modalSizeInput.value = e.target.dataset.size;
+            closePresets();
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && sizeSelector.classList.contains("is-open")) {
+            closePresets();
+        }
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!sizeSelector.contains(e.target) && sizeSelector.classList.contains("is-open")) {
+            closePresets();
+        }
+    });
+
+    let activeIconElement = null;
+
+    document.addEventListener("openModal", (event) => {
+        const { iconElement, title } = event.detail;
+
+        activeIconElement = iconElement;
+        
+        const clonedIcon = activeIconElement.cloneNode(true);
+        modalIconDisplay.innerHTML = "";
+        modalIconDisplay.appendChild(clonedIcon);
+        
+        modalOverlay.dataset.iconTitle = title.toLowerCase().replace(/[\/\s]/g, "-");
+        modalOverlay.classList.add("active");
+    });
+
+    function closeModal() {
+        modalOverlay.classList.remove("active");
+        activeIconElement = null;
+    }
+    modalCloseBtn.addEventListener("click", closeModal);
+    modalOverlay.addEventListener("click", (event) => {
+        if (event.target === modalOverlay) closeModal();
+    });
+
+    downloadBtn.addEventListener("click", async () => {
+        if (!activeIconElement) return;
+
+        const size = parseInt(modalSizeInput.value, 10) || 128;
+        const format = document.querySelector('#format-radios input[name="format"]:checked').value;
+        const filename = `${modalOverlay.dataset.iconTitle}.${format}`;
+        const originalStyle = activeIconElement.style.cssText;
+
+        try {
+            activeIconElement.style.cssText = `
+                width: ${size}px; 
+                height: ${size}px; 
+                border-radius: ${size * (3 / 11)}px;
+            `;
+
+            const dataUrl = await {
+                "png": () => toPng(activeIconElement, { skipFonts: true }),
+                "jpeg": () => toJpeg(activeIconElement, { skipFonts: true, quality: 0.95 }),
+                "svg": () => toSvg(activeIconElement, { skipFonts: true }),
+            }[format]();
+
+            download(dataUrl, filename);
+        } catch (error) {
+            console.error("Download failed:", error);
+        } finally {
+            activeIconElement.style.cssText = originalStyle;
+            closeModal();
+        }
+    });
+</script>
