@@ -33,3 +33,6 @@ slim.report.json
 build_cache.zip
 public_cache.zip
 deleted_files.txt
+
+# This is a generated file, shouldn't be tracked - gets rebuilt on build
+src/layouts/Layout.astro
