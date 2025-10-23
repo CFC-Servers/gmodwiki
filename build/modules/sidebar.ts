@@ -40,6 +40,23 @@ const removeUnusedClasses = (
   });
 };
 
+const addItems = async (
+  $: cheerio.CheerioAPI,
+  sidebar: cheerio.Cheerio<Element>,
+) => {
+  const extraSection = await fs.readFile(
+    "build/fragments/extraSidebar.html",
+    "utf-8",
+  );
+  const lastSection = sidebar.find("div.section").last();
+
+  if (lastSection.length === 0) {
+    throw new Error("Could not find last section in sidebar!");
+  }
+
+  lastSection.after(extraSection);
+};
+
 export async function setupSidebar($: cheerio.CheerioAPI) {
   const sidebar = $("div[id='sidebar']");
   if (sidebar.length === 0) {
@@ -47,6 +64,7 @@ export async function setupSidebar($: cheerio.CheerioAPI) {
   }
 
   removeUnusedClasses($, sidebar);
+  await addItems($, sidebar);
 
   // Now store the raw contents of the sidebar so we can replace it with a component we'll make
   let contents = sidebar.html();
