@@ -66,9 +66,6 @@ const buildDescription = (markup: string, pageContent: string) => {
   return ellipsis(summary, 254);
 };
 
-// Excluded to keep the bundle size under 25mb (cloudflare limit)
-const excludes: Map<string, boolean> = new Map([]);
-
 async function buildPage(
   api: ApiInterface,
   contentManager: StaticContentHandler,
@@ -76,10 +73,6 @@ async function buildPage(
   pageAPI: PagesAPI,
   link: string,
 ) {
-  if (excludes.has(link)) {
-    return;
-  }
-
   const struct: PageResponse = await api.getJSON(`/gmod/${link}`);
   // console.log(chalk.green("Building"), link)
 
