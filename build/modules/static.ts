@@ -69,9 +69,9 @@ class StaticContentHandler {
     options: sharp.SharpOptions,
   ): Promise<Buffer> {
     const webpOptions: sharp.WebpOptions = {
-      effort: 6,
-      quality: 85,
-      smartDeblock: true,
+      effort: 5,
+      quality: 83,
+      preset: "text",
       smartSubsample: true,
     };
 
