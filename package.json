@@ -18,14 +18,14 @@
     "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/internal-helpers": "^0.7.3",
+    "@astrojs/check": "^0.9.5",
+    "@astrojs/internal-helpers": "^0.7.4",
     "@cloudflare/workers-types": "^4.20240129.0",
     "@frsource/is-animated": "^1.0.5",
     "@types/html-minifier": "^4.0.5",
     "@types/minify": "^9.1.4",
     "@types/node": "^22.0.0",
-    "astro": "^5.14.1",
+    "astro": "^5.15.4",
     "bottleneck": "^2.19.5",
     "chalk": "^5.3.0",
     "cheerio": "^1.1.2",
@@ -38,8 +38,8 @@
     "wrangler": "^4.42.0"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.9",
-    "@astrojs/node": "^9.4.4",
+    "@astrojs/cloudflare": "^12.6.10",
+    "@astrojs/node": "^9.5.0",
     "downloadjs": "^1.4.7",
     "html-to-image": "^1.11.13"
   }
