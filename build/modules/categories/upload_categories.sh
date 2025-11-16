@@ -33,7 +33,7 @@ zip --recurse-paths -9 --quiet --junk-paths contents.zip ./public/categories/con
 zip --recurse-paths -9 --quiet --junk-paths parsed.zip ./public/categories/parsed &
 wait
 
-(npx wrangler r2 object put gmodwiki/categories/manifests/all.zip --file ./manifests.zip && rm -v ./manifests.zip) &
-(npx wrangler r2 object put gmodwiki/categories/contents/all.zip --file ./contents.zip && rm -v ./contents.zip) &
-(npx wrangler r2 object put gmodwiki/categories/parsed/all.zip --file ./parsed.zip && rm -v ./parsed.zip) &
+(npx wrangler r2 object put gmodwiki/categories/manifests/all.zip --remote --file ./manifests.zip && rm -v ./manifests.zip) &
+(npx wrangler r2 object put gmodwiki/categories/contents/all.zip --remote --file ./contents.zip && rm -v ./contents.zip) &
+(npx wrangler r2 object put gmodwiki/categories/parsed/all.zip --remote --file ./parsed.zip && rm -v ./parsed.zip) &
 wait

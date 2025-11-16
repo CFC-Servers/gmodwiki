@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+    <ShortName>GMod Wiki Mirror</ShortName>
+    <Description>A reliable and fast Mirror of the official Garry&#x27;s Mod Lua Wiki, with delightful improvements aimed at developers</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Tags>wiki games game gmod garrys mod glua lua api</Tags>
+
+    <Image width="16" height="16" type="image/png">https://gmodwiki.com/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.png</Image>
+    <Image width="32" height="32" type="image/png">https://gmodwiki.com/garry/822e60dc-c931-43e4-800f-cbe010b3d4cc.png</Image>
+
+    <Url method="get" rel="results" type="text/html" template="https://gmodwiki.com/websearch?query={searchTerms}"/>
+
+    <Url type="application/opensearchdescription+xml" rel="self" template="https://gmodwiki.com/~searchmanifest"/>
+</OpenSearchDescription>

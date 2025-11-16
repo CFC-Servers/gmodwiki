@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
 
       - name: Setup
@@ -59,9 +59,9 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
-          (npx wrangler r2 object put gmodwiki/public_cache.zip --file ./public_cache.zip && rm -v public_cache.zip) &
-          (npx wrangler r2 object put gmodwiki/build_cache.zip --file ./build_cache.zip && rm -v build_cache.zip) &
-          (npx wrangler r2 object put gmodwiki/search_index.json --file ./search_index.json && mv ./search_index.json ./public/) &
+          (npx wrangler r2 object put gmodwiki/public_cache.zip --remote --file ./public_cache.zip && rm -v public_cache.zip) &
+          (npx wrangler r2 object put gmodwiki/build_cache.zip --remote --file ./build_cache.zip && rm -v build_cache.zip) &
+          (npx wrangler r2 object put gmodwiki/search_index.json --remote --file ./search_index.json && mv ./search_index.json ./public/) &
           wait
 
       # CF Publish
@@ -78,7 +78,7 @@ jobs:
           CLOUDFLARE_CACHE_API_KEY: ${{ secrets.CF_CACHE_API_TOKEN }}
         run: |
           npm run clear_cloudflare_cache
-          rm --verbose deleted_files.json
+          rm -f --verbose deleted_files.json
 
       - name: Set up Docker Buildx
         if: ${{ github.event.inputs.skip_image != 'true' }}

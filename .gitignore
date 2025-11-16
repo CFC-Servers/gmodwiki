@@ -21,7 +21,9 @@ pnpm-debug.log*
 .DS_Store
 
 build/cache/
-public/
+
+public/*
+!public/.gitkeep
 
 slim.report.json
 
@@ -31,3 +33,7 @@ slim.report.json
 build_cache.zip
 public_cache.zip
 deleted_files.txt
+
+# These are generated files, shouldn't be tracked - they get rebuilt on build
+src/layouts/Layout.astro
+src/components/Sidebar.astro
