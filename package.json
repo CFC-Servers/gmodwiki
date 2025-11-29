@@ -24,7 +24,7 @@
     "@frsource/is-animated": "^1.0.5",
     "@types/html-minifier": "^4.0.5",
     "@types/minify": "^9.1.4",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.10.1",
     "astro": "^5.15.9",
     "bottleneck": "^2.19.5",
     "chalk": "^5.3.0",
