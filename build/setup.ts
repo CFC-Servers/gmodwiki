@@ -32,6 +32,7 @@ function setupContent($: cheerio.CheerioAPI) {
 
 async function setupFolders() {
   await fs.mkdir("src/pages", { recursive: true });
+  await fs.mkdir("src/layouts", { recursive: true });
   await fs.mkdir("public/content", { recursive: true });
 }
 

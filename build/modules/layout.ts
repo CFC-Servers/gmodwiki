@@ -33,6 +33,7 @@ export async function setupLayout($: cheerio.CheerioAPI) {
     "build/fragments/layoutScript.ts",
     "utf-8",
   );
+  await fs.mkdir("src/layouts", { recursive: true });
   await fs.writeFile(
     "src/layouts/Layout.astro",
     makeLayoutHeader(layoutHeadScript, layout),
