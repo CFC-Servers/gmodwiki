@@ -14,7 +14,7 @@ const fileExists = async (path: string) => {
 // Stores a UTC timestamp of the last build
 const getLastBuildTime = async () => {
   const lastBuildPath = "public/last_build.txt"
-  if (!fileExists(lastBuildPath)) {
+  if (!await fileExists(lastBuildPath)) {
     return 0
   }
 
