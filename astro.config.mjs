@@ -66,7 +66,7 @@ const DEFAULT_OPTIONS = {
   gif: {},
   webp: {
     lossless: false,
-    quality: 90,
+    quality: 80,
   },
   avif: {
     lossless: false,
