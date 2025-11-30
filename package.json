@@ -22,6 +22,7 @@
     "@astrojs/internal-helpers": "^0.7.4",
     "@cloudflare/workers-types": "^4.20240129.0",
     "@frsource/is-animated": "^1.0.5",
+    "@playform/compress": "^0.2.0",
     "@types/html-minifier": "^4.0.5",
     "@types/minify": "^9.1.4",
     "@types/node": "^24.10.1",
@@ -41,6 +42,7 @@
     "@astrojs/cloudflare": "^12.6.10",
     "@astrojs/node": "^9.5.0",
     "downloadjs": "^1.4.7",
-    "html-to-image": "^1.11.13"
+    "html-to-image": "^1.11.13",
+    "vite-plugin-image-optimizer": "^2.0.3"
   }
 }
