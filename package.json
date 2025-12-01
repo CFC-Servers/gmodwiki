@@ -39,7 +39,7 @@
     "wrangler": "^4.47.0"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.10",
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/node": "^9.5.0",
     "downloadjs": "^1.4.7",
     "html-to-image": "^1.11.13",
