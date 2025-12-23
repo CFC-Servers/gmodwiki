@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
-    "@astrojs/node": "^9.5.0",
+    "@astrojs/node": "^9.5.1",
     "downloadjs": "^1.4.7",
     "html-to-image": "^1.11.13",
     "vite-plugin-image-optimizer": "^2.0.3"
