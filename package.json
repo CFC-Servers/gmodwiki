@@ -22,7 +22,7 @@
     "@astrojs/internal-helpers": "^0.7.4",
     "@cloudflare/workers-types": "^4.20251229.0",
     "@frsource/is-animated": "^1.0.5",
-    "@playform/compress": "^0.2.0",
+    "@playform/compress": "^0.2.2",
     "@types/html-minifier": "^4.0.6",
     "@types/minify": "^9.1.4",
     "@types/node": "^25.0.3",
@@ -36,11 +36,11 @@
     "sharp": "^0.34.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "wrangler": "^4.47.0"
+    "wrangler": "^4.80.0"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.12",
-    "@astrojs/node": "^9.5.1",
+    "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/node": "^10.0.0",
     "downloadjs": "^1.4.7",
     "html-to-image": "^1.11.13",
     "vite-plugin-image-optimizer": "^2.0.3"
