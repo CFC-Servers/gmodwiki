@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:24-slim AS base
 WORKDIR /app
 COPY package.json package-lock.json ./
 
@@ -43,7 +43,7 @@ RUN npm run astrobuild
 
 
 # Final Image
-FROM gcr.io/distroless/nodejs22-debian12 AS final
+FROM gcr.io/distroless/nodejs24-debian12 AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
