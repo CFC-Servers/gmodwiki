@@ -5,8 +5,6 @@ import { promises as fs } from "fs"
 // This is just an array with the paths of the files that were deleted (and subsequently regenerated if we built again)
 // We need to convert that array to an array of URLs that we can use to clear the Cloudflare Cache
 // Then we'll make a request to the Cloudflare API to clear the cache for those URLs
-
-
 const readDeletedFiles = async () => {
   try {
       const content = await fs.readFile("deleted_files.json", "utf-8")
@@ -48,6 +46,12 @@ const addStaticPaths = (paths: string[]) => {
   )
 }
 
+const addCacheArchives = (paths: string[]) => {
+  paths.push(
+    "https://storage.gmodwiki.com/build_cache.zip",
+    "https://storage.gmodwiki.com/public_cache.zip",
+  )
+}
 
 const clearCache = async (urls: string[]) => {
   const zoneID = process.env.CLOUDFLARE_ZONE_ID;
@@ -83,6 +87,7 @@ const clearCache = async (urls: string[]) => {
   const content = await readDeletedFiles()
   const adjusted = translatePaths(content)
   addStaticPaths(adjusted)
+  addCacheArchives(adjusted)
 
   await clearCache(adjusted)
 })()
