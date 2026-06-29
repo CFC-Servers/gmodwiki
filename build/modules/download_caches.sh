@@ -1,4 +1,22 @@
 #!/bin/bash
-(curl --location --remote-name https://storage.gmodwiki.com/build_cache.zip && unzip -q build_cache.zip && rm -v build_cache.zip) &
-(curl --location --remote-name https://storage.gmodwiki.com/public_cache.zip && unzip -q public_cache.zip && rm -v public_cache.zip) &
+
+download_cache() {
+    local name="$1"
+
+    if ! curl --location --fail --show-error --silent --remote-name "https://storage.gmodwiki.com/${name}"; then
+        echo "WARNING: failed to download ${name}, continuing without it"
+        return 0
+    fi
+
+    # -o: overwrite files WITHOUT prompting
+    # -q: quiet mode
+    if ! unzip -o -q "${name}"; then
+        echo "WARNING: ${name} was corrupt or incomplete, continuing without it"
+    fi
+
+    rm -f "${name}"
+}
+
+download_cache build_cache.zip &
+download_cache public_cache.zip &
 wait

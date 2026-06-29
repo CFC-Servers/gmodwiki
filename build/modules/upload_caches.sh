@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Used to seed the R2 cache with the result of a local build (for when we need to clear out R2)
+# Used to seed the R2 cache with the result of a local build (also useful to external tools)
+
+rm -f public_cache.zip build_cache.zip
 zip --recurse-paths -9 --quiet public_cache.zip ./public &
 zip --recurse-paths -9 --quiet build_cache.zip ./build/cache &
 wait
