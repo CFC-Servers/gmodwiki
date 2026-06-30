@@ -1,8 +1,6 @@
 import { z } from "zod";
 import type { PageGetter, SearchResult } from "./types.js";
 
-// Server-level instructions surfaced to the LLM at connection time (MCP
-// `initialize` result). Tells the model what this server is and how to drive it.
 export const SERVER_INSTRUCTIONS = `Semantic search over the Garry's Mod Lua API wiki (gmodwiki.com), a mirror of Facepunch's official GMod developer documentation.
 
 Use this to answer questions about GMod Lua scripting — functions, hooks, classes, methods, enums, structs, and libraries.
@@ -13,8 +11,6 @@ Workflow:
 
 Page addresses look like: \`Player:Say\` (a method on the Player class), \`Global.print\` (a global function), \`GM:PlayerSpawn\` (a gamemode hook), \`Entity\` (a class), or \`ENUM_NAME\` (an enum). Prefer searching to find the right address rather than guessing it.`;
 
-// Works with both @modelcontextprotocol/sdk's McpServer and Cloudflare's McpServer:
-// both expose .tool(name, description, zodShape, handler).
 export function registerTools(
   server: { tool: (name: string, description: string, schema: any, handler: any) => void },
   deps: {
