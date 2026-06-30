@@ -22,9 +22,10 @@ RUN rm -rf \
     /app/node_modules/terser \
     /app/node_modules/@rollup \
     /app/node_modules/esbuild \
-    /app/node_modules/sharp \
-    /app/node_modules/@img \
-    /app/node_modules/astro
+    /app/node_modules/astro \
+    /app/node_modules/onnxruntime-node/bin/napi-v3/darwin \
+    /app/node_modules/onnxruntime-node/bin/napi-v3/win32 \
+    /app/node_modules/onnxruntime-web
 
 
 FROM base AS build-deps
@@ -32,9 +33,23 @@ RUN npm ci
 
 
 FROM build-deps AS builder
+# Bake the q8 model BEFORE copying source so Docker can cache this expensive
+# download step across source-only rebuilds.
+RUN printf '%s\n' \
+    'import { pipeline, env } from "@huggingface/transformers";' \
+    'env.cacheDir = "/app/hf-cache";' \
+    'env.allowRemoteModels = true;' \
+    'await pipeline("feature-extraction", "Xenova/bge-base-en-v1.5", { dtype: "q8" });' \
+    'console.log("Model baked at /app/hf-cache");' \
+    > /app/bake-model.mjs && node /app/bake-model.mjs
+
 COPY astro.config.mjs tsconfig.json ./
 COPY .astro ./
 COPY src ./src
+# Only core + adapters are needed for the site/offline build; the mcp/ servers
+# are deployed/published separately and aren't part of the Docker image.
+COPY semantic/core ./semantic/core
+COPY semantic/adapters ./semantic/adapters
 COPY build ./build
 COPY public ./public
 ENV BUILD_ENV=docker
@@ -47,6 +62,13 @@ FROM gcr.io/distroless/nodejs24-debian12 AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
+# Baked model cache (populated during builder stage; no network needed at runtime)
+COPY --from=builder /app/hf-cache /app/hf-cache
+# Point runtime at the baked model cache and at the embeddings artifact inside dist/client/
+# (Astro copies all public/ files into dist/client/ during astrobuild).
+ENV MODEL_CACHE_DIR=/app/hf-cache
+ENV EMBEDDINGS_BIN=/app/dist/client/embeddings.bin
+ENV EMBEDDINGS_MANIFEST=/app/dist/client/embeddings_manifest.json
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321

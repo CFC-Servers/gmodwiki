@@ -75,6 +75,14 @@ const DEFAULT_OPTIONS = {
   cacheLocation: undefined,
 };
 
+// Keep transformers.js/onnxruntime-node out of the CF Worker bundle.
+// Dynamic imports are still followed by Rollup; externalizing prevents them
+// from being inlined. Code is only reached on the Node path (hosted branch
+// returns early on CF), so the external reference is never executed there.
+const viteSSRExternal = buildEnv === "production"
+  ? ["@huggingface/transformers", "onnxruntime-node"]
+  : [];
+
 export default defineConfig({
   build: buildConfig,
   output: "server",
@@ -84,7 +92,10 @@ export default defineConfig({
   vite : {
     plugins: [
       ViteImageOptimizer(DEFAULT_OPTIONS)
-    ]
+    ],
+    ssr: {
+      external: viteSSRExternal,
+    },
   },
 
   integrations: [playformCompress({

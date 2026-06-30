@@ -1,3 +1,10 @@
 name = "gmodwiki"
 compatibility_date = "2025-10-08"
 pages_build_output_dir = "./dist"
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "gmodwiki-embeddings"

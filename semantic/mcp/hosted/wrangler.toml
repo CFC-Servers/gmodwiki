@@ -1,0 +1,24 @@
+name = "gmodwiki-mcp"
+main = "src/index.ts"
+compatibility_date = "2025-10-08"
+compatibility_flags = ["nodejs_compat"]
+
+# The agents package has a dynamic import("ai") in its MCP-client path.
+# This worker is a pure MCP server and never hits that path, so we stub
+# "ai" with an empty module to avoid a bundle error.
+[alias]
+ai = "./src/empty.ts"
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "gmodwiki-embeddings"
+
+[durable_objects]
+bindings = [{ name = "MCP_OBJECT", class_name = "GmodWikiMCP" }]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GmodWikiMCP"]

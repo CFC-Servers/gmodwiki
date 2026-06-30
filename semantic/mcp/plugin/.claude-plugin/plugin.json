@@ -1,0 +1,11 @@
+{
+  "name": "gmodwiki",
+  "version": "1.0.0",
+  "description": "Semantic search over the Garry's Mod Lua API wiki (gmodwiki.com). Adds the search_wiki and get_page MCP tools so assistants can look up GMod functions, hooks, classes, and examples.",
+  "author": {
+    "name": "CFC-Servers",
+    "url": "https://github.com/CFC-Servers"
+  },
+  "homepage": "https://gmodwiki.com",
+  "repository": "https://github.com/CFC-Servers/gmodwiki"
+}
