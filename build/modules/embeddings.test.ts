@@ -10,7 +10,7 @@ const fakeEmbedder = {
   async embedBatch(texts: string[]) {
     return texts.map((t) => {
       const v = new Float32Array(EMBEDDING_DIMS);
-      v[0] = t.length; // deterministic, content-dependent
+      v[0] = t.length;
       return v;
     });
   },
@@ -49,7 +49,7 @@ describe("buildEmbeddings", () => {
     // Change B, add C, remove nothing
     await seedCache(cacheDir, [{ address: "A", rev: 1 }, { address: "B", rev: 2 }, { address: "C", rev: 1 }]);
     const inc = await buildEmbeddings({ cacheDir, outDir, embedder: fakeEmbedder });
-    expect(inc.embedded).toBe(2); // B + C only
+    expect(inc.embedded).toBe(2);
     expect(inc.total).toBe(3);
   });
 });

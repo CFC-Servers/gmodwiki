@@ -13,4 +13,36 @@ describe("semanticSearch", () => {
     expect(results[0].score).toBeCloseTo(0.91, 5);
     expect(results).toHaveLength(2);
   });
+
+  it("demotes a hook below a slightly-lower-scoring function (type-aware nudge)", async () => {
+    // Hook out-scores the function on raw cosine, but the penalty flips them.
+    const hookFirst = {
+      async query() {
+        return [{ id: "GM:PlayerSay", score: 0.8 }, { id: "Player:Say", score: 0.75 }];
+      },
+    };
+    const kindMeta = (id: string) => ({
+      title: id,
+      url: "/" + id,
+      snippet: "",
+      kind: (id.startsWith("GM:") ? "hook" : "function") as "hook" | "function",
+    });
+    const results = await semanticSearch("send a chat message", 2, { embedder, store: hookFirst, meta: kindMeta });
+    expect(results.map((r) => r.address)).toEqual(["Player:Say", "GM:PlayerSay"]);
+    expect(results[0].kind).toBe("function");
+  });
+
+  it("leaves a hook on top when it wins by more than the penalty", async () => {
+    const bigGap = {
+      async query() {
+        return [{ id: "GM:PlayerSay", score: 0.9 }, { id: "Player:Say", score: 0.5 }];
+      },
+    };
+    const kindMeta = (id: string) => ({
+      title: id, url: "/" + id, snippet: "",
+      kind: (id.startsWith("GM:") ? "hook" : "function") as "hook" | "function",
+    });
+    const results = await semanticSearch("hook called when a player chats", 2, { embedder, store: bigGap, meta: kindMeta });
+    expect(results[0].address).toBe("GM:PlayerSay");
+  });
 });

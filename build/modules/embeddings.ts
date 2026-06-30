@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { diffManifest, changeKeyFor } from "./embeddings_diff.js";
 import { encodeEmbeddings, decodeEmbeddings } from "../../semantic/core/binary.js";
-import { buildEmbedText, buildSnippet } from "../../semantic/core/embed-text.js";
+import { buildEmbedText, buildSnippet, kindFor } from "../../semantic/core/embed-text.js";
 import { EMBEDDING_DIMS, MODEL_ID } from "../../semantic/core/model.js";
 import type { Manifest, ManifestEntry, RawEntry } from "../../semantic/core/types.js";
 
@@ -64,6 +64,7 @@ export function mergeManifest(
       title: entry.title,
       snippet: buildSnippet(entry),
       url: "/" + entry.address,
+      kind: kindFor(entry),
       changeKey: changeKeyFor(entry),
     });
     vectors.push(vector);

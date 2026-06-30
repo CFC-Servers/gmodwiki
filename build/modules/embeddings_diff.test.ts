@@ -26,8 +26,8 @@ describe("diffManifest", () => {
     const prev: Manifest = {
       model: "m", dims: 768, count: 2,
       entries: [
-        { id: "A", address: "A", title: "A", snippet: "", url: "/A", changeKey: "1" },
-        { id: "B", address: "B", title: "B", snippet: "", url: "/B", changeKey: "1" },
+        { id: "A", address: "A", title: "A", snippet: "", url: "/A", kind: "other", changeKey: "1" },
+        { id: "B", address: "B", title: "B", snippet: "", url: "/B", kind: "other", changeKey: "1" },
       ],
     };
     const d = diffManifest(prev, [mk("A", 1), mk("B", 2), mk("C", 1)]);
@@ -38,7 +38,7 @@ describe("diffManifest", () => {
   it("marks removed pages for deletion", () => {
     const prev: Manifest = {
       model: "m", dims: 768, count: 1,
-      entries: [{ id: "Z", address: "Z", title: "Z", snippet: "", url: "/Z", changeKey: "1" }],
+      entries: [{ id: "Z", address: "Z", title: "Z", snippet: "", url: "/Z", kind: "other", changeKey: "1" }],
     };
     const d = diffManifest(prev, [mk("A", 1)]);
     expect(d.toDelete).toEqual(["Z"]);

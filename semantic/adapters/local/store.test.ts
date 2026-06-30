@@ -18,8 +18,8 @@ beforeAll(async () => {
   const manifest: Manifest = {
     model: "m", dims: 3, count: 2,
     entries: [
-      { id: "A", address: "A", title: "Alpha", snippet: "a", url: "/A", changeKey: "1" },
-      { id: "B", address: "B", title: "Beta", snippet: "b", url: "/B", changeKey: "1" },
+      { id: "A", address: "A", title: "Alpha", snippet: "a", url: "/A", kind: "function", changeKey: "1" },
+      { id: "B", address: "B", title: "Beta", snippet: "b", url: "/B", kind: "hook", changeKey: "1" },
     ],
   };
   await fs.writeFile(manifestPath, JSON.stringify(manifest));
@@ -30,6 +30,6 @@ describe("LocalVectorStore", () => {
     const store = await LocalVectorStore.load(binPath, manifestPath);
     const matches = await store.query(new Float32Array([1, 0, 0]), 1);
     expect(matches[0].id).toBe("A");
-    expect(matches[0].metadata).toEqual({ title: "Alpha", url: "/A", snippet: "a" });
+    expect(matches[0].metadata).toEqual({ title: "Alpha", url: "/A", snippet: "a", kind: "function" });
   });
 });

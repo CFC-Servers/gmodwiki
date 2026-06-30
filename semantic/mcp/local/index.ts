@@ -4,6 +4,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { promises as fs } from "fs";
 import path from "path";
 import { registerTools, SERVER_INSTRUCTIONS } from "../../core/tools.js";
+import { pageToContent } from "../../core/page.js";
 import { semanticSearch } from "../../core/search.js";
 import { LocalEmbedder } from "../../adapters/local/embedder.js";
 import { LocalVectorStore } from "../../adapters/local/store.js";
@@ -23,8 +24,7 @@ async function main() {
     try {
       const raw = await fs.readFile(path.join(CONTENT_DIR, `${address.toLowerCase()}.json`), "utf8");
       const page: any = JSON.parse(raw);
-      const text = page.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-      return { title: page.title, content: text };
+      return { title: page.title, content: pageToContent(page.html) };
     } catch {
       return null;
     }

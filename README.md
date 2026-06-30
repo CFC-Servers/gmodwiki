@@ -172,7 +172,7 @@ _⚠️ Be sure to replace `gmodwiki.com` with your domain!_
 
 The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server at `https://mcp.gmodwiki.com/mcp`, exposing `search_wiki` and `get_page` tools so assistants can look up GMod functions, hooks, and examples.
 
-**Claude Code** — install the plugin:
+**Claude Code**: install the plugin:
 ```sh
 /plugin marketplace add CFC-Servers/gmodwiki
 /plugin install gmodwiki
@@ -183,7 +183,7 @@ The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server 
 
 <br>
 
-**Cursor** — `~/.cursor/mcp.json`:
+**Cursor**: `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
@@ -192,7 +192,7 @@ The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server 
 }
 ```
 
-**VS Code (Copilot)** — `.vscode/mcp.json` (note: root key is `servers`):
+**VS Code (Copilot)**: `.vscode/mcp.json` (note: root key is `servers`):
 ```json
 {
   "servers": {
@@ -201,9 +201,9 @@ The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server 
 }
 ```
 
-**Claude Desktop / claude.ai** — Settings → Connectors → *Add custom connector* → `https://mcp.gmodwiki.com/mcp`
+**Claude Desktop / claude.ai**: Settings → Connectors → *Add custom connector* → `https://mcp.gmodwiki.com/mcp`
 
-**Any stdio-only client** — bridge with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+**Any stdio-only client**: bridge with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
 ```json
 {
   "mcpServers": {

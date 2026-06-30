@@ -1,4 +1,4 @@
-import type { Match, VectorStore } from "../../core/types.js";
+import type { Match, PageKind, VectorStore } from "../../core/types.js";
 
 export class HostedVectorStore implements VectorStore {
   constructor(private index: VectorizeIndex) {}
@@ -8,7 +8,7 @@ export class HostedVectorStore implements VectorStore {
     return res.matches.map((m) => ({
       id: m.id,
       score: m.score,
-      metadata: m.metadata as { title: string; url: string; snippet: string } | undefined,
+      metadata: m.metadata as { title: string; url: string; snippet: string; kind?: PageKind } | undefined,
     }));
   }
 }

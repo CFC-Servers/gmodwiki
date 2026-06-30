@@ -7,17 +7,11 @@ export class LocalEmbedder implements Embedder {
 
   private async ensure() {
     if (!this.extractor) {
-      // Node uses the onnxruntime-node (cpu) backend — the only one transformers.js
-      // supports outside the browser. The Docker image prunes the unused
-      // cross-platform binaries to keep the size down (packaging strategy A).
-      // q8 keeps the baked model ~35MB (vs ~90MB fp32); negligible cosine-rank impact.
-      //
-      // MODEL_CACHE_DIR: set in the Docker final image to the baked-in hf-cache path.
-      // When present, force offline mode so the container never hits the network.
       if (process.env.MODEL_CACHE_DIR) {
         env.cacheDir = process.env.MODEL_CACHE_DIR;
         env.allowRemoteModels = false;
       }
+
       this.extractor = await pipeline("feature-extraction", "Xenova/bge-base-en-v1.5", {
         dtype: "q8",
       });

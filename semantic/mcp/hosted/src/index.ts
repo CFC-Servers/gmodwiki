@@ -1,6 +1,7 @@
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerTools, SERVER_INSTRUCTIONS } from "../../../core/tools.js";
+import { pageToContent } from "../../../core/page.js";
 import { semanticSearch } from "../../../core/search.js";
 import { HostedEmbedder } from "../../../adapters/hosted/embedder.js";
 import { HostedVectorStore } from "../../../adapters/hosted/store.js";
@@ -31,9 +32,7 @@ export class GmodWikiMCP extends McpAgent<Env> {
       const res = await fetch(`https://gmodwiki.com/content/${address.toLowerCase()}.json`);
       if (!res.ok) return null;
       const page: any = await res.json();
-      // page.html is processed HTML; strip to text for the assistant.
-      const text = page.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-      return { title: page.title, content: text };
+      return { title: page.title, content: pageToContent(page.html) };
     };
 
     registerTools(this.server, { search, getPage });

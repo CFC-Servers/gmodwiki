@@ -1,5 +1,8 @@
-import type { Embedder, VectorStore, SearchResult, PageGetter } from "./types.js";
+import type { Embedder, VectorStore, SearchResult, PageGetter, PageKind } from "./types.js";
 import { reciprocalRankFusion } from "./rrf.js";
+import { kindWeight } from "./model.js";
+
+type Meta = { title: string; url: string; snippet: string; kind?: PageKind };
 
 export async function semanticSearch(
   query: string,
@@ -7,7 +10,7 @@ export async function semanticSearch(
   deps: {
     embedder: Embedder;
     store: VectorStore;
-    meta: (id: string) => { title: string; url: string; snippet: string } | null;
+    meta: (id: string) => Meta | null;
   },
 ): Promise<SearchResult[]> {
   const vector = await deps.embedder.embed(query);
@@ -21,10 +24,14 @@ export async function semanticSearch(
       title: meta.title,
       url: meta.url,
       snippet: meta.snippet,
-      score: m.score,
+      kind: meta.kind,
+      // Type-aware nudge: demote hooks so the function you'd actually call wins
+      // a near-tie. Re-sorted below so the order reflects the adjusted score.
+      score: m.score * kindWeight(meta.kind),
       source: "semantic",
     });
   }
+  out.sort((a, b) => b.score - a.score);
   return out;
 }
 
@@ -34,7 +41,7 @@ export async function hybridSearch(
   deps: {
     semantic: () => Promise<SearchResult[]>;
     keyword: () => { id: string; snippet: string }[];
-    meta: (id: string) => { title: string; url: string; snippet: string } | null;
+    meta: (id: string) => Meta | null;
   },
 ): Promise<SearchResult[]> {
   const [semantic, keyword] = [await deps.semantic(), deps.keyword()];
@@ -48,10 +55,11 @@ export async function hybridSearch(
   for (const r of keyword) if (!snippetById.has(r.id)) snippetById.set(r.id, r.snippet);
 
   // Semantic results carry real title/url (from Vectorize on the hosted path, or
-  // the manifest offline). Prefer them over the meta() fallback, which on the
-  // hosted path is only a placeholder (the Worker has no manifest to look up).
-  const metaById = new Map<string, { title: string; url: string; snippet: string }>();
-  for (const r of semantic) metaById.set(r.address, { title: r.title, url: r.url, snippet: r.snippet });
+  // the manifest offline) plus the type-aware nudge already applied to their
+  // ordering. Prefer them over the meta() fallback, which on the hosted path is
+  // only a placeholder (the Worker has no manifest to look up).
+  const metaById = new Map<string, Meta>();
+  for (const r of semantic) metaById.set(r.address, { title: r.title, url: r.url, snippet: r.snippet, kind: r.kind });
 
   const out: SearchResult[] = [];
   for (const f of fused.slice(0, k)) {
@@ -64,6 +72,7 @@ export async function hybridSearch(
       title: meta?.title ?? f.id,
       url: meta?.url ?? "/" + f.id,
       snippet: snippetById.get(f.id) ?? meta?.snippet ?? "",
+      kind: meta?.kind,
       score: f.score,
       source,
     });

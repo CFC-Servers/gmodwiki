@@ -17,9 +17,6 @@ download_cache() {
     rm -f "${name}"
 }
 
-# Embeddings artifact: not bundled in the cache zips (kept out of the Cloudflare
-# deploy, like search_index.json). Pull it standalone into public/ so incremental
-# builds can reuse the prior vectors. Keep the files (do not delete).
 download_embedding() {
     local name="$1"
     mkdir -p public

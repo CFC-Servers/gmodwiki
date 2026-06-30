@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import { decodeEmbeddings } from "../../core/binary.js";
 import { bruteForceTopK } from "../../core/cosine.js";
-import type { Manifest, Match, VectorStore } from "../../core/types.js";
+import type { Manifest, Match, PageKind, VectorStore } from "../../core/types.js";
 
 export class LocalVectorStore implements VectorStore {
   private constructor(
@@ -17,9 +17,9 @@ export class LocalVectorStore implements VectorStore {
     return new LocalVectorStore(vectors, ids, manifest);
   }
 
-  meta(id: string): { title: string; url: string; snippet: string } | null {
+  meta(id: string): { title: string; url: string; snippet: string; kind?: PageKind } | null {
     const e = this.manifest.entries.find((x) => x.id === id);
-    return e ? { title: e.title, url: e.url, snippet: e.snippet } : null;
+    return e ? { title: e.title, url: e.url, snippet: e.snippet, kind: e.kind } : null;
   }
 
   async query(vector: Float32Array, k: number): Promise<Match[]> {

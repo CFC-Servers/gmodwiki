@@ -22,7 +22,7 @@ async function upsertAll() {
     JSON.stringify({
       id: e.id,
       values: Array.from(vectors[i]),
-      metadata: { title: e.title, url: e.url, snippet: e.snippet },
+      metadata: { title: e.title, url: e.url, snippet: e.snippet, kind: e.kind },
     }),
   );
 

@@ -48,8 +48,6 @@ jobs:
           # Temporarily move it out of the public dir to keep it out of the Cloudflare bundle
           # (it's too big, we upload it to R2 but include it in the docker image)
           mv --verbose ./public/search_index.json .
-          # Embeddings artifact gets the same treatment: kept out of the Cloudflare deploy,
-          # shipped via R2 + docker. Guarded in case embeddings weren't generated (no creds).
           if [ -f ./public/embeddings.bin ]; then mv --verbose ./public/embeddings.bin .; fi
           if [ -f ./public/embeddings_manifest.json ]; then mv --verbose ./public/embeddings_manifest.json .; fi
           npm run astrobuild

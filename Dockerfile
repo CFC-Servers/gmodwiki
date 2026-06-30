@@ -46,8 +46,6 @@ RUN printf '%s\n' \
 COPY astro.config.mjs tsconfig.json ./
 COPY .astro ./
 COPY src ./src
-# Only core + adapters are needed for the site/offline build; the mcp/ servers
-# are deployed/published separately and aren't part of the Docker image.
 COPY semantic/core ./semantic/core
 COPY semantic/adapters ./semantic/adapters
 COPY build ./build
@@ -62,10 +60,7 @@ FROM gcr.io/distroless/nodejs24-debian12 AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-# Baked model cache (populated during builder stage; no network needed at runtime)
 COPY --from=builder /app/hf-cache /app/hf-cache
-# Point runtime at the baked model cache and at the embeddings artifact inside dist/client/
-# (Astro copies all public/ files into dist/client/ during astrobuild).
 ENV MODEL_CACHE_DIR=/app/hf-cache
 ENV EMBEDDINGS_BIN=/app/dist/client/embeddings.bin
 ENV EMBEDDINGS_MANIFEST=/app/dist/client/embeddings_manifest.json

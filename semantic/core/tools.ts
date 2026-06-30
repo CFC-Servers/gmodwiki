@@ -3,11 +3,11 @@ import type { PageGetter, SearchResult } from "./types.js";
 
 export const SERVER_INSTRUCTIONS = `Semantic search over the Garry's Mod Lua API wiki (gmodwiki.com), a mirror of Facepunch's official GMod developer documentation.
 
-Use this to answer questions about GMod Lua scripting — functions, hooks, classes, methods, enums, structs, and libraries.
+Use this to answer questions about GMod Lua scripting: functions, hooks, classes, methods, enums, structs, and libraries.
 
 Workflow:
 1. Call \`search_wiki\` with a natural-language description of what you're trying to do (e.g. "make a player take damage") to discover relevant pages.
-2. Each result has an \`address\` — pass it to \`get_page\` to read the full documentation (arguments, return values, examples).
+2. Each result has an \`address\`: pass it to \`get_page\` to read the full documentation (arguments, return values, examples).
 
 Page addresses look like: \`Player:Say\` (a method on the Player class), \`Global.print\` (a global function), \`GM:PlayerSpawn\` (a gamemode hook), \`Entity\` (a class), or \`ENUM_NAME\` (an enum). Prefer searching to find the right address rather than guessing it.`;
 
@@ -42,7 +42,8 @@ export function registerTools(
       if (!page) {
         return { content: [{ type: "text", text: `No page found for '${address}'` }], isError: true };
       }
-      return { content: [{ type: "text", text: `# ${page.title}\n\n${page.content}` }] };
+      const url = `https://gmodwiki.com/${address}`;
+      return { content: [{ type: "text", text: `# ${page.title}\n\n${page.content}\n\nSource: ${url}` }] };
     },
   );
 }

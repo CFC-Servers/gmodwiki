@@ -1,10 +1,12 @@
 import * as cheerio from 'cheerio';
+import type { Element } from 'domhandler';
 
 type Realm = 'client' | 'menu' | 'server';
 
 interface WikiPage {
   title: string;
   content: string;
+  markup: string;
 }
 
 interface Class {
@@ -136,8 +138,8 @@ export class WikiScraper {
 
   public parseFunctionPage(pageContent: string): Function {
     const $ = this.parseContent(pageContent);
-    const name = $('function').attr().name;
-    const parent = $('function').attr().parent;
+    const name = $('function').attr('name') ?? '';
+    const parent = $('function').attr('parent') ?? '';
     const description = $('function > description').html();
     const $sourceFile = $('function > file');
     const realmsRaw = this.trimMultiLineString($('function > realm').text());
@@ -146,7 +148,7 @@ export class WikiScraper {
     const overloads: Array<FunctionOverload> = [];
     const returnValues: Array<FunctionReturnValue> = [];
 
-    const parseArg = (arg: cheerio.Element, i: number) => {
+    const parseArg = (arg: Element, i: number) => {
         const description = $(arg).html();
 
         const argument: FunctionArgument = {
@@ -167,7 +169,7 @@ export class WikiScraper {
 
     const $argsBlocks = $("function > args");
 
-    $($argsBlocks[0]).children().each((i: number, arg: cheerio.Element) => {
+    $($argsBlocks[0]).children().each((i: number, arg: Element) => {
         args.push(parseArg(arg, i))
     })
 
@@ -177,7 +179,7 @@ export class WikiScraper {
             arguments: []
         }
 
-        $($argsBlocks[i]).children().each((i: number, arg: cheerio.Element) => {
+        $($argsBlocks[i]).children().each((i: number, arg: Element) => {
             overload.arguments.push(parseArg(arg, i))
         })
 
@@ -230,7 +232,7 @@ export class WikiScraper {
     if ($sourceFile.length > 0) {
       const file = $sourceFile.text();
 
-      const line = $sourceFile.attr().line.replace('L', '');
+      const line = ($sourceFile.attr('line') ?? '').replace('L', '');
       const lines = line.split('-');
       const lineStart = lines[0];
       const lineEnd = lines[1];
@@ -268,7 +270,7 @@ export class WikiScraper {
 
   public parseTypePage(pageContent: string): Type {
     const $ = this.parseContent(pageContent);
-    const name = $('type').attr().name;
+    const name = $('type').attr('name') ?? '';
     const description = $('type > summary').html();
 
     const type: Type = {
@@ -417,7 +419,9 @@ export class WikiScraper {
   }
 
   private parseContent(content: string): cheerio.CheerioAPI {
-    return cheerio.load(content, { decodeEntities: false });
+    // `decodeEntities` is not in cheerio 1.x's option types (and is ignored at
+    // runtime); cast to keep the call unchanged without a type error.
+    return cheerio.load(content, { decodeEntities: false } as cheerio.CheerioOptions);
   }
 
   private trimMultiLineString(str: string): string {

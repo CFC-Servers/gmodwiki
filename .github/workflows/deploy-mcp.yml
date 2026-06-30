@@ -1,9 +1,5 @@
 name: Deploy MCP Server
 
-# The hosted MCP worker is CODE, not content. It reads the Vectorize index at
-# runtime, so new embeddings (produced by update.yml / full_update.yml) go live
-# without a redeploy. The worker only needs deploying when its own code changes
-# — hence this is push-triggered and path-scoped, NOT on the content cron.
 on:
   push:
     branches: [main]
@@ -27,9 +23,6 @@ jobs:
           node-version: 24
           cache: "npm"
 
-      # Root deps provide `zod` (pulled into the bundle by semantic/core/tools.ts);
-      # the worker's own deps (agents, @modelcontextprotocol/sdk, wrangler) come
-      # from its package. esbuild resolves each import from the file's location up.
       - name: Install dependencies
         run: |
           npm --no-audit --progress=false ci

@@ -1,7 +1,12 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
+  "exclude": [
+    "dist",
+    "build/fragments",
+    "semantic/mcp/hosted",
+    "semantic/mcp/local"
+  ],
   "compilerOptions": {
     "target": "ES2021",
     "lib": ["ES2021", "WebWorker"],

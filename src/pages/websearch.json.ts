@@ -4,8 +4,6 @@ import { keywordRank } from "../../semantic/core/keyword.js";
 import { HostedEmbedder } from "../../semantic/adapters/hosted/embedder.js";
 import { HostedVectorStore } from "../../semantic/adapters/hosted/store.js";
 
-// Local adapter lazy loaders — dynamic imports so transformers.js/onnxruntime-node
-// are never pulled into the Cloudflare Worker bundle.
 let localStorePromise: Promise<any> | null = null;
 let localEmbedder: any = null;
 
@@ -13,9 +11,6 @@ async function getLocalDeps() {
   const { LocalVectorStore } = await import("../../semantic/adapters/local/store.js");
   const { LocalEmbedder } = await import("../../semantic/adapters/local/embedder.js");
   if (!localStorePromise) {
-    // EMBEDDINGS_BIN / EMBEDDINGS_MANIFEST allow the Docker final image to point
-    // at dist/client/ (where Astro copies public/ assets) instead of the source
-    // public/ tree which is not present in the container.
     const binPath = process.env.EMBEDDINGS_BIN ?? "./public/embeddings.bin";
     const manifestPath = process.env.EMBEDDINGS_MANIFEST ?? "./public/embeddings_manifest.json";
     localStorePromise = LocalVectorStore.load(binPath, manifestPath);
@@ -53,13 +48,12 @@ export const GET: APIRoute = async ({ url, locals, request }) => {
       });
       return new Response(JSON.stringify(results), { headers: { "content-type": "application/json" } });
     } catch (e) {
-      // Transient Workers AI / Vectorize error — degrade to keyword-only below
-      // rather than 500ing, since the keyword index is already in hand.
+
       console.warn("hosted semantic search unavailable, falling back to keyword:", e);
     }
   }
 
-  // Offline path (Node adapter / Docker): local model + on-disk vectors, if the artifact exists.
+  // Offline path (Node adapter / Docker): local model + on-disk vectors
   try {
     const { store, embedder } = await getLocalDeps();
     const results = await hybridSearch(query, 50, {
@@ -72,7 +66,7 @@ export const GET: APIRoute = async ({ url, locals, request }) => {
     console.warn("local semantic search unavailable, falling back to keyword:", e);
   }
 
-  // Fallback (no bindings, e.g. local Node before Phase 3): keyword-only, shaped as SearchResult[].
+  // Fallback (no bindings?): keyword-only
   const keywordOnly = keywordRank(keywordIndex, query, 50).map((r) => ({
     address: r.id, title: r.id, url: "/" + r.id, snippet: r.snippet, score: 0, source: "keyword" as const,
   }));
