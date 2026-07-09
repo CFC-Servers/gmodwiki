@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+
 import { diffManifest, changeKeyFor } from "./embeddings_diff.js";
 import { encodeEmbeddings, decodeEmbeddings } from "../../semantic/core/binary.js";
 import { buildEmbedText, buildSnippet, kindFor } from "../../semantic/core/embed-text.js";
@@ -10,8 +11,10 @@ export async function loadRawEntries(cacheDir: string): Promise<RawEntry[]> {
   const gmod = path.join(cacheDir, "gmod");
   const files = await fs.readdir(gmod);
   const entries: RawEntry[] = [];
+
   for (const file of files) {
     if (!file.endsWith(".json")) continue;
+
     const raw = await fs.readFile(path.join(gmod, file), "utf8");
     let obj: any;
     try {
@@ -20,7 +23,9 @@ export async function loadRawEntries(cacheDir: string): Promise<RawEntry[]> {
       console.warn(`skipping unparseable ${file}`);
       continue;
     }
+
     if (!obj.address || !obj.html) continue;
+
     entries.push({
       address: obj.address,
       title: obj.title ?? obj.address,
@@ -30,6 +35,7 @@ export async function loadRawEntries(cacheDir: string): Promise<RawEntry[]> {
       revisionId: obj.revisionId,
     });
   }
+
   return entries;
 }
 
@@ -37,9 +43,12 @@ async function loadPrev(outDir: string): Promise<{ manifest: Manifest; vecById: 
   try {
     const manifest: Manifest = JSON.parse(await fs.readFile(path.join(outDir, "embeddings_manifest.json"), "utf8"));
     const bin = await fs.readFile(path.join(outDir, "embeddings.bin"));
+
+    // Manifest entries and binary vectors are parallel arrays, same order.
     const { vectors } = decodeEmbeddings(new Uint8Array(bin));
     const vecById = new Map<string, Float32Array>();
     manifest.entries.forEach((e, i) => vecById.set(e.id, vectors[i]));
+
     return { manifest, vecById };
   } catch {
     return null;
@@ -58,6 +67,7 @@ export function mergeManifest(
   for (const entry of entries) {
     const vector = newVecById.get(entry.address) ?? prevVecById.get(entry.address);
     if (!vector) continue; // should not happen; unchanged entries keep prior vector
+
     manifestEntries.push({
       id: entry.address,
       address: entry.address,
@@ -83,6 +93,9 @@ export async function buildEmbeddings(opts: {
 }): Promise<{ embedded: number; deleted: string[]; total: number }> {
   const entries = await loadRawEntries(opts.cacheDir);
   const prev = await loadPrev(opts.outDir);
+
+  // Incremental: only pages whose changeKey moved get re-embedded,
+  // everything else reuses its previous vector.
   const diff = diffManifest(prev?.manifest ?? null, entries);
 
   console.log(`embeddings: ${diff.toEmbed.length} to embed, ${diff.unchanged.length} unchanged, ${diff.toDelete.length} removed`);

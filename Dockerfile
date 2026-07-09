@@ -33,8 +33,8 @@ RUN npm ci
 
 
 FROM build-deps AS builder
-# Bake the q8 model BEFORE copying source so Docker can cache this expensive
-# download step across source-only rebuilds.
+
+# Bake the q8 model
 RUN printf '%s\n' \
     'import { pipeline, env } from "@huggingface/transformers";' \
     'env.cacheDir = "/app/hf-cache";' \

@@ -1,19 +1,25 @@
 import type { Manifest, RawEntry } from "../../semantic/core/types.js";
 import { buildEmbedText } from "../../semantic/core/embed-text.js";
 
+// FNV-1a. Not cryptographic, just a cheap stable fingerprint for change detection.
 function stableHash(s: string): string {
   let h = 2166136261;
+
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i);
     h = Math.imul(h, 16777619);
   }
+
   return "h:" + (h >>> 0).toString(16);
 }
 
+// The wiki's revisionId is the authoritative change signal; hash the embed
+// text only when the scrape didn't capture one.
 export function changeKeyFor(entry: RawEntry): string {
   if (entry.revisionId !== undefined && entry.revisionId !== null) {
     return String(entry.revisionId);
   }
+
   return stableHash(buildEmbedText(entry));
 }
 
@@ -24,11 +30,13 @@ export function diffManifest(
   if (!prev) {
     return { toEmbed: [...entries], toDelete: [], unchanged: [] };
   }
+
   const prevByAddress = new Map(prev.entries.map((e) => [e.address, e]));
   const newAddresses = new Set(entries.map((e) => e.address));
 
   const toEmbed: RawEntry[] = [];
   const unchanged: string[] = [];
+
   for (const entry of entries) {
     const prior = prevByAddress.get(entry.address);
     if (prior && prior.changeKey === changeKeyFor(entry)) {
@@ -37,6 +45,7 @@ export function diffManifest(
       toEmbed.push(entry);
     }
   }
+
   const toDelete = prev.entries
     .map((e) => e.address)
     .filter((address) => !newAddresses.has(address));

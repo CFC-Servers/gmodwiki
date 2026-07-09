@@ -13,6 +13,7 @@ const entry: RawEntry = {
 describe("extractPlainText", () => {
   it("strips tags and scripts", () => {
     const t = extractPlainText(entry.html);
+
     expect(t).toContain("Forces the player to say");
     expect(t).not.toContain("ignore()");
     expect(t).not.toContain("<");
@@ -22,6 +23,7 @@ describe("extractPlainText", () => {
 describe("buildEmbedText", () => {
   it("leads with the title and tag words, then the body", () => {
     const t = buildEmbedText(entry);
+
     expect(t.startsWith("Player:Say")).toBe(true);
     expect(t).toContain("function");
     expect(t).toContain("Forces the player to say");
@@ -46,7 +48,9 @@ describe("buildEmbedText", () => {
         </args>
       </function>`,
     };
+
     const t = buildEmbedText(withMarkup);
+
     expect(t).toContain("text (string): The text to say.");
     expect(t).toContain("teamOnly (boolean): Team only.");
     expect(t).toContain("Server");
@@ -62,15 +66,18 @@ describe("buildEmbedText", () => {
 
 describe("kindFor", () => {
   const k = (markup?: string) => kindFor({ ...entry, markup });
+
   it("classifies callable functions", () => {
     expect(k(`<function type="classfunc"></function>`)).toBe("function");
     expect(k(`<function type="libraryfunc"></function>`)).toBe("function");
     expect(k(`<function type="panelfunc"></function>`)).toBe("function");
   });
+
   it("classifies hooks", () => {
     expect(k(`<function type="hook"></function>`)).toBe("hook");
     expect(k(`<function type="panelhook"></function>`)).toBe("hook");
   });
+
   it("treats enums/categories and markup-less pages as other", () => {
     expect(k(`<enum></enum>`)).toBe("other");
     expect(k(`<cat>2D Rendering</cat>`)).toBe("other");
@@ -81,6 +88,7 @@ describe("kindFor", () => {
 describe("buildSnippet", () => {
   it("returns a short plain preview", () => {
     const s = buildSnippet(entry, 40);
+
     expect(s.length).toBeLessThanOrEqual(43); // 40 + possible "..."
     expect(s).toContain("Forces the player");
   });
@@ -94,7 +102,9 @@ describe("buildSnippet", () => {
         <realm>Shared</realm>
       </function>`,
     };
+
     const s = buildSnippet(withMarkup);
+
     expect(s).toBe("Applies the specified amount of damage to the entity.");
     expect(s).not.toContain("Search Github");
     expect(s).not.toContain("Description");

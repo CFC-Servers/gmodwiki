@@ -5,9 +5,12 @@ export class HostedEmbedder implements Embedder {
   constructor(private ai: Ai) {}
 
   async embed(text: string): Promise<Float32Array> {
+    // bge is asymmetric: documents are embedded bare, queries need QUERY_PREFIX.
     const res: any = await this.ai.run(MODEL_ID as any, { text: [QUERY_PREFIX + text] });
+
     const data: number[][] = res.data ?? res.result?.data;
     if (!data || !data[0]) throw new Error("Workers AI embed returned no data");
+
     return Float32Array.from(data[0]);
   }
 }

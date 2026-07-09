@@ -13,7 +13,10 @@ export class LocalVectorStore implements VectorStore {
   static async load(binPath: string, manifestPath: string): Promise<LocalVectorStore> {
     const manifest: Manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
     const { vectors } = decodeEmbeddings(new Uint8Array(await fs.readFile(binPath)));
+
+    // Manifest entries and binary vectors are parallel arrays, same order.
     const ids = manifest.entries.map((e) => e.id);
+
     return new LocalVectorStore(vectors, ids, manifest);
   }
 

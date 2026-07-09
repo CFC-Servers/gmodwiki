@@ -17,8 +17,10 @@ describe("WorkersAiEmbedder", () => {
 
     const e = new WorkersAiEmbedder("acct", "token");
     const out = await e.embedBatch(["a", "b"]);
+
     expect(out).toHaveLength(2);
     expect(Array.from(out[0])).toEqual([expect.closeTo(0.1, 5), expect.closeTo(0.2, 5)]);
+
     expect(fetchMock).toHaveBeenCalledOnce();
     const callArgs = fetchMock.mock.calls[0] as unknown as [string, { body: string }];
     expect(JSON.parse(callArgs[1].body)).toEqual({ text: ["a", "b"] });

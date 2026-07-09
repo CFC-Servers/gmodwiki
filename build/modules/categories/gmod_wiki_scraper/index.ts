@@ -419,8 +419,6 @@ export class WikiScraper {
   }
 
   private parseContent(content: string): cheerio.CheerioAPI {
-    // `decodeEntities` is not in cheerio 1.x's option types (and is ignored at
-    // runtime); cast to keep the call unchanged without a type error.
     return cheerio.load(content, { decodeEntities: false } as cheerio.CheerioOptions);
   }
 
