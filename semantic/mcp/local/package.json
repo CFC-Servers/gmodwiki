@@ -1,0 +1,11 @@
+{
+  "name": "gmodwiki-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": { "gmodwiki-mcp": "index.js" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@huggingface/transformers": "^3",
+    "zod": "^3.23.0"
+  }
+}

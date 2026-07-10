@@ -17,6 +17,18 @@ download_cache() {
     rm -f "${name}"
 }
 
+download_embedding() {
+    local name="$1"
+    mkdir -p public
+
+    if ! curl --location --fail --show-error --silent --output "public/${name}" "https://storage.gmodwiki.com/${name}"; then
+        echo "WARNING: failed to download ${name}, continuing without it (a fresh full embed will run)"
+        rm -f "public/${name}"
+    fi
+}
+
 download_cache build_cache.zip &
 download_cache public_cache.zip &
+download_embedding embeddings.bin &
+download_embedding embeddings_manifest.json &
 wait

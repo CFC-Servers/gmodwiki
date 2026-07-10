@@ -363,12 +363,25 @@ function UpdateSearch(limitResults = true) {
     };
     SearchResults.append(moreresults);
   }
-  if (SearchResults.children.length == 0) {
-    var noresults = document.createElement("span");
-    noresults.classList.add("noresults");
-    noresults.innerHTML = "No results.<br/>Press Enter to search the wiki.";
-    SearchResults.appendChild(noresults);
-  }
+  AddFullSearchCTA(SearchInput.value);
+}
+function AddFullSearchCTA(query) {
+  if (!query || query.trim().length < 2) return;
+  var hadResults = SearchResults.querySelectorAll("a, .sectionheader").length > 0;
+
+  var cta = document.createElement("a");
+  cta.href = "/websearch?query=" + encodeURIComponent(query);
+  cta.classList.add("full-search-cta");
+  if (!hadResults) cta.classList.add("full-search-cta-empty");
+  cta.innerHTML =
+    '<span class="mdi mdi-magnify"></span> Search all pages for ' +
+    '<strong>"' + query.replace(/</g, "&lt;") + '"</strong>' +
+    '<span class="full-search-hint">&#8629; Enter</span>';
+  cta.onclick = function () {
+    window.location.href = "/websearch?query=" + encodeURIComponent(query);
+    return false;
+  };
+  SearchResults.appendChild(cta);
 }
 var SectionHeader;
 var TitleCount = 0;

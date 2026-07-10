@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio"
+import type { Element } from "domhandler"
 import { promises as fs } from "fs"
 import ApiInterface from "./api_interface.js"
 
@@ -22,7 +23,7 @@ const getLastBuildTime = async () => {
   return parseInt(lastBuildTime, 10)
 }
 
-const getURLFromRow = ($: cheerio.CheerioAPI, row: cheerio.Element) => {
+const getURLFromRow = ($: cheerio.CheerioAPI, row: Element) => {
   return $(row).find("div.address a").attr("href")
 }
 

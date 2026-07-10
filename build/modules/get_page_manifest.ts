@@ -1,5 +1,6 @@
 // Finds all individual pages for the website
 import * as cheerio from "cheerio"
+import type { Element } from "domhandler"
 import type ApiInterface from "./api_interface.js"
 
 interface PagelistResponse {
@@ -32,7 +33,7 @@ export async function getAllPagesForCategory(api: ApiInterface, category: WikiCa
     const $ = cheerio.load(html)
     const hrefs: string[] = []
 
-    $("a[href]").each((_: number, elem: cheerio.Element) => {
+    $("a[href]").each((_: number, elem: Element) => {
         const href = $(elem).attr("href")
         if (href) {
             hrefs.push(href)

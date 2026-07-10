@@ -15,7 +15,14 @@
     "upload_categories": "/bin/bash ./build/modules/categories/upload_categories.sh",
     "build_categories": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/categories/build_categories.ts",
     "clear_recent_changes": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_recent_changes.ts",
-    "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts"
+    "clear_cloudflare_cache": "node --no-warnings=ExperimentalWarning --trace-uncaught --trace-warnings --loader ts-node/esm ./build/modules/clear_cloudflare_cache.ts",
+    "vectorize_sync": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/modules/vectorize_sync.ts",
+    "embeddings": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./build/build_embeddings_local.ts",
+    "embeddings:publish": "npm run embeddings && npm run vectorize_sync",
+    "mcp:deploy": "npm --prefix semantic/mcp/hosted run deploy",
+    "mcp:publish": "npm run embeddings:publish && npm run mcp:deploy",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
@@ -36,13 +43,16 @@
     "sharp": "^0.34.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
+    "vitest": "^3.2.6",
     "wrangler": "^4.47.0"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/node": "^9.5.1",
+    "@huggingface/transformers": "^3.8.1",
     "downloadjs": "^1.4.7",
     "html-to-image": "^1.11.13",
-    "vite-plugin-image-optimizer": "^2.0.3"
+    "vite-plugin-image-optimizer": "^2.0.3",
+    "zod": "^3.25.76"
   }
 }

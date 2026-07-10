@@ -31,6 +31,7 @@ const mdiWhitelist = [
   ".mdi-language-lua",
   ".mdi-library-shelves",
   ".mdi-link-variant",
+  ".mdi-magnify",
   ".mdi-menu",
   ".mdi-pencil",
   ".mdi-robot",
@@ -220,6 +221,12 @@ export async function processCss(contentHandler: StaticContentHandler) {
 
   // Add scrollbar for the body tabs
   newContent = `${newContent} .body-tabs { overflow-x: auto; }\n`;
+
+  // Full-search CTA pinned at bottom of sidebar search results
+  newContent = `${newContent} .full-search-cta { display: block; padding: 8px 10px; margin-top: 6px; border-top: 1px solid rgba(128, 128, 128, 0.3); font-size: 0.9em; cursor: pointer; }\n`;
+  newContent = `${newContent} .full-search-cta:hover { background: rgba(128, 128, 128, 0.12); }\n`;
+  newContent = `${newContent} .full-search-cta-empty { border-top: none; }\n`;
+  newContent = `${newContent} .full-search-hint { float: right; opacity: 0.6; font-size: 0.85em; }\n`;
 
   newContent = removeDeadStyles(newContent);
   newContent = optimizeCss(newContent);

@@ -75,6 +75,11 @@ const DEFAULT_OPTIONS = {
   cacheLocation: undefined,
 };
 
+// Keep transformers.js/onnxruntime-node out of the CF Worker bundle
+const viteSSRExternal = buildEnv === "production"
+  ? ["@huggingface/transformers", "onnxruntime-node"]
+  : [];
+
 export default defineConfig({
   build: buildConfig,
   output: "server",
@@ -84,7 +89,10 @@ export default defineConfig({
   vite : {
     plugins: [
       ViteImageOptimizer(DEFAULT_OPTIONS)
-    ]
+    ],
+    ssr: {
+      external: viteSSRExternal,
+    },
   },
 
   integrations: [playformCompress({

@@ -22,6 +22,8 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :mag_right: **Fast searching**
     - Both basic and full-site searching are implemented
     - Search results are not paginated
+- :robot: **Semantic search & MCP**
+    - Hybrid keyword + semantic search, with an MCP server for AI tools
 - :framed_picture: **Optimized images**
     - Image size reduced by > 40% with only a small loss in quality
 - :cloud: **Hosted entirely on The Cloud**
@@ -164,6 +166,51 @@ _⚠️ Be sure to replace `gmodwiki.com` with your domain!_
 ![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/0dd7cbac-d3e8-486c-9549-344b8f453f27)
 ![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/34b267ae-5036-45e1-91a1-b948702a89e2)
 ![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/e8133bac-c12a-4bbe-a7bf-fff30d1e2850)
+</details>
+
+## Use it in your AI assistant (MCP)
+
+The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server at `https://mcp.gmodwiki.com/mcp`, exposing `search_wiki` and `get_page` tools so assistants can look up GMod functions, hooks, and examples.
+
+**Claude Code**: install the plugin:
+```sh
+/plugin marketplace add CFC-Servers/gmodwiki
+/plugin install gmodwiki
+```
+
+<details>
+    <summary>:point_up_2: Other clients (Cursor, VS Code, Claude Desktop, …)</summary>
+
+<br>
+
+**Cursor**: `~/.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "gmodwiki": { "url": "https://mcp.gmodwiki.com/mcp", "transport": "streamable-http" }
+  }
+}
+```
+
+**VS Code (Copilot)**: `.vscode/mcp.json` (note: root key is `servers`):
+```json
+{
+  "servers": {
+    "gmodwiki": { "type": "http", "url": "https://mcp.gmodwiki.com/mcp" }
+  }
+}
+```
+
+**Claude Desktop / claude.ai**: Settings → Connectors → *Add custom connector* → `https://mcp.gmodwiki.com/mcp`
+
+**Any stdio-only client**: bridge with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+```json
+{
+  "mcpServers": {
+    "gmodwiki": { "command": "npx", "args": ["-y", "mcp-remote", "https://mcp.gmodwiki.com/mcp"] }
+  }
+}
+```
 </details>
 
 ## Dev

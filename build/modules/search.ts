@@ -56,6 +56,7 @@ class SearchManager {
 
       const $ = cheerio.load(body)
       $("script, style").remove()
+      $(".function_links").remove() // drops the "Search Github" link from indexed text
       $("br").replaceWith("\n")
 
       function traverse(node: any) {

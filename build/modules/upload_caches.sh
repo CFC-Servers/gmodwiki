@@ -11,13 +11,18 @@ wait
 (npx wrangler r2 object put gmodwiki/build_cache.zip --remote --file ./build_cache.zip && rm -v build_cache.zip) &
 wait
 
+# Embeddings artifact (semantic search dataset)
+(npx wrangler r2 object put gmodwiki/embeddings.bin --remote --file ./public/embeddings.bin) &
+(npx wrangler r2 object put gmodwiki/embeddings_manifest.json --remote --file ./public/embeddings_manifest.json) &
+wait
+
 # Purge-a da cache-a 🤌
 if [[ -n "$CLOUDFLARE_ZONE_ID" && -n "$CLOUDFLARE_CACHE_API_KEY" ]]; then
     echo "Purging Cloudflare edge cache for cache archives..."
     curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
         -H "Authorization: Bearer ${CLOUDFLARE_CACHE_API_KEY}" \
         -H "Content-Type: application/json" \
-        --data '{"files":["https://storage.gmodwiki.com/public_cache.zip","https://storage.gmodwiki.com/build_cache.zip"]}'
+        --data '{"files":["https://storage.gmodwiki.com/public_cache.zip","https://storage.gmodwiki.com/build_cache.zip","https://storage.gmodwiki.com/embeddings.bin","https://storage.gmodwiki.com/embeddings_manifest.json"]}'
     echo
 else
     echo "WARNING: CLOUDFLARE_ZONE_ID / CLOUDFLARE_CACHE_API_KEY not set; skipping edge cache purge."

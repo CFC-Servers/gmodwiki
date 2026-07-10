@@ -37,3 +37,7 @@ deleted_files.txt
 # These are generated files, shouldn't be tracked - they get rebuilt on build
 src/layouts/Layout.astro
 src/components/Sidebar.astro
+
+docs/
+.claude/
+.superpowers/

@@ -1,0 +1,14 @@
+{
+  "name": "gmodwiki",
+  "owner": {
+    "name": "CFC-Servers",
+    "url": "https://github.com/CFC-Servers"
+  },
+  "plugins": [
+    {
+      "name": "gmodwiki",
+      "source": "./semantic/mcp/plugin",
+      "description": "Semantic search over the Garry's Mod Lua API wiki (gmodwiki.com) via MCP — adds search_wiki and get_page tools."
+    }
+  ]
+}

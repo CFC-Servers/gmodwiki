@@ -1,0 +1,39 @@
+name: Deploy MCP Server
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'semantic/mcp/hosted/**'
+      - 'semantic/core/**'
+      - 'semantic/adapters/hosted/**'
+      - '.github/workflows/deploy-mcp.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm --no-audit --progress=false ci
+          npm --no-audit --progress=false --prefix semantic/mcp/hosted ci
+
+      - name: Test
+        run: npm test
+
+      - name: Deploy worker
+        working-directory: semantic/mcp/hosted
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: npx wrangler deploy
