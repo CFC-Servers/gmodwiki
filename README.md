@@ -213,6 +213,18 @@ The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server 
 ```
 </details>
 
+### Teaching your assistant when to use it
+
+Usually you don't have to do anything: the server describes itself via the MCP `instructions` field (see [`semantic/core/tools.ts`](https://github.com/CFC-Servers/gmodwiki/blob/main/semantic/core/tools.ts)), and clients that support it (Claude Code, Claude Desktop, etc.) feed that to the assistant automatically.
+
+Some clients ignore server instructions, though. If your assistant isn't reaching for the tools when it should, add something like this to your project's rules file (`CLAUDE.md`, `AGENTS.md`, Cursor rules, ...):
+
+```markdown
+For any Garry's Mod Lua API question (functions, hooks, methods, enums, libraries), use the
+gmodwiki MCP tools instead of answering from memory: call `search_wiki` with a natural-language
+description of the task, then pass a result's `address` to `get_page` for the full documentation.
+```
+
 ## Dev
 
 <details>
