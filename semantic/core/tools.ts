@@ -16,8 +16,11 @@ export function registerTools(
   deps: {
     search: (query: string, k: number) => Promise<SearchResult[]>;
     getPage: PageGetter;
+    /** Base URL used in `Source:` links; defaults to the public mirror. */
+    baseUrl?: string;
   },
 ): void {
+  const baseUrl = deps.baseUrl ?? "https://gmodwiki.com";
   server.tool(
     "search_wiki",
     "Semantically search the Garry's Mod Lua API wiki for functions, hooks, classes, methods, enums, and libraries. Best with a natural-language description of the task (e.g. \"make a player say something in chat\"). Returns ranked pages, each with an `address` (pass to get_page for full docs), `title`, `url`, and a `snippet`.",
@@ -42,7 +45,7 @@ export function registerTools(
       if (!page) {
         return { content: [{ type: "text", text: `No page found for '${address}'` }], isError: true };
       }
-      const url = `https://gmodwiki.com/${address}`;
+      const url = `${baseUrl}/${address}`;
       return { content: [{ type: "text", text: `# ${page.title}\n\n${page.content}\n\nSource: ${url}` }] };
     },
   );

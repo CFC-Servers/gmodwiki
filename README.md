@@ -2,16 +2,20 @@
 <p align="left">
     <a href="https://discord.gg/5JUqZjzmYJ" alt="Discord Invite"><img src="https://img.shields.io/discord/981394195812085770?label=Support&logo=discord&logoColor=white" /></a>
 </p>
-This project scrapes and mirrors the GMod Wiki.
+This project scrapes and mirrors the GMod Wiki. It is fully self-hosted (Docker or bare Node) — no cloud services required.
 
-It also includes a number of enhancments over the original.
-
-You may use the [public site](https://gmodwiki.com), or even [host your own](https://github.com/CFC-Servers/gmodwiki?tab=readme-ov-file#self-hosting) for super fast offline access!
+It also includes a number of enhancements over the original.
 
 ### Features
 - :dark_sunglasses: **Custom Darkmode** _([Thanks @Be1zebub/@Phoenixf129!](https://github.com/Be1zebub/Small-GLua-Things/blob/master/dark_wiki.js))_
     - Alternatively, this mirror plays nicely with DarkReader!
-- :ship: **Self-hosting with Docker**
+- :ship: **Self-hosting with Docker** — no cloud dependencies
+- :pencil: **Custom pages** _(new!)_
+    - Create your own pages/categories with class/function documentation at `/custom`
+    - Pages are written in [Facepunch wiki markup](https://wiki.facepunch.com/wiki/) (`<function>`, `<example>`, `<note>`, ...) and/or regular markdown, and render exactly like official pages
+    - Stored in PostgreSQL, so they survive official content updates
+    - Only custom pages are editable — official pages stay read-only to avoid conflicts with upstream updates
+    - No accounts, no auth: everyone can create and edit custom pages
 - :racing_car: **Performance enhancements**
     - Significant performance improvements for CSS styling
     - Reduced the total stylesheet size by nearly 90%
@@ -22,160 +26,96 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 - :mag_right: **Fast searching**
     - Both basic and full-site searching are implemented
     - Search results are not paginated
+    - Custom pages are included in search results
 - :robot: **Semantic search & MCP**
-    - Hybrid keyword + semantic search, with an MCP server for AI tools
+    - Hybrid keyword + semantic search running fully locally (transformers.js), with a built-in MCP server for AI tools at `/mcp`
 - :framed_picture: **Optimized images**
     - Image size reduced by > 40% with only a small loss in quality
-- :cloud: **Hosted entirely on The Cloud**
-    - Very reliable! Should almost never go down
 - :robot: **Automatic content updates**
-    - Page content is [automatically updated](https://github.com/CFC-Servers/gmodwiki/blob/main/.github/workflows/update.yml) four times a day
+    - Rebuild the Docker image (or re-run the build) to pull the latest wiki content; custom pages are untouched
 - :hammer_and_wrench: **UI bug fixes**
 - **`?format=json` support**
 - **`~pagelist` support _(json format only)_**
-- **`/gmod/` redirect support**
-  - _This means you can safely redirect all gmod links from `wiki.facepunch.com` to `gmodwiki.com`_
 - **"Copy markdown link" button** _([Thanks TankNut!](https://github.com/TankNut))_
 - **Keyboard navigation/highlighting support for the sidebar**
 - All external links open in a new tab
 
 ### Limitations
 Current limitations:
-- No Editing _(will not implement)_
+- Official (scraped) pages cannot be edited — only custom pages can _(by design: official pages are overwritten on every update)_
 - No change history _(probably won't implement)_
 - All images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp)
 - The main page script.js is self-hosted and modified (for performance), meaning any useful updates will need to be manually backported
 
 ## Self-Hosting
-[A docker image](https://github.com/CFC-Servers/gmodwiki/pkgs/container/gmodwiki) is provided to support self-hosting use cases.
-
-The image is about 160mb, making it reasonably portable and quick to download 👍
-
-### Running the Docker image
 
 First, be sure you have [Docker installed](https://docs.docker.com/compose/install/).
 
-#### With `docker run`
-**Run the wiki in the background**:
-```
-docker run --name gmodwiki -p 127.0.0.1:4321:4321 --rm -d ghcr.io/cfc-servers/gmodwiki:latest
-```
+### With [`docker compose`](https://docs.docker.com/compose/) _(recommended)_
 
-Then visit `http://localhost:4321` in your browser.
+Download the [`docker-compose.yml`](https://github.com/CFC-Servers/gmodwiki/blob/main/docker-compose.yml) file from this repository and put it somewhere on your machine, then run:
 
-**Stopping the background container**:
-```
-docker stop --time 1 gmodwiki
+```sh
+docker compose up -d
 ```
 
-#### With [`docker compose`](https://docs.docker.com/compose/)
-_Useful if you want to leave the site running at all times_
+This starts two containers:
+- `gmodwiki_web` — the wiki itself (http://localhost:4321)
+- `gmodwiki_db` — PostgreSQL, which stores your custom pages (persisted in the `gmodwiki_pgdata` volume)
 
-<details>
-    <summary>:point_up_2: Instructions</summary>
-
-<br>
-
-Download the [`docker-compose.yml`](https://github.com/CFC-Servers/gmodwiki/blob/main/docker-compose.yml) file from this repository and put it somewhere on your machine.
-
-Then, simply `docker compose up` _(or `docker-compose up` for older `docker` engines)_.
-
-<br>
-
-You can easily configure the Host and Port when using docker compose.
-
-First, create a `.env` file in the same directory as the `docker-compose.yml`, in the format of:
+You can configure the host/port/database password with a `.env` file next to `docker-compose.yml`:
 ```env
 GMODWIKI_HOST=127.0.0.1
 GMODWIKI_PORT=4321
+GMODWIKI_DB_PASSWORD=change-me
 ```
 
-Then you can change the Host or Port in that file, and then run `docker compose up` again.
-
-
-If you want to expose the wiki instance to the world _(not recommended without a reverse proxy like Nginx, and especially not without Cloudflare)_:
+If you want to expose the wiki instance to the world _(not recommended without a reverse proxy like Nginx)_:
 - Set `GMODWIKI_HOST=0.0.0.0`
 - Forward your chosen port _(`4321` by default)_ in your router/firewall
 - Visit your public IP in your browser: `http://<your IP>:<your port>`
-    
-</details>
 
+### With `docker run` _(without custom pages)_
 
-### Hosting your own public instance
-_If you want to run another global instance for redundancy / host your own version_
+The wiki works without a database — you just lose the ability to create custom pages:
 
-<details>
-    <summary>:point_up_2: Instructions</summary>
-
-<br>
-
-This mirror is made to run on Cloudflare. Deploying is really easy, simply clone the project and run:
-    
 ```sh
-npm i;
-npm run build;
-npm run pages:deploy;
+docker run --name gmodwiki -p 127.0.0.1:4321:4321 --rm -d ghcr.io/cfc-servers/gmodwiki:latest
 ```
 
-Follow the auth/setup prompts from `wrangler`.
+To enable custom pages, point it at your own PostgreSQL with `-e DATABASE_URL=postgres://user:pass@host:5432/db` (the schema is created automatically).
 
-Then:
-- Visit your Cloudflare dashboard
-- Select "Workers and Pages" from the sidebar
-- Click on your `gmodwiki` instance
-- Verify that it deployed correctly and that you can visit the latest `.pages.dev` site listed on the page
+**Stopping the background container**:
+```sh
+docker stop --time 1 gmodwiki
+```
 
-If you have your own domain:
-- Go to the "Custom Domains" tab and click "Set up a custom domain" to connect your own domain
+### Updating wiki content
 
-### Now, set up the redirect rules:
-Navigate to Cache Rules:
+Official page content is baked into the image at build time. To update it, pull the newest image (published daily) and restart:
 
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/fc89fe0f-57fd-4e34-ac0d-bd7b1ddddfca)
+```sh
+docker compose pull && docker compose up -d
+```
 
-**`?format=json` redirect**
+Your custom pages live in PostgreSQL and are never touched by content updates.
 
-_⚠️ Be sure to replace `gmodwiki.com` with your domain!_
+## Custom pages
 
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/3329e11f-eed0-487e-8901-906fee2f8039)
+Open `/custom` (also linked in the sidebar) to browse and create pages, or `/custom/edit` to open the editor directly.
 
-**`/gmod/` redirect**
-
-_⚠️ This needs to be the second rule in the rules list!_
-
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/b64b92a2-028d-498e-8040-a117fe2ee3b6)
-
-Now, wait about 30 seconds, and then try:
-- Visiting: `https://<YOUR DOMAIN>/Player_Animations?format=json` and verify that you're redirected to: `https://<YOUR DOMAIN>/content/Player_Animations.json`
-- Visiting: `https://<YOUR DOMAIN>/gmod/Player_Animations` and verify that you're redirected to: `https://<YOUR DOMAIN>/Player_Animations`
-
-### Then, you'll need to set up your caching rules:
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/9854e77b-6f3d-4932-adaa-896bffcbbafa)
-
-**Search Caching Rule** (needs to be first in the rule list):
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/70f2d777-7e35-4a86-9429-4f5556cdfb5b)
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/61b58cfb-205f-41a3-9634-84b654d20318)
-
-
-**Primary Caching Rule:**
-- Edge Cache: 3 days
-- Brower Cache: 1 day
-
-_⚠️ Be sure to replace `gmodwiki.com` with your domain!_
-
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/0dd7cbac-d3e8-486c-9549-344b8f453f27)
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/34b267ae-5036-45e1-91a1-b948702a89e2)
-![image](https://github.com/CFC-Servers/gmodwiki/assets/7936439/e8133bac-c12a-4bbe-a7bf-fff30d1e2850)
-</details>
+- Pages support the official [Facepunch wiki markup](https://wiki.facepunch.com/wiki/): `<function>`, `<example>`, `<enumeration>`, `<structure>`, `<note>`, `<warning>`, `<bug>`, `<deprecated>`, `<page>`, `<key>`, ... plus regular markdown (headers, lists, tables, links, fenced ```lua code blocks with syntax highlighting)
+- The editor shows a live preview rendered exactly like official pages
+- Custom pages can't shadow official addresses, and official pages can't be edited — so updating the mirror from wiki.facepunch.com can never conflict with your content
+- Custom pages appear in search and are served to MCP clients via `get_page`
 
 ## Use it in your AI assistant (MCP)
 
-The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server at `https://mcp.gmodwiki.com/mcp`, exposing `search_wiki` and `get_page` tools so assistants can look up GMod functions, hooks, and examples.
+Every instance ships its own [MCP](https://modelcontextprotocol.io) server at `http://<host>:<port>/mcp` (streamable HTTP), exposing `search_wiki` and `get_page` tools so assistants can look up GMod functions, hooks, and examples — including your custom pages.
 
-**Claude Code**: install the plugin:
+**Claude Code**:
 ```sh
-/plugin marketplace add CFC-Servers/gmodwiki
-/plugin install gmodwiki
+claude mcp add --transport http gmodwiki http://localhost:4321/mcp
 ```
 
 <details>
@@ -187,7 +127,7 @@ The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server 
 ```json
 {
   "mcpServers": {
-    "gmodwiki": { "url": "https://mcp.gmodwiki.com/mcp", "transport": "streamable-http" }
+    "gmodwiki": { "url": "http://localhost:4321/mcp", "transport": "streamable-http" }
   }
 }
 ```
@@ -196,18 +136,18 @@ The wiki is available as a hosted [MCP](https://modelcontextprotocol.io) server 
 ```json
 {
   "servers": {
-    "gmodwiki": { "type": "http", "url": "https://mcp.gmodwiki.com/mcp" }
+    "gmodwiki": { "type": "http", "url": "http://localhost:4321/mcp" }
   }
 }
 ```
 
-**Claude Desktop / claude.ai**: Settings → Connectors → *Add custom connector* → `https://mcp.gmodwiki.com/mcp`
+**Claude Desktop / claude.ai**: Settings → Connectors → *Add custom connector* → `http://localhost:4321/mcp`
 
 **Any stdio-only client**: bridge with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
 ```json
 {
   "mcpServers": {
-    "gmodwiki": { "command": "npx", "args": ["-y", "mcp-remote", "https://mcp.gmodwiki.com/mcp"] }
+    "gmodwiki": { "command": "npx", "args": ["-y", "mcp-remote", "http://localhost:4321/mcp"] }
   }
 }
 ```
@@ -240,8 +180,16 @@ npm run astrobuild;
 npm run preview;
 ```
 
+For custom pages you also need PostgreSQL; the easiest way is:
+```
+docker run --name gmodwiki-pg -p 5432:5432 -e POSTGRES_USER=gmodwiki -e POSTGRES_PASSWORD=gmodwiki -e POSTGRES_DB=gmodwiki -d postgres:16-alpine
+```
+The app connects to `postgres://gmodwiki:gmodwiki@localhost:5432/gmodwiki` by default; override with `DATABASE_URL`.
+
 ### Some dev notes:
 - The first `npm run build` will take awhile as it scrapes the main website
+    - Set `PAGE_LIMIT=200` to only build a subset of pages for quick local testing
+    - Set `SKIP_EMBEDDINGS=1` to skip the semantic-search embedding step (search falls back to keyword-only)
 - Those building on windows may need to run the following command to fix issues with `sharp`
 ```
 npm install --force @img/sharp-win32-x64
@@ -250,5 +198,4 @@ npm install --force @img/sharp-win32-x64
     - All downloaded page content will be cached into `./build/cache/`
     - All downloaded static content will be cached to `./public/`
     - You can remove either of these directories if you need to re-parse the remote content again
-- By default, `npm run astrobuild` will build the site for **self hosting**, not **cloud hosting**. If you need to test the cloud environment, you can run `export BUILD_ENV=production` before running the build/preview commands
 </details>

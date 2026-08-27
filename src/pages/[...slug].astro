@@ -8,6 +8,7 @@ const fourohfour = `
     <a name="notfound" class="anchor_offset"></a>
     <h1>Not Found<a class="anchor" href="#notfound"><i class="mdi mdi-link-variant"></i></a></h1>
     <p>This page is missing.</p>
+    <p>You can <a href="/custom/edit?address=${encodeURIComponent(slug)}">create it as a custom page</a>.</p>
 </div>
 `
 
@@ -31,6 +32,13 @@ try {
         json.html = fourohfour
     } else {
         json = await response.json()
+
+        // `?format=json` compatibility with the official wiki (previously a CDN redirect)
+        if (Astro.url.searchParams.get("format") === "json") {
+            return new Response(JSON.stringify(json), {
+                headers: { "content-type": "application/json" },
+            })
+        }
     }
 } catch (e) {
     json.html = "Failed to load page <b>" + slug + "</b>" + (e ? "<p>" + e.toString() + "</p>" : "")

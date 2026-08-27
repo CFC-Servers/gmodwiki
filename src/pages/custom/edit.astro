@@ -1,0 +1,250 @@
+---
+import Layout from "@layouts/Layout.astro"
+import { getCustomPage, listCustomCategories } from "../../lib/db.js"
+import { isOfficialPage } from "../../lib/custom_pages.js"
+
+const requestedAddress = Astro.url.searchParams.get("address") ?? ""
+
+let existing: any = null
+let categories: string[] = []
+let official = false
+
+try {
+    if (requestedAddress) {
+        existing = await getCustomPage(requestedAddress)
+        if (!existing) official = await isOfficialPage(Astro.url.origin, requestedAddress)
+    }
+    categories = (await listCustomCategories()).map((c) => c.name)
+} catch (e: any) {
+    console.warn("editor: database unavailable:", e?.message ?? e)
+}
+
+const isEdit = existing !== null
+const pageTitle = isEdit ? `Editing: ${existing.title}` : "Create a Custom Page"
+
+const initialMarkup = existing?.markup ?? `<function name="MyFunction" parent="Global" type="libraryfunc">
+	<description>
+What this function does.
+
+<note>Extra information for readers.</note>
+	</description>
+	<realm>Shared</realm>
+	<args>
+		<arg name="input" type="string">Describe the argument.</arg>
+	</args>
+	<rets>
+		<ret name="" type="boolean">Describe the return value.</ret>
+	</rets>
+</function>
+
+<example>
+	<description>Basic usage.</description>
+	<code>
+local ok = MyFunction("hello")
+print(ok)
+	</code>
+	<output>true</output>
+</example>
+`
+---
+
+<Layout title={pageTitle} description="Custom page editor" views="" updated="">
+    <div class="markdown">
+        <h1>{pageTitle}<a class="anchor" href="#editor"><i class="mdi mdi-link-variant"></i></a><a name="editor" class="anchor_offset"></a></h1>
+
+        {official && (
+            <div class="warning"><div class="inner">
+                <b>{requestedAddress}</b> is an official wiki page. Official pages are read-only —
+                they are refreshed from wiki.facepunch.com on every content update, so local edits
+                would be lost and are not allowed. You can create a custom page at a different address instead.
+            </div></div>
+        )}
+
+        <p>
+            Custom pages support <a target="_blank" href="https://wiki.facepunch.com/wiki/">Facepunch wiki markup</a>
+            (<code>&lt;function&gt;</code>, <code>&lt;example&gt;</code>, <code>&lt;note&gt;</code>, <code>&lt;page&gt;</code>, ...)
+            and regular markdown. The preview below updates as you type.
+        </p>
+
+        <div class="editor-grid">
+            <div class="editor-pane">
+                <label>Address <span class="hint">(URL path of the page, e.g. <code>MyAddon/MyFunction</code>)</span></label>
+                <input type="text" id="page-address" value={existing?.address ?? requestedAddress} readonly={isEdit} />
+
+                <label>Title <span class="hint">(optional — defaults to the address)</span></label>
+                <input type="text" id="page-title" value={existing?.title ?? ""} />
+
+                <label>Category</label>
+                <input type="text" id="page-category" list="category-options" value={existing?.category ?? "Custom"} />
+                <datalist id="category-options">
+                    {categories.map((name) => <option value={name} />)}
+                </datalist>
+
+                <label>Markup</label>
+                <textarea id="page-markup" spellcheck="false">{initialMarkup}</textarea>
+
+                <div class="editor-actions">
+                    <button id="save-button" type="button">{isEdit ? "Save changes" : "Create page"}</button>
+                    {isEdit && <button id="delete-button" type="button" class="danger">Delete page</button>}
+                    {isEdit && <a href={`/${existing.address}`}>View page</a>}
+                    <a href="/custom">All custom pages</a>
+                </div>
+                <div id="editor-status"></div>
+            </div>
+
+            <div class="editor-pane">
+                <label>Preview</label>
+                <div id="preview" class="markdown preview-box"><i>Loading preview...</i></div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .editor-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25em;
+        align-items: start;
+    }
+    @media (max-width: 1100px) {
+        .editor-grid { grid-template-columns: 1fr; }
+    }
+    .editor-pane label {
+        display: block;
+        font-weight: 600;
+        margin: 0.8em 0 0.25em;
+    }
+    .editor-pane .hint {
+        font-weight: 400;
+        opacity: 0.65;
+        font-size: 0.85em;
+    }
+    .editor-pane input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.45em 0.6em;
+    }
+    .editor-pane input[readonly] {
+        opacity: 0.65;
+    }
+    .editor-pane textarea {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 420px;
+        padding: 0.6em;
+        font-family: monospace;
+        font-size: 0.9em;
+        line-height: 1.4;
+        resize: vertical;
+    }
+    .editor-actions {
+        display: flex;
+        gap: 0.75em;
+        align-items: center;
+        margin-top: 0.9em;
+        flex-wrap: wrap;
+    }
+    .editor-actions button {
+        padding: 0.5em 1.1em;
+        cursor: pointer;
+    }
+    .editor-actions button.danger {
+        color: #c0392b;
+    }
+    #editor-status {
+        margin-top: 0.6em;
+        min-height: 1.2em;
+    }
+    .preview-box {
+        border: 1px solid rgba(127, 127, 127, 0.35);
+        border-radius: 6px;
+        padding: 0.9em;
+        min-height: 420px;
+        overflow-x: auto;
+    }
+</style>
+
+<script is:inline define:vars={{ isEdit }}>
+    const addressInput = document.getElementById("page-address");
+    const titleInput = document.getElementById("page-title");
+    const categoryInput = document.getElementById("page-category");
+    const markupInput = document.getElementById("page-markup");
+    const preview = document.getElementById("preview");
+    const status = document.getElementById("editor-status");
+
+    let previewTimer = null;
+
+    async function updatePreview() {
+        try {
+            const res = await fetch("/api/custom/preview", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ markup: markupInput.value }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || res.statusText);
+            preview.innerHTML = data.html || "<i>Nothing to preview yet.</i>";
+        } catch (err) {
+            preview.innerHTML = "<i>Preview failed: " + err.message + "</i>";
+        }
+    }
+
+    markupInput.addEventListener("input", () => {
+        clearTimeout(previewTimer);
+        previewTimer = setTimeout(updatePreview, 600);
+    });
+    updatePreview();
+
+    document.getElementById("save-button").addEventListener("click", async () => {
+        const address = addressInput.value.trim();
+        if (!address) {
+            status.textContent = "Address is required.";
+            return;
+        }
+
+        status.textContent = "Saving...";
+        const body = JSON.stringify({
+            address,
+            title: titleInput.value,
+            category: categoryInput.value,
+            markup: markupInput.value,
+        });
+
+        try {
+            const res = await fetch(
+                isEdit ? "/api/custom/pages/" + encodeURIComponent(address).replaceAll("%2F", "/") : "/api/custom/pages",
+                {
+                    method: isEdit ? "PUT" : "POST",
+                    headers: { "content-type": "application/json" },
+                    body,
+                },
+            );
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || res.statusText);
+            status.textContent = "Saved!";
+            window.location.href = "/" + data.page.address;
+        } catch (err) {
+            status.textContent = "Error: " + err.message;
+        }
+    });
+
+    const deleteButton = document.getElementById("delete-button");
+    if (deleteButton) {
+        deleteButton.addEventListener("click", async () => {
+            if (!confirm("Delete this custom page? This cannot be undone.")) return;
+            status.textContent = "Deleting...";
+            try {
+                const address = addressInput.value.trim();
+                const res = await fetch("/api/custom/pages/" + encodeURIComponent(address).replaceAll("%2F", "/"), {
+                    method: "DELETE",
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || res.statusText);
+                window.location.href = "/custom";
+            } catch (err) {
+                status.textContent = "Error: " + err.message;
+            }
+        });
+    }
+</script>

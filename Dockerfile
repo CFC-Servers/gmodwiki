@@ -7,11 +7,9 @@ FROM base AS prod-deps
 RUN npm ci --omit=dev
 # Remove a bunch of unnecessary stuff to slim down the image
 RUN rm -rf \
-    /app/node_modules/@astrojs/cloudflare \
     /app/node_modules/typescript \
     /app/node_modules/@shikijs \
     /app/node_modules/@esbuild \
-    /app/node_modules/@cloudflare \
     /app/node_modules/fontkit \
     /app/node_modules/@babel \
     /app/node_modules/prismjs \
@@ -51,6 +49,7 @@ COPY semantic/adapters ./semantic/adapters
 COPY build ./build
 COPY public ./public
 ENV BUILD_ENV=docker
+ENV MODEL_CACHE_DIR=/app/hf-cache
 RUN npm run build
 RUN npm run astrobuild
 

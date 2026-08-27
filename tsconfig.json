@@ -4,7 +4,6 @@
   "exclude": [
     "dist",
     "build/fragments",
-    "semantic/mcp/hosted",
     "semantic/mcp/local"
   ],
   "compilerOptions": {
@@ -12,9 +11,6 @@
     "lib": ["ES2021", "WebWorker"],
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "types": [
-      "@cloudflare/workers-types/2023-07-01"
-    ],
     "baseUrl": ".",
     "paths": {
         "@layouts/*": ["src/layouts/*"]

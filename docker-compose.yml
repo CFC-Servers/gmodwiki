@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   gmodwiki_web:
     image: ghcr.io/cfc-servers/gmodwiki:latest
@@ -8,4 +6,28 @@ services:
     stop_grace_period: 1s
     ports:
       - "${GMODWIKI_HOST:-127.0.0.1}:${GMODWIKI_PORT:-4321}:4321"
+    environment:
+      DATABASE_URL: "postgres://gmodwiki:${GMODWIKI_DB_PASSWORD:-gmodwiki}@gmodwiki_db:5432/gmodwiki"
+    depends_on:
+      gmodwiki_db:
+        condition: service_healthy
     restart: unless-stopped
+
+  gmodwiki_db:
+    image: postgres:16-alpine
+    container_name: gmodwiki_db
+    environment:
+      POSTGRES_USER: gmodwiki
+      POSTGRES_PASSWORD: "${GMODWIKI_DB_PASSWORD:-gmodwiki}"
+      POSTGRES_DB: gmodwiki
+    volumes:
+      - gmodwiki_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gmodwiki -d gmodwiki"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  gmodwiki_pgdata:

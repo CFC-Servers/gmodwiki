@@ -120,7 +120,14 @@ export async function buildAllPages(
   searchManager: SearchManager,
 ) {
   const pageAPI = new PagesAPI();
-  const allLinks = await getAllPageLinks(api);
+  let allLinks = await getAllPageLinks(api);
+
+  // PAGE_LIMIT=N builds only the first N pages — handy for quick local testing
+  const pageLimit = Number(process.env.PAGE_LIMIT) || 0;
+  if (pageLimit > 0) {
+    console.log(`PAGE_LIMIT set; building only ${pageLimit} of ${allLinks.length} pages`);
+    allLinks = allLinks.slice(0, pageLimit);
+  }
 
   // split into 10 chunks
   const chunkSize = Math.ceil(allLinks.length / 10);
