@@ -13,6 +13,10 @@ const mdiWhitelist = [
   ".mdi-calendar",
   ".mdi-code-braces",
   ".mdi-code-not-equal",
+  // Applied dynamically by CopyCode (not present in cached HTML, so
+  // `get_used_mdis` cannot detect them)
+  ".mdi-check",
+  ".mdi-close",
   ".mdi-content-copy",
   ".mdi-controller-classic-outline",
   ".mdi-cube-outline",

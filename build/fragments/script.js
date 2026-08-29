@@ -267,20 +267,77 @@ window.ToggleClass = function (element, classname) {
 };
 
 window.CopyCode = function (event) {
-  var code = event.target.closest("div.code").innerText;
-  navigator.clipboard.writeText(code).then(() => {
-    var btn = event.target.closest("copy");
-    var icn = btn.querySelector(".mdi");
-    icn.classList.replace("mdi-content-copy", "mdi-check");
-    btn.classList.add("copied");
-    clearTimeout(icn.copyTimeout);
-    icn.copyTimeout = setTimeout(function () {
-      icn.classList.replace("mdi-check", "mdi-content-copy");
-      btn.classList.remove("copied");
-    }, 5000);
-  });
+  var btn = event.target.closest("copy");
+  if (btn == null) return;
+
+  var block = btn.closest("div.code");
+  if (block == null) return;
+
   event.preventDefault();
+
+  var clone = block.cloneNode(true);
+  var cloneBtn = clone.querySelector("copy");
+  if (cloneBtn != null) cloneBtn.remove();
+  var code = clone.textContent.replace(/^\n+/, "").replace(/\s+$/, "");
+
+  var showState = function (success) {
+    var icn = btn.querySelector(".mdi");
+    if (icn == null) return;
+    clearTimeout(icn.copyTimeout);
+    if (success) {
+      icn.classList.replace("mdi-content-copy", "mdi-check");
+      btn.classList.add("copied");
+    } else {
+      icn.classList.replace("mdi-content-copy", "mdi-close");
+      btn.classList.add("copy-failed");
+      console.warn("Failed to copy code block to clipboard");
+    }
+    icn.copyTimeout = setTimeout(function () {
+      if (icn.classList.contains("mdi-check"))
+        icn.classList.replace("mdi-check", "mdi-content-copy");
+      if (icn.classList.contains("mdi-close"))
+        icn.classList.replace("mdi-close", "mdi-content-copy");
+      btn.classList.remove("copied");
+      btn.classList.remove("copy-failed");
+    }, 5000);
+  };
+
+  var legacyCopy = function () {
+    var textarea = document.createElement("textarea");
+    textarea.value = code;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.top = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    var ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch (e) {}
+    document.body.removeChild(textarea);
+    return ok;
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(code).then(
+      function () {
+        showState(true);
+      },
+      function () {
+        showState(legacyCopy());
+      },
+    );
+  } else {
+    showState(legacyCopy());
+  }
 };
+
+document.addEventListener("click", function (event) {
+  if (event.defaultPrevented) return;
+  if (event.target.closest == null) return;
+  if (event.target.closest("copy") == null) return;
+  window.CopyCode(event);
+});
 
 var SearchInput;
 var SearchResults;
