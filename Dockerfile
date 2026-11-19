@@ -1,6 +1,7 @@
 FROM node:24-slim AS base
 WORKDIR /app
 COPY package.json package-lock.json ./
+ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip
 
 
 FROM base AS prod-deps

@@ -10,6 +10,9 @@ on:
       - '.github/workflows/deploy-mcp.yml'
   workflow_dispatch:
 
+env:
+  ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

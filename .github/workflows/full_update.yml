@@ -13,6 +13,9 @@ on:
     - cron: '12 5 1 * *' # At 05:12 on day-of-month 1.
 
 
+env:
+  ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+
 jobs:
   full-update:
     runs-on: ubuntu-latest

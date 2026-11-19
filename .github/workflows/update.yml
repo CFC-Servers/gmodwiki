@@ -10,6 +10,9 @@ on:
     - cron: '41 */6 * * *' # At minute 41 past every 6th hour
 
 
+env:
+  ONNXRUNTIME_NODE_INSTALL_CUDA: skip
+
 jobs:
   update:
     runs-on: ubuntu-latest
