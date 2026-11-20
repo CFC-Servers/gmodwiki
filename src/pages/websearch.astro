@@ -1,15 +1,10 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { highlightTerms } from "../../semantic/core/highlight.js";
-
-interface SearchResult {
-  address: string; title: string; url: string; snippet: string; score: number;
-  source: "keyword" | "semantic" | "both";
-}
+import { search } from "./websearch.json.js";
 
 const query = Astro.url.searchParams.get("query") || "";
-const endpoint = `${Astro.url.protocol}//${Astro.url.host}/websearch.json?query=${encodeURIComponent(query)}`;
-const results: SearchResult[] = await (await fetch(endpoint)).json();
+const results = query ? await search(query, Astro.url, Astro.locals) : [];
 ---
 
 <Layout title="Search Results" description="Garry's Mod Wiki" views="" updated="">

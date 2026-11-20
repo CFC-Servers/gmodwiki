@@ -24,9 +24,19 @@ RUN rm -rf \
     /app/node_modules/@rollup \
     /app/node_modules/esbuild \
     /app/node_modules/astro \
+    /app/node_modules/workerd \
+    /app/node_modules/wrangler \
+    /app/node_modules/miniflare \
+    /app/node_modules/lightningcss* \
+    /app/node_modules/@img/*linuxmusl* \
     /app/node_modules/onnxruntime-node/bin/napi-v3/darwin \
     /app/node_modules/onnxruntime-node/bin/napi-v3/win32 \
+    /app/node_modules/onnxruntime-node/bin/napi-v3/linux/*/libonnxruntime.so.1.* \
     /app/node_modules/onnxruntime-web
+RUN case "$(uname -m)" in \
+    x86_64) rm -rf /app/node_modules/onnxruntime-node/bin/napi-v3/linux/arm64 ;; \
+    aarch64) rm -rf /app/node_modules/onnxruntime-node/bin/napi-v3/linux/x64 ;; \
+    esac
 
 
 FROM base AS build-deps
@@ -65,6 +75,7 @@ COPY --from=builder /app/hf-cache /app/hf-cache
 ENV MODEL_CACHE_DIR=/app/hf-cache
 ENV EMBEDDINGS_BIN=/app/dist/client/embeddings.bin
 ENV EMBEDDINGS_MANIFEST=/app/dist/client/embeddings_manifest.json
+ENV SEARCH_INDEX=/app/dist/client/search_index.json
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
