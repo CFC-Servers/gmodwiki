@@ -49,7 +49,7 @@ Current limitations:
 ## Self-Hosting
 [A docker image](https://github.com/CFC-Servers/gmodwiki/pkgs/container/gmodwiki) is provided to support self-hosting use cases.
 
-The image is about 160mb, making it reasonably portable and quick to download 👍
+The image is about 230mb, making it reasonably portable and quick to download 👍
 
 ### Running the Docker image
 
