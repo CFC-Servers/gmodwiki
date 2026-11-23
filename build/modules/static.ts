@@ -53,6 +53,60 @@ const hostWhitelist = new Map([
   ["wiki.facepunch.com", true],
 ]);
 
+const staticWebpOptions: sharp.WebpOptions = {
+  effort: 5,
+  quality: 83,
+  preset: "text",
+  smartSubsample: true,
+};
+
+const animatedWebpOptions: sharp.WebpOptions = {
+  effort: 4,
+  lossless: true,
+};
+
+interface StoredFile {
+  filePath: string;
+  data: Buffer;
+}
+
+function withWebpExtension(filePath: string): string {
+  const extension = path.extname(filePath);
+  const withoutExtension = filePath.slice(0, -extension.length);
+
+  return `${withoutExtension}.webp`;
+}
+
+function toPublicUrl(filePath: string): string {
+  return `/${filePath}`.replaceAll("public/", "");
+}
+
+async function findExistingFile(filePaths: string[]): Promise<string | null> {
+  for (const filePath of filePaths) {
+    if (await fileExists(filePath)) return filePath;
+  }
+
+  return null;
+}
+
+async function encodeWebp(data: Buffer, animated: boolean): Promise<Buffer> {
+  const webpOptions = animated ? animatedWebpOptions : staticWebpOptions;
+  return await sharp(data, { animated }).webp(webpOptions).toBuffer();
+}
+
+async function convertImage(
+  data: Buffer,
+  originalPath: string,
+): Promise<StoredFile> {
+  const animated = isAnimated(data);
+  const webp = await encodeWebp(data, animated);
+
+  const originalIsSmaller = data.length <= webp.length;
+  if (animated && originalIsSmaller) return { filePath: originalPath, data };
+
+  return { filePath: withWebpExtension(originalPath), data: webp };
+}
+
 class StaticContentHandler {
   private host: string;
   private api: ApiInterface;
@@ -64,27 +118,11 @@ class StaticContentHandler {
     this.cache = new Map();
   }
 
-  private async optimizeImage(
-    data: Buffer,
-    options: sharp.SharpOptions,
-  ): Promise<Buffer> {
-    const webpOptions: sharp.WebpOptions = {
-      effort: 5,
-      quality: 83,
-      preset: "text",
-      smartSubsample: true,
-    };
-
-    return await sharp(data, options).webp(webpOptions).toBuffer();
-  }
-
   private async downloadContent(url: string): Promise<string> {
     const resolvedUrl = this.resolveUrl(url);
 
-    if (this.cache.has(resolvedUrl)) {
-      const cached = this.cache.get(resolvedUrl);
-      if (cached) return cached;
-    }
+    const cached = this.cache.get(resolvedUrl);
+    if (cached) return cached;
 
     const urlPath = new URL(resolvedUrl).pathname;
     const directoryStructure = path.dirname(urlPath);
@@ -92,35 +130,34 @@ class StaticContentHandler {
 
     const fileName = path.basename(resolvedUrl).split("?")[0];
     const fileExtension = path.extname(fileName).toLowerCase();
-    let filePath = path.join(fullPath, fileName).replaceAll("\\", "/");
-    let newURL = `/${filePath}`.replaceAll("public/", "");
+    const originalPath = path.join(fullPath, fileName).replaceAll("\\", "/");
 
-    // We replace all images with webp
-    if (isImage.has(fileExtension)) {
-      filePath = filePath.replaceAll(fileExtension, ".webp");
-      newURL = newURL.replaceAll(fileExtension, ".webp");
-    }
+    const convertsToWebp = isImage.has(fileExtension);
+    const possiblePaths = convertsToWebp
+      ? [withWebpExtension(originalPath), originalPath]
+      : [originalPath];
 
-    if (fileExtension !== ".css" && (await fileExists(filePath))) {
-      this.cache.set(resolvedUrl, newURL);
-      return newURL;
+    if (fileExtension !== ".css") {
+      const existingPath = await findExistingFile(possiblePaths);
+      if (existingPath) return this.remember(resolvedUrl, existingPath);
     }
 
     await fs.mkdir(fullPath, { recursive: true });
 
-    let data = await this.api.getRawFull(resolvedUrl);
-    if (isImage.has(fileExtension)) {
-      const options: sharp.SharpOptions = {};
-      if (isAnimated(data)) {
-        options.animated = true;
-      }
+    const data = await this.api.getRawFull(resolvedUrl);
+    const stored = convertsToWebp
+      ? await convertImage(data, originalPath)
+      : { filePath: originalPath, data };
 
-      data = await this.optimizeImage(data, options);
-    }
+    await fs.writeFile(stored.filePath, stored.data);
 
-    await fs.writeFile(filePath, data);
+    return this.remember(resolvedUrl, stored.filePath);
+  }
 
+  private remember(resolvedUrl: string, filePath: string): string {
+    const newURL = toPublicUrl(filePath);
     this.cache.set(resolvedUrl, newURL);
+
     return newURL;
   }
 

@@ -26,6 +26,8 @@ if (buildEnv === "production") {
 
 const DEFAULT_OPTIONS = {
   includePublic: true,
+  // the scraper already encodes these, and re-encoding drops animation frames
+  exclude: /\.webp$/i,
   svg: {
     multipass: true,
     plugins: [
@@ -64,10 +66,6 @@ const DEFAULT_OPTIONS = {
     quality: 90,
   },
   gif: {},
-  webp: {
-    lossless: false,
-    quality: 80,
-  },
   avif: {
     lossless: false,
   },
