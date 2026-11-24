@@ -1,5 +1,6 @@
 import ky from "ky"
 import { promises as fs } from "fs"
+import { purgeInBatches } from "./cloudflare_purge.js"
 
 // When clear_recent_changes finishes, it creates a deleted_files.json
 // This is just an array with the paths of the files that were deleted (and subsequently regenerated if we built again)
@@ -58,28 +59,18 @@ const clearCache = async (urls: string[]) => {
   const apiKey = process.env.CLOUDFLARE_CACHE_API_KEY;
 
   console.log("Clearing Cloudflare Cache...");
-  
-  // We have to clean in batches of 30
-  for (let i = 0; i < urls.length; i += 30) {
-    const batch = urls.slice(i, i + 30);
-    console.log(`Purging URLs from ${i} to ${i + batch.length - 1}:`, batch);
 
-    try {
-      await ky.post(`https://api.cloudflare.com/client/v4/zones/${zoneID}/purge_cache`, {
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        json: {
-          files: batch,
-        },
-      })
-
-      console.log(`Purged ${batch.length} URLs successfully.`);
-    } catch (error) {
-      console.error("Error purging URLs:", error);
-    }
-  }
+  await purgeInBatches(urls, async (batch) => {
+    await ky.post(`https://api.cloudflare.com/client/v4/zones/${zoneID}/purge_cache`, {
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      json: {
+        files: batch,
+      },
+    })
+  });
 }
 
 (async () => {
