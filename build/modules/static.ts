@@ -1,7 +1,6 @@
 // Finds, acquires, writes, and stubs any static content found in a given html file
 import path from "path";
 import sharp from "sharp";
-import chalk from "chalk";
 import * as cheerio from "cheerio";
 import isAnimated from "@frsource/is-animated";
 import { promises as fs } from "fs";
@@ -48,6 +47,8 @@ const isImage = new Map([
   [".webp", true],
 ]);
 
+const scriptableImageExtensions = new Set([".svg"]);
+
 const hostWhitelist = new Map([
   ["files.facepunch.com", true],
   ["wiki.facepunch.com", true],
@@ -65,7 +66,7 @@ const animatedWebpOptions: sharp.WebpOptions = {
   lossless: true,
 };
 
-interface StoredFile {
+export interface StoredFile {
   filePath: string;
   data: Buffer;
 }
@@ -94,15 +95,19 @@ async function encodeWebp(data: Buffer, animated: boolean): Promise<Buffer> {
   return await sharp(data, { animated }).webp(webpOptions).toBuffer();
 }
 
-async function convertImage(
+export async function convertImage(
   data: Buffer,
   originalPath: string,
 ): Promise<StoredFile> {
-  const animated = isAnimated(data);
-  const webp = await encodeWebp(data, animated);
+  const webp = await encodeWebp(data, isAnimated(data));
 
+  const extension = path.extname(originalPath).toLowerCase();
+  const canServeOriginal = !scriptableImageExtensions.has(extension);
   const originalIsSmaller = data.length <= webp.length;
-  if (animated && originalIsSmaller) return { filePath: originalPath, data };
+
+  if (canServeOriginal && originalIsSmaller) {
+    return { filePath: originalPath, data };
+  }
 
   return { filePath: withWebpExtension(originalPath), data: webp };
 }

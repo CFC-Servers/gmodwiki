@@ -43,7 +43,7 @@ You may use the [public site](https://gmodwiki.com), or even [host your own](htt
 Current limitations:
 - No Editing _(will not implement)_
 - No change history _(probably won't implement)_
-- All images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp)
+- Most images are mirrored into the `.webp` format, which has [somewhat limited browser support](https://caniuse.com/webp). An image keeps its original format when that file is smaller
 - The main page script.js is self-hosted and modified (for performance), meaning any useful updates will need to be manually backported
 
 ## Self-Hosting
