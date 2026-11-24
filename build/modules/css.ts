@@ -51,7 +51,7 @@ const mdiWhitelist = [
   ".mdi-view-quilt",
 ];
 
-function removeDeadStyles(cssContent: string) {
+export function removeDeadStyles(cssContent: string): string {
   // Unused mdi selectors can be removed
   const isBadMdi = (block: string) => {
     const isMdi = block.startsWith(".mdi-");
@@ -113,7 +113,8 @@ function removeDeadStyles(cssContent: string) {
     return true;
   };
 
-  const blocks = cssContent.split("}\n");
+  const withoutComments = cssContent.replace(/\/\*[\s\S]*?\*\//g, "");
+  const blocks = withoutComments.split("}\n");
   const keptBlocks = blocks.filter(shouldKeep);
   return keptBlocks.join("}\n");
 }
@@ -201,6 +202,7 @@ export async function processCss(contentHandler: StaticContentHandler) {
   let newContent = await contentHandler.processContent(current, true);
 
   newContent = newContent.replace(/[\r]/g, "");
+  newContent = newContent.replace(/^\uFEFF/, "");
 
   // Optimization, hide all list items that aren't expanded
   newContent = `${newContent} #sidebar details[open] > ul { display: block; }\n`;

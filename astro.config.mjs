@@ -2,7 +2,6 @@ import { defineConfig } from "astro/config";
 
 import node from "@astrojs/node";
 import cloudflare from "@astrojs/cloudflare";
-import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import playformCompress from "@playform/compress";
 
 const buildEnv = process.env.BUILD_ENV;
@@ -24,55 +23,6 @@ if (buildEnv === "production") {
   };
 }
 
-const DEFAULT_OPTIONS = {
-  includePublic: true,
-  // the scraper already encodes these, and re-encoding drops animation frames
-  exclude: /\.webp$/i,
-  svg: {
-    multipass: true,
-    plugins: [
-      {
-        name: 'preset-default',
-        params: {
-          overrides: {
-            cleanupNumericValues: true,
-            cleanupIds: {
-              minify: true,
-              remove: true,
-            },
-            convertPathData: true,
-          },
-        },
-      },
-      'sortAttrs',
-      {
-        name: 'addAttributesToSVGElement',
-        params: {
-          attributes: [{ xmlns: 'http://www.w3.org/2000/svg' }],
-        },
-      },
-    ],
-  },
-  png: {
-    quality: 90,
-  },
-  jpeg: {
-    quality: 90,
-  },
-  jpg: {
-    quality: 90,
-  },
-  tiff: {
-    quality: 90,
-  },
-  gif: {},
-  avif: {
-    lossless: false,
-  },
-  cache: false,
-  cacheLocation: undefined,
-};
-
 // Keep transformers.js/onnxruntime-node out of the CF Worker bundle
 const viteSSRExternal = buildEnv === "production"
   ? ["@huggingface/transformers", "onnxruntime-node"]
@@ -85,9 +35,6 @@ export default defineConfig({
   compressHTML: true,
 
   vite : {
-    plugins: [
-      ViteImageOptimizer(DEFAULT_OPTIONS)
-    ],
     ssr: {
       external: viteSSRExternal,
     },

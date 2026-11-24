@@ -97,6 +97,7 @@ If you want to expose the wiki instance to the world _(not recommended without a
 - Set `GMODWIKI_HOST=0.0.0.0`
 - Forward your chosen port _(`4321` by default)_ in your router/firewall
 - Visit your public IP in your browser: `http://<your IP>:<your port>`
+- If link previews show the wrong address, set `PUBLIC_ORIGIN` to your public URL (for example `PUBLIC_ORIGIN=https://wiki.example.org`)
     
 </details>
 

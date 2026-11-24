@@ -8,4 +8,6 @@ services:
     stop_grace_period: 1s
     ports:
       - "${GMODWIKI_HOST:-127.0.0.1}:${GMODWIKI_PORT:-4321}:4321"
+    environment:
+      PUBLIC_ORIGIN: "${PUBLIC_ORIGIN:-}"
     restart: unless-stopped

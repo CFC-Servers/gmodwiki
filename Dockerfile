@@ -76,6 +76,7 @@ ENV MODEL_CACHE_DIR=/app/hf-cache
 ENV EMBEDDINGS_BIN=/app/dist/client/embeddings.bin
 ENV EMBEDDINGS_MANIFEST=/app/dist/client/embeddings_manifest.json
 ENV SEARCH_INDEX=/app/dist/client/search_index.json
+ENV CONTENT_DIR=/app/dist/client/content
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321

@@ -1,8 +1,10 @@
 ---
 import Layout from "@layouts/Layout.astro"
+import { loadPage, type WikiPage } from "@lib/page_content"
+import { publicOrigin } from "@lib/public_origin"
 
 const slug = Astro.params.slug || "index"
-let json: any = { title: "Failed to load page", description: "Failed to load page", html: "", footer: "0 views<br>" }
+let json: WikiPage = { title: "Failed to load page", description: "Failed to load page", html: "", footer: "0 views<br>" }
 const fourohfour = `
 <div class="markdown" id="pagecontent">
     <a name="notfound" class="anchor_offset"></a>
@@ -21,19 +23,19 @@ try {
         return new Response(JSON.stringify(json), { status: 404 })
     }
 
-    const resource = `${Astro.url.protocol}//${Astro.url.host}/content/${slug.toLowerCase()}.json`
-    const response = await fetch(resource)
-    if (response.status === 404) {
+    const lookup = await loadPage(slug, Astro.url, Astro.locals)
+    if (lookup.status === "missing") {
         // Otherwise, we return a formatted 404 page. This happens if someone visits a missing page directly.
-        // TODO: Can we just not catch this case and let the 404 response handle it?
+        Astro.response.status = 404
         json.title = "Page Not Found"
         json.description = "Page Not Found"
         json.html = fourohfour
     } else {
-        json = await response.json()
+        json = lookup.page
     }
 } catch (e) {
-    json.html = "Failed to load page <b>" + slug + "</b>" + (e ? "<p>" + e.toString() + "</p>" : "")
+    console.error(`Failed to load page ${slug}:`, e)
+    json.html = "<p>Failed to load page.</p>"
 }
 
 const images = {
@@ -67,7 +69,8 @@ const getOpenGraphImage = (tags: string[]) => {
 const tags = json.tags
 const tagArray = tags ? tags.split(" ").map((tag: string) => tag.trim()) : []
 const ogImage = getOpenGraphImage(tagArray)
-const ogImageUrl = `${Astro.url.protocol}//${Astro.url.host}${ogImage}`
+const siteOrigin = publicOrigin(Astro.request, Astro.url, Astro.locals)
+const ogImageUrl = `${siteOrigin}${ogImage}`
 
 const footer = json.footer
 const footerInfo = footer.split("<br>")
