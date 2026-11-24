@@ -39,7 +39,10 @@ RUN case "$(uname -m)" in \
     esac
 
 
-FROM base AS build-deps
+FROM --platform=$BUILDPLATFORM node:24-slim AS build-deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip
 RUN npm ci
 
 
