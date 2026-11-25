@@ -4,14 +4,16 @@ import { kindWeight } from "./model.js";
 
 type Meta = { title: string; url: string; snippet: string; kind?: PageKind };
 
+export interface SemanticSearchDeps {
+  embedder: Embedder;
+  store: VectorStore;
+  meta: (id: string) => Meta | null;
+}
+
 export async function semanticSearch(
   query: string,
   k: number,
-  deps: {
-    embedder: Embedder;
-    store: VectorStore;
-    meta: (id: string) => Meta | null;
-  },
+  deps: SemanticSearchDeps,
 ): Promise<SearchResult[]> {
   const vector = await deps.embedder.embed(query);
   const matches = await deps.store.query(vector, k);

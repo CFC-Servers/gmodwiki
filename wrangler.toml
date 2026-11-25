@@ -1,6 +1,14 @@
 name = "gmodwiki"
+main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2025-10-08"
-pages_build_output_dir = "./dist"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[assets]
+directory = "./dist/client"
+binding = "ASSETS"
 
 [ai]
 binding = "AI"

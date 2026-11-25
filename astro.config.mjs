@@ -1,42 +1,33 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 
 import node from "@astrojs/node";
 import cloudflare from "@astrojs/cloudflare";
 import playformCompress from "@playform/compress";
 
-const buildEnv = process.env.BUILD_ENV;
+const buildsForCloudflare = process.env.BUILD_ENV === "production";
 
-let adapter;
-const buildConfig = { split: true };
+const adapter = buildsForCloudflare
+  ? cloudflare({ imageService: "passthrough" })
+  : node({ mode: "standalone" });
 
-if (buildEnv === "production") {
-  console.log("Building for Cloudflare adapter");
-  adapter = cloudflare({
-    imageService: "passthrough",
-  });
-} else {
-  console.log("Building for Node adapter");
-  adapter = node({ mode: "standalone" });
+const platformModule = buildsForCloudflare
+  ? "./src/platform/cloudflare.ts"
+  : "./src/platform/node.ts";
 
-  buildConfig.rollupOptions = {
-    external: ["fs", "node:fs", "path", "node:path"],
-  };
-}
-
-// Keep transformers.js/onnxruntime-node out of the CF Worker bundle
-const viteSSRExternal = buildEnv === "production"
-  ? ["@huggingface/transformers", "onnxruntime-node"]
-  : [];
+console.log(`Building for the ${buildsForCloudflare ? "Cloudflare" : "Node"} adapter`);
 
 export default defineConfig({
-  build: buildConfig,
   output: "server",
   adapter: adapter,
   compressHTML: true,
+  session: false,
 
-  vite : {
-    ssr: {
-      external: viteSSRExternal,
+  vite: {
+    resolve: {
+      alias: {
+        "@platform": fileURLToPath(new URL(platformModule, import.meta.url)),
+      },
     },
   },
 

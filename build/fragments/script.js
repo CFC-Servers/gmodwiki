@@ -14,6 +14,11 @@ class Navigate {
     this.details = this.sideBar.getElementsByTagName("details");
   }
 
+  static ContentPath(address) {
+    const segments = address.toLowerCase().split("/");
+    return segments.map((segment) => encodeURIComponent(segment)).join("/");
+  }
+
   static ToPage(address, push = true) {
     if (this.pageContent == null) {
       window.location.href = address;
@@ -31,7 +36,7 @@ class Navigate {
     this.pageTitle2.innerText = "Loading..";
     this.pageContent.parentElement.classList.add("loading");
 
-    fetch(`/content${address.toLowerCase()}.json`, { method: "GET" })
+    fetch(`/content${this.ContentPath(address)}.json`, { method: "GET" })
       .then((r) => r.json())
       .then((json) => {
         newData = json;

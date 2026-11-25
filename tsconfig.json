@@ -10,10 +10,10 @@
   "compilerOptions": {
     "target": "ES2021",
     "lib": ["ES2021", "WebWorker"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "types": [
-      "@cloudflare/workers-types/2023-07-01"
+      "@cloudflare/workers-types"
     ],
     "baseUrl": ".",
     "paths": {
@@ -22,6 +22,9 @@
     }
   },
   "ts-node": {
-    "transpileOnly": true
+    "transpileOnly": true,
+    "compilerOptions": {
+      "moduleResolution": "node"
+    }
   }
 }

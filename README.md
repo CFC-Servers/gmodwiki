@@ -115,7 +115,7 @@ This mirror is made to run on Cloudflare. Deploying is really easy, simply clone
 ```sh
 npm i;
 npm run build;
-npm run pages:deploy;
+npm run worker:deploy;
 ```
 
 Follow the auth/setup prompts from `wrangler`.
@@ -124,10 +124,10 @@ Then:
 - Visit your Cloudflare dashboard
 - Select "Workers and Pages" from the sidebar
 - Click on your `gmodwiki` instance
-- Verify that it deployed correctly and that you can visit the latest `.pages.dev` site listed on the page
+- Verify that it deployed correctly and that you can visit the `.workers.dev` address listed on the page
 
 If you have your own domain:
-- Go to the "Custom Domains" tab and click "Set up a custom domain" to connect your own domain
+- Go to "Settings", then "Domains & Routes", and add a custom domain to connect your own domain
 
 ### Now, set up the redirect rules:
 Navigate to Cache Rules:

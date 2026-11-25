@@ -1,10 +1,10 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { highlightTerms } from "../../semantic/core/highlight.js";
-import { search } from "./websearch.json.js";
+import { search } from "@lib/search";
 
 const query = Astro.url.searchParams.get("query") || "";
-const results = query ? await search(query, Astro.url, Astro.locals) : [];
+const results = query ? await search(query) : [];
 ---
 
 <Layout title="Search Results" description="Garry's Mod Wiki" views="" updated="">

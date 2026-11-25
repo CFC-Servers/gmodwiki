@@ -18,6 +18,12 @@ RUN rm -rf \
     /app/node_modules/prismjs \
     /app/node_modules/shiki \
     /app/node_modules/rollup \
+    /app/node_modules/rolldown \
+    /app/node_modules/@rolldown \
+    /app/node_modules/cloudflare \
+    /app/node_modules/vitest \
+    /app/node_modules/@vitest \
+    /app/node_modules/@bruits \
     /app/node_modules/vite \
     /app/node_modules/@types \
     /app/node_modules/terser \
@@ -65,7 +71,9 @@ COPY semantic/adapters ./semantic/adapters
 COPY build ./build
 COPY public ./public
 ENV BUILD_ENV=docker
-RUN npm run build
+ARG SCRAPE_WIKI=false
+RUN if [ "$SCRAPE_WIKI" = "true" ]; then npm run build; fi
+RUN test -f src/layouts/Layout.astro || (echo "The scraped wiki content is missing. Run 'npm run build' first, or pass --build-arg SCRAPE_WIKI=true." && exit 1)
 RUN npm run astrobuild
 
 

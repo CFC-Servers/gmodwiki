@@ -1,7 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro"
-import { loadPage, type WikiPage } from "@lib/page_content"
-import { publicOrigin } from "@lib/public_origin"
+import { platform } from "@platform"
+import type { WikiPage } from "../platform/types"
 
 const slug = Astro.params.slug || "index"
 let json: WikiPage = { title: "Failed to load page", description: "Failed to load page", html: "", footer: "0 views<br>" }
@@ -23,7 +23,7 @@ try {
         return new Response(JSON.stringify(json), { status: 404 })
     }
 
-    const lookup = await loadPage(slug, Astro.url, Astro.locals)
+    const lookup = await platform.loadPage(slug.toLowerCase())
     if (lookup.status === "missing") {
         // Otherwise, we return a formatted 404 page. This happens if someone visits a missing page directly.
         Astro.response.status = 404
@@ -35,6 +35,8 @@ try {
     }
 } catch (e) {
     console.error(`Failed to load page ${slug}:`, e)
+    Astro.response.status = 500
+    Astro.response.headers.set("Cache-Control", "no-store")
     json.html = "<p>Failed to load page.</p>"
 }
 
@@ -69,7 +71,7 @@ const getOpenGraphImage = (tags: string[]) => {
 const tags = json.tags
 const tagArray = tags ? tags.split(" ").map((tag: string) => tag.trim()) : []
 const ogImage = getOpenGraphImage(tagArray)
-const siteOrigin = publicOrigin(Astro.request, Astro.url, Astro.locals)
+const siteOrigin = platform.publicOrigin(Astro.request, Astro.url)
 const ogImageUrl = `${siteOrigin}${ogImage}`
 
 const footer = json.footer

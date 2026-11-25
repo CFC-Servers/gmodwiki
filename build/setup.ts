@@ -40,6 +40,10 @@ async function setupMainScript() {
   await fs.copyFile("build/fragments/script.js", "public/script.js");
 }
 
+async function setupAssetHeaders() {
+  await fs.copyFile("build/fragments/_headers", "public/_headers");
+}
+
 async function setupAssets() {
   await fs.cp("build/assets", "public", { recursive: true });
 }
@@ -181,6 +185,7 @@ export async function setup(
   await processCss(contentHandler);
   await setupFolders();
   await setupMainScript();
+  await setupAssetHeaders();
   await setupAssets();
   await getRemoteFiles(api);
 

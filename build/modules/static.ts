@@ -1,6 +1,6 @@
 // Finds, acquires, writes, and stubs any static content found in a given html file
 import path from "path";
-import sharp from "sharp";
+import sharp, { type WebpOptions } from "sharp";
 import * as cheerio from "cheerio";
 import isAnimated from "@frsource/is-animated";
 import { promises as fs } from "fs";
@@ -54,14 +54,14 @@ const hostWhitelist = new Map([
   ["wiki.facepunch.com", true],
 ]);
 
-const staticWebpOptions: sharp.WebpOptions = {
+const staticWebpOptions: WebpOptions = {
   effort: 5,
   quality: 83,
   preset: "text",
   smartSubsample: true,
 };
 
-const animatedWebpOptions: sharp.WebpOptions = {
+const animatedWebpOptions: WebpOptions = {
   effort: 4,
   lossless: true,
 };
